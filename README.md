@@ -1,1 +1,1 @@
-# AIMarketResearch
+# CustomMarketResearch

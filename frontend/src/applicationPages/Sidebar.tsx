@@ -6,9 +6,9 @@ const ACTIVE_BG = "rgba(138, 202, 255, 0.08)";
 
 const navItems = [
   { label: "Dashboard", to: "/app" },
-  { label: "Products", to: "/app/products" },
-  { label: "Customers", to: "/app/customers" },
-  { label: "Settings", to: "/app/settings" },
+  { label: "Products", to: "/app/#" },
+  { label: "Customers", to: "/app/#" },
+  { label: "Settings", to: "/app/#" },
 ];
 
 export default function Sidebar() {
@@ -16,7 +16,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-56 shrink-0 h-full border-r border-white/10 flex flex-col"
+      className="w-56 shrink-0 h-full border-r text-white/70 border-white flex flex-col"
       style={{ backgroundColor: SIDEBAR_BG }}
     >
       <nav className="flex-1 p-3 flex flex-col gap-0.5">
@@ -27,7 +27,7 @@ export default function Sidebar() {
               key={to}
               to={to}
               className={`px-3 py-2 rounded-lg text-[13px] transition-colors no-underline ${
-                !isActive && "text-white/70 hover:text-white hover:bg-white/5"
+                !isActive && "text-white/70 hover:text-white hover:bg-white/10"
               }`}
               style={
                 isActive

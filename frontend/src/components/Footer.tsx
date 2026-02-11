@@ -39,8 +39,8 @@ const columns = [
   {
     title: "Legal",
     links: [
-      { label: "Privacy", to: "#" },
-      { label: "Terms of Service", to: "#" },
+      { label: "Privacy", to: "/company" },
+      { label: "Terms of Service", to: "/company" },
       { label: "Security", to: "/enterprise" },
       { label: "Compliance", to: "/enterprise" },
     ],
@@ -94,9 +94,15 @@ export default function Footer() {
             © {new Date().getFullYear()} CustomMarket Research. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm text-white/50">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Cookie preferences</a>
+            <Link to="/company" className="hover:text-white transition-colors">
+              Privacy
+            </Link>
+            <Link to="/company" className="hover:text-white transition-colors">
+              Terms
+            </Link>
+            <Link to="/company" className="hover:text-white transition-colors">
+              Cookie preferences
+            </Link>
           </div>
         </div>
       </div>

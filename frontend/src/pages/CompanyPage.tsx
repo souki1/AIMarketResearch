@@ -125,7 +125,7 @@ export default function CompanyPage() {
             We’re building the future of enterprise market research. If you’re passionate about data, AI, and helping teams make better decisions, we’d love to hear from you.
           </p>
           <div className="mt-8 flex justify-center">
-            <Link to="#" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-brand border-2 border-brand hover:bg-brand hover:text-white transition-colors">
+            <Link to="/company" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-brand border-2 border-brand hover:bg-brand hover:text-white transition-colors">
               View open roles
             </Link>
           </div>

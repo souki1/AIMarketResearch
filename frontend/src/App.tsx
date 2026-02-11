@@ -11,6 +11,8 @@ import ResourcesPage from "./pages/ResourcesPage";
 import CompanyPage from "./pages/CompanyPage";
 import EnterprisePage from "./pages/EnterprisePage";
 import SignInPage from "./pages/SignInPage";
+import AppLayout from "./applicationPages/AppLayout";
+import DashboardPage from "./applicationPages/DashboardPage";
 
 function MainLayout() {
   return (
@@ -30,6 +32,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/signin" element={<SignInPage />} />
+        <Route path="/app" element={<AppLayout />}>
+          <Route index element={<DashboardPage />} />
+        </Route>
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />

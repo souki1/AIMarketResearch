@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import "./App.css";
 import TrustBar from "./components/TrustBar";
 import Navbar from "./components/Navbar";
@@ -10,14 +10,27 @@ import CustomersPage from "./pages/CustomersPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import CompanyPage from "./pages/CompanyPage";
 import EnterprisePage from "./pages/EnterprisePage";
+import SignInPage from "./pages/SignInPage";
+
+function MainLayout() {
+  return (
+    <>
+      <TrustBar />
+      <Navbar />
+      <main className="flex-1 pt-[104px]">
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <TrustBar />
-      <Navbar />
-      <main className="flex-1 pt-[104px]">
-        <Routes>
+      <Routes>
+        <Route path="/signin" element={<SignInPage />} />
+        <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/solutions" element={<SolutionsPage />} />
@@ -25,9 +38,8 @@ function App() {
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/company" element={<CompanyPage />} />
           <Route path="/enterprise" element={<EnterprisePage />} />
-        </Routes>
-      </main>
-      <Footer />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

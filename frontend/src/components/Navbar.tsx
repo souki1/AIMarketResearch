@@ -54,7 +54,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden lg:flex items-center gap-2">
               <Link
-                to="/resources"
+                to="/signin"
                 className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-brand hover:bg-slate-50 transition-colors"
               >
                 Sign in
@@ -121,7 +121,7 @@ export default function Navbar() {
               Enterprise
             </Link>
             <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
-              <Link to="/resources" className="w-full py-3 rounded-lg text-center font-medium text-slate-600 bg-slate-100 hover:bg-slate-200" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/signin" className="w-full py-3 rounded-lg text-center font-medium text-slate-600 bg-slate-100 hover:bg-slate-200" onClick={() => setMobileMenuOpen(false)}>
                 Sign in
               </Link>
               <Link to="/company" className="w-full py-3 rounded-lg text-center font-medium text-white bg-brand hover:bg-brand-light" onClick={() => setMobileMenuOpen(false)}>

@@ -57,3 +57,31 @@ body {
   background: #0f172a;
   color: rgba(255, 255, 255, 0.9);
 }
+
+/* App layout: smooth scrollbar matching dark theme */
+.scrollbar-app {
+  scroll-behavior: smooth;
+}
+
+.scrollbar-app::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-app::-webkit-scrollbar-track {
+  background: rgb(17, 23, 28);
+}
+
+.scrollbar-app::-webkit-scrollbar-thumb {
+  background: rgb(55, 65, 75);
+  border-radius: 4px;
+}
+
+.scrollbar-app::-webkit-scrollbar-thumb:hover {
+  background: rgb(71, 85, 98);
+}
+
+.scrollbar-app {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(55, 65, 75) rgb(17, 23, 28);
+}

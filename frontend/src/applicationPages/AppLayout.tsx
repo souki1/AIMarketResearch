@@ -21,9 +21,9 @@ export default function AppLayout() {
         >
           <Sidebar />
         </div>
-        <div className="flex-1 min-w-0 flex ">
+        <div className="flex-1 min-h-0 px-1 py-1 flex">
           <main
-            className="w-[99%] h-full overflow-auto rounded-lg "
+            className="w-[99.5%] h-full min-h-0 overflow-auto rounded-lg scroll-smooth scrollbar-app"
             style={{ backgroundColor: "var(--dubois-global-background-color, #1f272d)" }}
           >
             <Outlet />

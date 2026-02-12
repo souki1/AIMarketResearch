@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@radix-ui/react-icons";
 import SimpleBarChart from "../components/SimpleBarChart";
 import BarChart from "../components/BarChart";
 
@@ -73,9 +74,7 @@ export default function ProductsPage() {
                 <p className="mt-3 text-slate-600">{p.description}</p>
                 <span className="mt-4 inline-flex items-center gap-1 text-accent font-medium text-sm">
                   Learn more
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  <ChevronRightIcon className="w-4 h-4" />
                 </span>
               </Link>
             ))}

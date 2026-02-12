@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
 
 const PAGE_BG = "rgb(31, 39, 45)";
 const CARD_BG = "rgb(17, 23, 28)";
@@ -108,20 +109,7 @@ export default function SignInPage() {
               onClick={() => setShowEmailForm(true)}
               className="mt-6 w-full flex items-center justify-center gap-2.5 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10 transition-colors font-medium cursor-pointer"
             >
-              <svg
-                className="w-4 h-4 text-white/80 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+              <EnvelopeClosedIcon className="w-4 h-4 text-white/80 shrink-0" aria-hidden />
               Continue with email
             </button>
           ) : (

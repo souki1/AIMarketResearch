@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { HamburgerMenuIcon, MagnifyingGlassIcon, PersonIcon, GearIcon, ExitIcon } from "@radix-ui/react-icons";
 
 const NAVBAR_BG = "rgb(31, 39, 45)";
 
@@ -9,21 +10,7 @@ type NavbarProps = {
 };
 
 export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
-  const [profileOpen, setProfileOpen] = useState(false);
-  const profileRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setProfileOpen(false);
-      }
-    }
-    if (profileOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [profileOpen]);
 
   return (
     <header
@@ -36,9 +23,7 @@ export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
         className="shrink-0 w-9 h-9 cursor-pointer rounded-lg flex items-center justify-center text-white/70 hover:bg-white/10 transition-colors"
         aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <HamburgerMenuIcon className="w-5 h-5" aria-hidden />
       </button>
       <Link to="/app" className="flex items-center gap-2 text-white/70 hover:text-white transition-colors shrink-0">
         <img src="/logo.svg" alt="CustomMarket" className="w-5 h-5" />
@@ -51,9 +36,7 @@ export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
         </label>
         <div className="relative w-full max-w-sm">
           <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" aria-hidden>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <MagnifyingGlassIcon className="w-4 h-4" aria-hidden />
           </span>
           <input
             id="app-search"
@@ -63,91 +46,60 @@ export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
           />
         </div>
       </div>
-      <div className="relative shrink-0" ref={profileRef}>
-        <button
-          type="button"
-          onClick={() => setProfileOpen((prev) => !prev)}
-          className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white/90 hover:bg-white/15 transition-colors cursor-pointer"
-          aria-label="Profile"
-          aria-expanded={profileOpen}
-          aria-haspopup="menu"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <button
+            type="button"
+            className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white/90 hover:bg-white/15 transition-colors cursor-pointer"
+            aria-label="Profile"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 8zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-        </button>
-        {profileOpen && (
-          <div
-            role="menu"
-            aria-orientation="vertical"
-            className="absolute right-0 top-full mt-2 w-64 rounded-lg border border-white/10 bg-[rgb(31,39,45)] py-2 shadow-xl z-50 outline-none"
-            style={{ outline: "none" }}
+            <PersonIcon className="w-5 h-5" aria-hidden />
+          </button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content
+            className="w-64 rounded-lg border border-white/10 bg-[rgb(31,39,45)] py-2 shadow-xl z-50 outline-none"
+            sideOffset={8}
+            align="end"
           >
             <div className="px-4 py-2 border-b border-white/10">
               <span className="text-sm font-medium text-white/90 block truncate">
                 user@example.com
               </span>
             </div>
-            <button
-              type="button"
-              role="menuitem"
-              className="w-full px-4 py-2.5 text-left text-sm text-white/90 hover:bg-white/10 flex items-center gap-2"
-            >
+            <DropdownMenu.Item className="px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none cursor-default flex items-center gap-2">
               <span className="truncate">workspace</span>
               <span className="text-xs text-white/50 truncate">Workspace ID: 7474654407029309</span>
-            </button>
-            <div role="separator" className="h-px bg-white/10 my-2" />
-            <Link
-              to="/app/settings"
-              role="menuitem"
-              className="block px-4 py-2.5 text-sm text-white/90 hover:bg-white/10"
-              onClick={() => setProfileOpen(false)}
-            >
-              Settings
-            </Link>
-            <Link
-              to="/company"
-              role="menuitem"
-              className="block px-4 py-2.5 text-sm text-white/90 hover:bg-white/10"
-              onClick={() => setProfileOpen(false)}
-            >
-              Privacy policy
-            </Link>
-            <div role="separator" className="h-px bg-white/10 my-2" />
-            <button
-              type="button"
-              role="menuitem"
-              className="w-full px-4 py-2.5 text-left text-sm text-white/90 hover:bg-white/10"
-              onClick={() => setProfileOpen(false)}
-            >
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator className="h-px bg-white/10 my-2" />
+            <DropdownMenu.Item asChild>
+              <Link
+                to="/app/settings"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none"
+              >
+                <GearIcon className="w-4 h-4" /> Settings
+              </Link>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item asChild>
+              <Link
+                to="/company"
+                className="block px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none"
+              >
+                Privacy policy
+              </Link>
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator className="h-px bg-white/10 my-2" />
+            <DropdownMenu.Item className="px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none cursor-pointer">
               Send feedback
-            </button>
-            <div role="separator" className="h-px bg-white/10 my-2" />
-            <button
-              type="button"
-              role="menuitem"
-              className="w-full px-4 py-2.5 text-left text-sm text-white/90 hover:bg-white/10"
-              onClick={() => {
-                setProfileOpen(false);
-                navigate("/signin", { replace: true });
-              }}
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator className="h-px bg-white/10 my-2" />
+            <DropdownMenu.Item
+              className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none cursor-pointer"
+              onSelect={() => navigate("/signin", { replace: true })}
             >
-              Log out
-            </button>
-          </div>
-        )}
-      </div>
+              <ExitIcon className="w-4 h-4" /> Log out
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+      </DropdownMenu.Root>
     </header>
   );
 }

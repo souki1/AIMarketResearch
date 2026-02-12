@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@radix-ui/react-icons";
 import BarChart from "../components/BarChart";
 
 const stats = [
@@ -137,9 +138,7 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors"
               >
                 Request a demo
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                <ChevronRightIcon className="w-4 h-4" />
               </Link>
               <Link
                 to="/enterprise"

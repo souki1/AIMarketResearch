@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --dubois-global-background-color: rgb(17, 23, 28);
   --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --color-brand: #0f172a;
   --color-brand-light: #1e293b;
@@ -9,6 +10,10 @@
   --color-accent-light: #0ea5e9;
   --color-surface: #f8fafc;
   --color-muted: #64748b;
+}
+
+:root {
+  --dubois-global-background-color: rgb(17, 23, 28);
 }
 
 * {

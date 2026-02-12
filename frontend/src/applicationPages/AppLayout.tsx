@@ -5,9 +5,10 @@ import Sidebar from "./Sidebar";
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const SIDEBAR_BG = "rgb(31, 39, 45)";
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-[SIDEBAR_BG] " style={{ backgroundColor: SIDEBAR_BG }}>
       <Navbar
         sidebarOpen={sidebarOpen}
         onMenuClick={() => setSidebarOpen((prev) => !prev)}
@@ -20,9 +21,14 @@ export default function AppLayout() {
         >
           <Sidebar />
         </div>
-        <main className="flex-1 min-w-0 overflow-auto bg-slate-50">
-          <Outlet />
-        </main>
+        <div className="flex-1 min-w-0 flex ">
+          <main
+            className="w-[99%] h-full overflow-auto rounded-lg "
+            style={{ backgroundColor: "var(--dubois-global-background-color, #1f272d)" }}
+          >
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );

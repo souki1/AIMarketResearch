@@ -16,8 +16,11 @@ const CompanyPage = lazy(() => import("../pages/CompanyPage"));
 const EnterprisePage = lazy(() => import("../pages/EnterprisePage"));
 const SignInPage = lazy(() => import("../pages/SignInPage"));
 const DashboardPage = lazy(() => import("../applicationPages/DashboardPage"));
+const AppProductsPage = lazy(() => import("../applicationPages/ProductsPage"));
+const AppCustomersPage = lazy(() => import("../applicationPages/CustomersPage"));
+const AppSettingsPage = lazy(() => import("../applicationPages/SettingsPage"));
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter([ 
   {
     path: "/",
     element: <Root />,
@@ -28,7 +31,9 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
-          // Add more app routes: { path: "settings", element: <SettingsPage /> },
+          { path: "products", element: <AppProductsPage /> },
+          { path: "customers", element: <AppCustomersPage /> },
+          { path: "settings", element: <AppSettingsPage /> },
         ],
       },
       {

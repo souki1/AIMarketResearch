@@ -6,9 +6,9 @@ const ACTIVE_BG = "rgba(138, 202, 255, 0.08)";
 
 const navItems = [
   { label: "Dashboard", to: "/app" },
-  { label: "Products", to: "/app/#" },
-  { label: "Customers", to: "/app/#" },
-  { label: "Settings", to: "/app/#" },
+  { label: "Products", to: "/app/products" },
+  { label: "Customers", to: "/app/customers" },
+  { label: "Settings", to: "/app/settings" },
 ];
 
 export default function Sidebar() {
@@ -16,12 +16,12 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-56 shrink-0 h-full border-r text-white/70 border-white flex flex-col"
+      className="w-56 shrink-0 h-full text-white/70 flex flex-col"
       style={{ backgroundColor: SIDEBAR_BG }}
     >
       <nav className="flex-1 p-3 flex flex-col gap-0.5">
         {navItems.map(({ label, to }) => {
-          const isActive = location.pathname === to;
+          const isActive = location.pathname === to || (to !== "/app" && location.pathname.startsWith(to));
           return (
             <Link
               key={to}

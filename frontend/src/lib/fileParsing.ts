@@ -1,7 +1,10 @@
 import * as XLSX from "xlsx";
 
 export type FileItem = {
-  file: File;
+  id?: string;
+  dbId?: number;
+  file?: File;
+  filename: string;
   imageUrl?: string;
   tableData?: string[][];
 };
@@ -12,6 +15,17 @@ export function isImage(file: File) {
 
 export function isExcelOrCsv(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase();
+  return ext === "xlsx" || ext === "xls" || ext === "csv";
+}
+
+export function isImageByName(filename: string, mimeType?: string) {
+  if (mimeType?.startsWith("image/")) return true;
+  const ext = filename.split(".").pop()?.toLowerCase();
+  return ["jpg", "jpeg", "png", "gif", "webp", "bmp", "svg"].includes(ext ?? "");
+}
+
+export function isExcelOrCsvByName(filename: string) {
+  const ext = filename.split(".").pop()?.toLowerCase();
   return ext === "xlsx" || ext === "xls" || ext === "csv";
 }
 
@@ -71,4 +85,18 @@ export function readExcelOrCsv(file: File): Promise<string[][]> {
       reader.readAsArrayBuffer(file);
     }
   });
+}
+
+export async function readExcelOrCsvFromUrl(url: string, filename: string): Promise<string[][]> {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  const ext = filename.split(".").pop()?.toLowerCase();
+  if (ext === "csv") {
+    const text = await blob.text();
+    return parseCsv(text);
+  }
+  const buf = await blob.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array" });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  return XLSX.utils.sheet_to_json<string[]>(ws, { header: 1, defval: "" }) as string[][];
 }

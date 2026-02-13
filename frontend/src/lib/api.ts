@@ -28,6 +28,43 @@ export async function apiFetch<T>(
   return res.json();
 }
 
+export type StoredFile = {
+  id: number;
+  filename: string;
+  storage_path: string;
+  mime_type: string | null;
+  size: number | null;
+  parsed_data?: string[][] | null;
+};
+
+// Files
+export const filesApi = {
+  upload: async (files: File[]): Promise<{ uploaded: StoredFile[] }> => {
+    const formData = new FormData();
+    files.forEach((f) => formData.append("files", f));
+    const res = await fetch(getApiUrl("api/files/upload"), {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error((err as { detail?: string }).detail ?? "Upload failed");
+    }
+    return res.json();
+  },
+  list: () =>
+    fetch(getApiUrl("api/files")).then((r) => {
+      if (!r.ok) throw new Error("Failed to list files");
+      return r.json() as Promise<StoredFile[]>;
+    }),
+  getContentUrl: (id: number) => getApiUrl(`api/files/${id}/content`),
+  delete: (id: number) =>
+    fetch(getApiUrl(`api/files/${id}`), { method: "DELETE" }).then((r) => {
+      if (!r.ok) throw new Error("Failed to delete file");
+      return r.json();
+    }),
+};
+
 // Auth
 export const authApi = {
   login: (email: string, password: string) =>

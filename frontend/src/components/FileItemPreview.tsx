@@ -8,7 +8,7 @@ type FileItemPreviewProps = {
 export default function FileItemPreview({ item, onRemove }: FileItemPreviewProps) {
   return (
     <li className="flex items-center justify-between gap-2 rounded px-2 py-1 text-xs text-white/80 bg-white/5">
-      <span className="truncate">{item.file.name}</span>
+      <span className="truncate">{item.filename}</span>
       <button
         type="button"
         onClick={onRemove}

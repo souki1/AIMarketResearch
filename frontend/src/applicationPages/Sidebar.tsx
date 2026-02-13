@@ -5,7 +5,7 @@ const ACTIVE_COLOR = "rgb(138, 202, 255)";
 const ACTIVE_BG = "rgba(138, 202, 255, 0.08)";
 
 const navItems = [
-  { label: "Dashboard", to: "/app" },
+  { label: "Workspace", to: "/app" },
   { label: "Products", to: "/app/products" },
   { label: "Customers", to: "/app/customers" },
   { label: "Settings", to: "/app/settings" },

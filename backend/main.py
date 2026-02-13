@@ -1,9 +1,10 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from sqlalchemy import text
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, dashboard, users
+from app.api import auth, dashboard, files, users
 from app.db.database import engine
 from app.db.models import Base
 
@@ -11,6 +12,13 @@ from app.db.models import Base
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    # Add parsed_data column if missing (for existing DBs)
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE uploaded_files ADD COLUMN parsed_data TEXT"))
+            conn.commit()
+    except Exception:
+        pass
     # Seed demo user for testing (email: demo@custommarket.com, password: demo123)
     from app.db import SessionLocal
     from app.db.models import User, Workspace
@@ -53,6 +61,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
+app.include_router(files.router, prefix="/api")
 
 
 @app.get("/")

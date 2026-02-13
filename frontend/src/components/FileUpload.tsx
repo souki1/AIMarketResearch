@@ -9,6 +9,8 @@ type FileUploadProps = {
   items?: FileItem[];
   /** Called whenever files change. Use for controlled mode or to render FileView elsewhere. */
   onItemsChange?: (items: FileItem[]) => void;
+  /** Called when a file is removed. Use to delete from backend. */
+  onRemove?: (item: FileItem) => void;
   /** @deprecated Use onItemsChange instead */
   onFilesChange?: (items: FileItem[]) => void;
 };
@@ -17,6 +19,7 @@ export default function FileUpload({
   items: controlledItems,
   onItemsChange,
   onFilesChange,
+  onRemove,
 }: FileUploadProps) {
   const [internalItems, setInternalItems] = useState<FileItem[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -46,7 +49,11 @@ export default function FileUpload({
   async function addFiles(newFiles: File[]) {
     const newItems: FileItem[] = await Promise.all(
       newFiles.map(async (file) => {
-        const item: FileItem = { file };
+        const item: FileItem = {
+          id: crypto.randomUUID(),
+          file,
+          filename: file.name,
+        };
         if (isImage(file)) {
           item.imageUrl = URL.createObjectURL(file);
         } else if (isExcelOrCsv(file)) {
@@ -86,10 +93,12 @@ export default function FileUpload({
 
   function removeFile(index: number) {
     setItems((prev) => {
-      const next = prev.filter((_, i) => i !== index);
       const removed = prev[index];
-      if (removed?.imageUrl) URL.revokeObjectURL(removed.imageUrl);
-      onFilesChange?.(next);
+      const next = prev.filter((_, i) => i !== index);
+      if (removed?.imageUrl && removed.imageUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(removed.imageUrl);
+      }
+      onRemove?.(removed);
       return next;
     });
   }
@@ -108,7 +117,7 @@ export default function FileUpload({
         <ul className="mt-1.5 space-y-0.5">
           {items.map((it, i) => (
             <FileItemPreview
-              key={`${it.file.name}-${i}`}
+              key={`${it.filename}-${it.dbId ?? it.id}-${i}`}
               item={it}
               onRemove={() => removeFile(i)}
             />

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -35,3 +35,35 @@ def get_current_user(
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     return user
+
+
+def _resolve_user_from_token(token: str | None, db: Session) -> User | None:
+    """Resolve user from JWT token string."""
+    if not token:
+        return None
+    payload = decode_token(token)
+    if payload is None:
+        return None
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+    return db.query(User).filter(User.id == int(user_id)).first()
+
+
+def get_optional_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
+    db: Annotated[Session, Depends(get_db)],
+) -> User | None:
+    """Return current user if authenticated, else None."""
+    token = credentials.credentials if credentials else None
+    return _resolve_user_from_token(token, db)
+
+
+def get_optional_user_from_header_or_query(
+    request: Request,
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
+    db: Annotated[Session, Depends(get_db)],
+) -> User | None:
+    """Return user from Authorization header or token query param (for img src)."""
+    token = credentials.credentials if credentials else request.query_params.get("token")
+    return _resolve_user_from_token(token, db)

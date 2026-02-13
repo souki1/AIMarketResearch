@@ -34,32 +34,77 @@ export type StoredFile = {
   storage_path: string;
   mime_type: string | null;
   size: number | null;
+  tab_id?: number | null;
   parsed_data?: string[][] | null;
+};
+
+export type DataTab = {
+  id: number;
+  name: string;
+  sort_order: number;
+};
+
+function fetchWithAuth(
+  url: string,
+  options: RequestInit = {},
+  token?: string | null
+): Promise<Response> {
+  const headers: HeadersInit = { ...(options.headers as Record<string, string>) };
+  if (token) {
+    (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+  }
+  return fetch(url, { ...options, headers });
+}
+
+// Tabs
+export const tabsApi = {
+  list: (token?: string | null) =>
+    fetchWithAuth(getApiUrl("api/tabs"), {}, token).then((r) => {
+      if (!r.ok) throw new Error("Failed to list tabs");
+      return r.json() as Promise<DataTab[]>;
+    }),
+  create: (name?: string, token?: string | null) =>
+    apiFetch<DataTab>("/api/tabs", {
+      method: "POST",
+      body: JSON.stringify({ name: name ?? "New Tab" }),
+      token: token ?? undefined,
+    }),
 };
 
 // Files
 export const filesApi = {
-  upload: async (files: File[]): Promise<{ uploaded: StoredFile[] }> => {
+  upload: async (
+    files: File[],
+    tabId?: number | null,
+    token?: string | null
+  ): Promise<{ uploaded: StoredFile[] }> => {
     const formData = new FormData();
     files.forEach((f) => formData.append("files", f));
-    const res = await fetch(getApiUrl("api/files/upload"), {
+    if (tabId != null) formData.append("tab_id", String(tabId));
+    const res = await fetchWithAuth(getApiUrl("api/files/upload"), {
       method: "POST",
       body: formData,
-    });
+    }, token);
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error((err as { detail?: string }).detail ?? "Upload failed");
     }
     return res.json();
   },
-  list: () =>
-    fetch(getApiUrl("api/files")).then((r) => {
+  list: (tabId?: number | null, token?: string | null) => {
+    const url = new URL(getApiUrl("api/files"));
+    if (tabId != null) url.searchParams.set("tab_id", String(tabId));
+    return fetchWithAuth(url.toString(), {}, token).then((r) => {
       if (!r.ok) throw new Error("Failed to list files");
       return r.json() as Promise<StoredFile[]>;
-    }),
-  getContentUrl: (id: number) => getApiUrl(`api/files/${id}/content`),
-  delete: (id: number) =>
-    fetch(getApiUrl(`api/files/${id}`), { method: "DELETE" }).then((r) => {
+    });
+  },
+  getContentUrl: (id: number, token?: string | null) => {
+    const url = getApiUrl(`api/files/${id}/content`);
+    return token ? `${url}?token=${encodeURIComponent(token)}` : url;
+  },
+  delete: (id: number, token?: string | null) =>
+    fetchWithAuth(getApiUrl(`api/files/${id}`), { method: "DELETE" }, token).then((r) => {
       if (!r.ok) throw new Error("Failed to delete file");
       return r.json();
     }),

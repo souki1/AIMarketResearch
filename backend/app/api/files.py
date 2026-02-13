@@ -3,13 +3,14 @@ import uuid
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
+from app.api.dependencies import get_optional_user, get_optional_user_from_header_or_query
 from app.core.file_parser import parse_file_to_rows
 from app.db import get_db
-from app.db.models import UploadedFile, Workspace
+from app.db.models import DataTab, UploadedFile, User, Workspace
 
 router = APIRouter(prefix="/files", tags=["files"])
 
@@ -19,12 +20,13 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 DEFAULT_WORKSPACE_ID = "7474654407029309"
 
 
-def get_workspace_id(db: Session) -> str:
-    """Use default workspace for now. Can add auth later."""
-    w = db.query(Workspace).filter(Workspace.id == DEFAULT_WORKSPACE_ID).first()
+def get_workspace_id(db: Session, user: User | None = None) -> str:
+    """Use user's workspace if authenticated, else default workspace."""
+    workspace_id = user.workspace_id if user else DEFAULT_WORKSPACE_ID
+    w = db.query(Workspace).filter(Workspace.id == workspace_id).first()
     if w:
         return w.id
-    w = Workspace(id=DEFAULT_WORKSPACE_ID, name="workspace")
+    w = Workspace(id=workspace_id, name="workspace")
     db.add(w)
     db.commit()
     return w.id
@@ -33,10 +35,23 @@ def get_workspace_id(db: Session) -> str:
 @router.post("/upload")
 def upload_files(
     files: list[UploadFile] = File(...),
+    tab_id: int | None = Form(None),
     db: Annotated[Session, Depends(get_db)] = None,
+    user: Annotated[User | None, Depends(get_optional_user)] = None,
 ):
-    """Upload files and store in database."""
-    workspace_id = get_workspace_id(db)
+    """Upload files and store in database. If tab_id is omitted and no tabs exist, creates a tab."""
+    workspace_id = get_workspace_id(db, user)
+    effective_tab_id = tab_id
+    if effective_tab_id is None:
+        existing = db.query(DataTab).filter(DataTab.workspace_id == workspace_id).first()
+        if existing:
+            effective_tab_id = existing.id
+        else:
+            tab = DataTab(name="Tab 1", workspace_id=workspace_id, sort_order=0)
+            db.add(tab)
+            db.commit()
+            db.refresh(tab)
+            effective_tab_id = tab.id
     saved = []
 
     for f in files:
@@ -61,6 +76,8 @@ def upload_files(
             mime_type=f.content_type,
             size=len(content),
             workspace_id=workspace_id,
+            user_id=user.id if user else None,
+            tab_id=effective_tab_id,
             parsed_data=parsed_data,
         )
         db.add(rec)
@@ -73,6 +90,7 @@ def upload_files(
                 "storage_path": rec.storage_path,
                 "mime_type": rec.mime_type,
                 "size": rec.size,
+                "tab_id": rec.tab_id,
                 "parsed_data": json.loads(rec.parsed_data) if rec.parsed_data else None,
             }
         )
@@ -81,14 +99,17 @@ def upload_files(
 
 
 @router.get("")
-def list_files(db: Annotated[Session, Depends(get_db)] = None):
-    """List all uploaded files for the workspace."""
-    files = (
-        db.query(UploadedFile)
-        .filter(UploadedFile.workspace_id == DEFAULT_WORKSPACE_ID)
-        .order_by(UploadedFile.created_at.desc())
-        .all()
-    )
+def list_files(
+    tab_id: int | None = None,
+    db: Annotated[Session, Depends(get_db)] = None,
+    user: Annotated[User | None, Depends(get_optional_user)] = None,
+):
+    """List uploaded files. If tab_id given, filter by tab; else return all."""
+    workspace_id = user.workspace_id if user else DEFAULT_WORKSPACE_ID
+    q = db.query(UploadedFile).filter(UploadedFile.workspace_id == workspace_id)
+    if tab_id is not None:
+        q = q.filter(UploadedFile.tab_id == tab_id)
+    files = q.order_by(UploadedFile.created_at.desc()).all()
     return [
         {
             "id": f.id,
@@ -96,6 +117,7 @@ def list_files(db: Annotated[Session, Depends(get_db)] = None):
             "storage_path": f.storage_path,
             "mime_type": f.mime_type,
             "size": f.size,
+            "tab_id": f.tab_id,
             "parsed_data": json.loads(f.parsed_data) if f.parsed_data else None,
         }
         for f in files
@@ -103,9 +125,18 @@ def list_files(db: Annotated[Session, Depends(get_db)] = None):
 
 
 @router.get("/{file_id}/data")
-def get_file_data(file_id: int, db: Annotated[Session, Depends(get_db)] = None):
+def get_file_data(
+    file_id: int,
+    db: Annotated[Session, Depends(get_db)] = None,
+    user: Annotated[User | None, Depends(get_optional_user)] = None,
+):
     """Get parsed file data as rows and columns."""
-    rec = db.query(UploadedFile).filter(UploadedFile.id == file_id).first()
+    workspace_id = user.workspace_id if user else DEFAULT_WORKSPACE_ID
+    rec = (
+        db.query(UploadedFile)
+        .filter(UploadedFile.id == file_id, UploadedFile.workspace_id == workspace_id)
+        .first()
+    )
     if not rec:
         raise HTTPException(404, "File not found")
     if not rec.parsed_data:
@@ -116,9 +147,18 @@ def get_file_data(file_id: int, db: Annotated[Session, Depends(get_db)] = None):
 
 
 @router.get("/{file_id}/content")
-def get_file_content(file_id: int, db: Annotated[Session, Depends(get_db)] = None):
-    """Serve the file content (for images, downloads, etc.)."""
-    rec = db.query(UploadedFile).filter(UploadedFile.id == file_id).first()
+def get_file_content(
+    file_id: int,
+    db: Annotated[Session, Depends(get_db)] = None,
+    user: Annotated[User | None, Depends(get_optional_user_from_header_or_query)] = None,
+):
+    """Serve the file content. Accepts token in ?token= for img src."""
+    workspace_id = user.workspace_id if user else DEFAULT_WORKSPACE_ID
+    rec = (
+        db.query(UploadedFile)
+        .filter(UploadedFile.id == file_id, UploadedFile.workspace_id == workspace_id)
+        .first()
+    )
     if not rec:
         raise HTTPException(404, "File not found")
     path = UPLOAD_DIR / rec.storage_path
@@ -128,9 +168,18 @@ def get_file_content(file_id: int, db: Annotated[Session, Depends(get_db)] = Non
 
 
 @router.delete("/{file_id}")
-def delete_file(file_id: int, db: Annotated[Session, Depends(get_db)] = None):
+def delete_file(
+    file_id: int,
+    db: Annotated[Session, Depends(get_db)] = None,
+    user: Annotated[User | None, Depends(get_optional_user)] = None,
+):
     """Delete an uploaded file."""
-    rec = db.query(UploadedFile).filter(UploadedFile.id == file_id).first()
+    workspace_id = user.workspace_id if user else DEFAULT_WORKSPACE_ID
+    rec = (
+        db.query(UploadedFile)
+        .filter(UploadedFile.id == file_id, UploadedFile.workspace_id == workspace_id)
+        .first()
+    )
     if not rec:
         raise HTTPException(404, "File not found")
     path = UPLOAD_DIR / rec.storage_path

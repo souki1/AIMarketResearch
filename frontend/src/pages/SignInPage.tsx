@@ -1,18 +1,34 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
+import { useAuth } from "../contexts/AuthContext";
 
 const PAGE_BG = "rgb(31, 39, 45)";
 const CARD_BG = "rgb(17, 23, 28)";
 
 export default function SignInPage() {
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // TODO: call auth API, then navigate on success
-    navigate("/app", { replace: true });
+    setError(null);
+    setLoading(true);
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement)?.value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)?.value;
+    if (!email || !password) return;
+    try {
+      await login(email, password);
+      navigate("/app", { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign in failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -114,6 +130,9 @@ export default function SignInPage() {
             </button>
           ) : (
             <form className="mt-6 space-y-4 text-left" onSubmit={handleSubmit}>
+              {error && (
+                <p className="text-sm text-red-400">{error}</p>
+              )}
               <div>
                 <label
                   htmlFor="signin-email"
@@ -123,6 +142,7 @@ export default function SignInPage() {
                 </label>
                 <input
                   id="signin-email"
+                  name="email"
                   type="email"
                   autoComplete="email"
                   required
@@ -139,6 +159,7 @@ export default function SignInPage() {
                 </label>
                 <input
                   id="signin-password"
+                  name="password"
                   type="password"
                   autoComplete="current-password"
                   required
@@ -148,9 +169,10 @@ export default function SignInPage() {
               </div>
               <button
                 type="submit"
-                className="w-full rounded-lg bg-brand py-2 text-sm font-medium text-white hover:bg-brand-light transition-colors cursor-pointer"
+                disabled={loading}
+                className="w-full rounded-lg bg-brand py-2 text-sm font-medium text-white hover:bg-brand-light transition-colors cursor-pointer disabled:opacity-70"
               >
-                Sign in with email
+                {loading ? "Signing in..." : "Sign in with email"}
               </button>
             </form>
           )}
@@ -159,7 +181,7 @@ export default function SignInPage() {
         <p className="text-center mt-10 text-xs text-white/60">
           Don&apos;t have an account?{" "}
           <Link
-            to="/company"
+            to="/signup"
             className="font-medium text-accent-light hover:underline"
           >
             Sign up

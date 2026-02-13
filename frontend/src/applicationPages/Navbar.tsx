@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HamburgerMenuIcon, MagnifyingGlassIcon, PersonIcon, GearIcon, ExitIcon } from "@radix-ui/react-icons";
+import { useAuth } from "../contexts/AuthContext";
 
 const NAVBAR_BG = "rgb(31, 39, 45)";
 
@@ -10,7 +11,13 @@ type NavbarProps = {
 };
 
 export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/signin", { replace: true });
+  }
 
   return (
     <header
@@ -63,13 +70,15 @@ export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
           >
             <div className="px-4 py-2 border-b border-white/10">
               <span className="text-sm font-medium text-white/90 block truncate">
-                user@example.com
+                {user?.email ?? "Not signed in"}
               </span>
             </div>
-            <DropdownMenu.Item className="px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none cursor-default flex items-center gap-2">
-              <span className="truncate">workspace</span>
-              <span className="text-xs text-white/50 truncate">Workspace ID: 7474654407029309</span>
-            </DropdownMenu.Item>
+            {user && (
+              <DropdownMenu.Item className="px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none cursor-default flex items-center gap-2">
+                <span className="truncate">{user.workspace_name}</span>
+                <span className="text-xs text-white/50 truncate">Workspace ID: {user.workspace_id}</span>
+              </DropdownMenu.Item>
+            )}
             <DropdownMenu.Separator className="h-px bg-white/10 my-2" />
             <DropdownMenu.Item asChild>
               <Link
@@ -94,7 +103,7 @@ export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
             <DropdownMenu.Separator className="h-px bg-white/10 my-2" />
             <DropdownMenu.Item
               className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/90 hover:bg-white/10 outline-none cursor-pointer"
-              onSelect={() => navigate("/signin", { replace: true })}
+              onSelect={handleLogout}
             >
               <ExitIcon className="w-4 h-4" /> Log out
             </DropdownMenu.Item>

@@ -52,7 +52,7 @@ export default function DataResearchTable({
   const allSelected = pageRows.length > 0 && selected.size === pageRows.length;
 
   return (
-    <div className="flex flex-col h-full min-h-0 w-[1200px] max-w-full rounded-lg border border-white/10 bg-white/5 overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 w-full rounded-lg border border-white/10 bg-white/5 overflow-hidden">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-white/10 shrink-0">
         <h2 className="font-display font-semibold text-lg text-white/90">
@@ -101,7 +101,7 @@ export default function DataResearchTable({
 
       {/* Table - full width/height, inner scroll when content overflows */}
       <div className="flex-1 min-h-0 w-full overflow-auto">
-        <table className="min-w-max w-full text-sm text-white/90">
+        <table className="min-w-full text-sm text-white/90">
           <thead className="sticky top-0 bg-[rgb(17,23,28)] z-10">
             <tr>
               <th className="w-10 px-3 py-2 border-b border-white/10 text-left">

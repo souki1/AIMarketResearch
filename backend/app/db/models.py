@@ -24,6 +24,16 @@ class User(Base):
     workspace = relationship("Workspace", backref="users")
 
 
+class DataTab(Base):
+    __tablename__ = "data_tabs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    workspace_id = Column(String, ForeignKey("workspaces.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    sort_order = Column(Integer, default=0)
+
+
 class UploadedFile(Base):
     __tablename__ = "uploaded_files"
 
@@ -33,5 +43,7 @@ class UploadedFile(Base):
     mime_type = Column(String, nullable=True)
     size = Column(Integer, nullable=True)
     workspace_id = Column(String, ForeignKey("workspaces.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    tab_id = Column(Integer, ForeignKey("data_tabs.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     parsed_data = Column(Text, nullable=True)  # JSON: [[row1_col1, row1_col2, ...], [row2...], ...]

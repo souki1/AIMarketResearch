@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 export type FileItem = {
   id?: string;
   dbId?: number;
+  tabId?: number | null;
   file?: File;
   filename: string;
   imageUrl?: string;

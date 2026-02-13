@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, dashboard, files, users
+from app.api import auth, dashboard, files, tabs, users
 from app.db.database import engine
 from app.db.models import Base
 
@@ -17,6 +17,40 @@ async def lifespan(app: FastAPI):
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE uploaded_files ADD COLUMN parsed_data TEXT"))
             conn.commit()
+    except Exception:
+        pass
+    # Add tab_id column if missing (for existing DBs)
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE uploaded_files ADD COLUMN tab_id INTEGER"))
+            conn.commit()
+    except Exception:
+        pass
+    # Add user_id column if missing (for existing DBs)
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE uploaded_files ADD COLUMN user_id INTEGER"))
+            conn.commit()
+    except Exception:
+        pass
+    # Migrate orphan files (tab_id NULL) to a default tab
+    try:
+        from app.db import SessionLocal
+        from app.db.models import DataTab, UploadedFile
+        db = SessionLocal()
+        try:
+            orphan_count = db.query(UploadedFile).filter(UploadedFile.tab_id == None).count()
+            if orphan_count > 0:
+                default_tab = db.query(DataTab).filter(DataTab.workspace_id == "7474654407029309").first()
+                if not default_tab:
+                    default_tab = DataTab(name="Tab 1", workspace_id="7474654407029309", sort_order=0)
+                    db.add(default_tab)
+                    db.commit()
+                    db.refresh(default_tab)
+                db.query(UploadedFile).filter(UploadedFile.tab_id == None).update({UploadedFile.tab_id: default_tab.id})
+                db.commit()
+        finally:
+            db.close()
     except Exception:
         pass
     # Seed demo user for testing (email: demo@custommarket.com, password: demo123)
@@ -62,6 +96,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(files.router, prefix="/api")
+app.include_router(tabs.router, prefix="/api")
 
 
 @app.get("/")

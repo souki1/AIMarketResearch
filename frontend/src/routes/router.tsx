@@ -15,6 +15,7 @@ const ResourcesPage = lazy(() => import("../pages/ResourcesPage"));
 const CompanyPage = lazy(() => import("../pages/CompanyPage"));
 const EnterprisePage = lazy(() => import("../pages/EnterprisePage"));
 const SignInPage = lazy(() => import("../pages/SignInPage"));
+const SignUpPage = lazy(() => import("../pages/SignUpPage"));
 const DashboardPage = lazy(() => import("../applicationPages/DashboardPage"));
 const AppProductsPage = lazy(() => import("../applicationPages/ProductsPage"));
 const AppCustomersPage = lazy(() => import("../applicationPages/CustomersPage"));
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
     element: <Root />,
     children: [
       { path: "signin", element: <SignInPage /> },
+      { path: "signup", element: <SignUpPage /> },
       {
         path: "app",
         element: <AppLayout />,

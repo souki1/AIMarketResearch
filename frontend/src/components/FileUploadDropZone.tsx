@@ -20,14 +20,14 @@ export default function FileUploadDropZone({
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className={`flex items-center gap-1.5 rounded border border-dashed px-3 py-2 cursor-pointer transition-colors ${
+      className={`flex items-center justify-center gap-2 rounded-lg border-2 border-dashed px-6 py-4 cursor-pointer transition-colors ${
         isDragging
           ? "border-white/40 bg-white/10"
           : "border-white/20 hover:border-white/30 hover:bg-white/5"
       }`}
     >
-      <UploadIcon className="w-4 h-4 shrink-0 text-white/50" />
-      <span className="text-xs text-white/70">Drop files or click</span>
+      <UploadIcon className="w-5 h-5 shrink-0 text-white/50" />
+      <span className="text-sm text-white/70">Drop files or click to upload</span>
       <input
         type="file"
         multiple

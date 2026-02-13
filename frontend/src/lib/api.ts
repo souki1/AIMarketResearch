@@ -69,6 +69,12 @@ export const tabsApi = {
       body: JSON.stringify({ name: name ?? "New Tab" }),
       token: token ?? undefined,
     }),
+  rename: (id: number, name: string, token?: string | null) =>
+    apiFetch<DataTab>(`/api/tabs/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name }),
+      token: token ?? undefined,
+    }),
 };
 
 // Files

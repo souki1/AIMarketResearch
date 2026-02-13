@@ -11,6 +11,8 @@ export type DataResearchTableProps = {
   /** Headers from first row, data rows after */
   headers: string[];
   rows: string[][];
+  /** Hide the "Data Research" header when nested (e.g. in collapsible cards) */
+  hideTitle?: boolean;
 };
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -18,6 +20,7 @@ const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 export default function DataResearchTable({
   headers,
   rows,
+  hideTitle = false,
 }: DataResearchTableProps) {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [page, setPage] = useState(1);
@@ -52,8 +55,9 @@ export default function DataResearchTable({
   const allSelected = pageRows.length > 0 && selected.size === pageRows.length;
 
   return (
-    <div className="flex flex-col h-full min-h-0 w-full rounded-lg border border-white/10 bg-white/5 overflow-hidden">
+    <div className={`flex flex-col h-full min-h-0 w-full overflow-hidden ${!hideTitle ? "rounded-lg border border-white/10 bg-white/5" : ""}`}>
       {/* Header */}
+      {!hideTitle && (
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-white/10 shrink-0">
         <h2 className="font-display font-semibold text-lg text-white/90">
           Data Research
@@ -98,6 +102,7 @@ export default function DataResearchTable({
           </button>
         </div>
       </div>
+      )}
 
       {/* Table - full width/height, inner scroll when content overflows */}
       <div className="flex-1 min-h-0 w-full overflow-auto">

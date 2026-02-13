@@ -13,6 +13,8 @@ type FileUploadProps = {
   onRemove?: (item: FileItem) => void;
   /** @deprecated Use onItemsChange instead */
   onFilesChange?: (items: FileItem[]) => void;
+  /** Rendered between drop zone and file list (e.g. tabs, upload destination) */
+  insertBetween?: React.ReactNode;
 };
 
 export default function FileUpload({
@@ -20,6 +22,7 @@ export default function FileUpload({
   onItemsChange,
   onFilesChange,
   onRemove,
+  insertBetween,
 }: FileUploadProps) {
   const [internalItems, setInternalItems] = useState<FileItem[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -104,7 +107,7 @@ export default function FileUpload({
   }
 
   return (
-    <div className="mt-4 w-[40%] mx-auto">
+    <div className="mt-4 w-full max-w-2xl">
       <FileUploadDropZone
         isDragging={isDragging}
         onDrop={handleDrop}
@@ -112,6 +115,8 @@ export default function FileUpload({
         onDragLeave={handleDragLeave}
         onFileChange={handleFileChange}
       />
+
+      {insertBetween}
 
       {items.length > 0 && (
         <ul className="mt-1.5 space-y-0.5">

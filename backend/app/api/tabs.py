@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -43,6 +43,29 @@ def list_tabs(
         .all()
     )
     return [{"id": t.id, "name": t.name, "sort_order": t.sort_order} for t in tabs]
+
+
+@router.patch("/{tab_id}")
+def rename_tab(
+    tab_id: int,
+    body: CreateTabBody | None = None,
+    db: Annotated[Session, Depends(get_db)] = None,
+    user: Annotated[User | None, Depends(get_optional_user)] = None,
+):
+    """Rename a tab."""
+    workspace_id = user.workspace_id if user else DEFAULT_WORKSPACE_ID
+    tab = (
+        db.query(DataTab)
+        .filter(DataTab.id == tab_id, DataTab.workspace_id == workspace_id)
+        .first()
+    )
+    if not tab:
+        raise HTTPException(404, "Tab not found")
+    name = (body or CreateTabBody()).name
+    tab.name = name or "New Tab"
+    db.commit()
+    db.refresh(tab)
+    return {"id": tab.id, "name": tab.name, "sort_order": tab.sort_order}
 
 
 @router.post("")

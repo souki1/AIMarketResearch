@@ -32,8 +32,8 @@ export default function Navbar({ sidebarOpen, onMenuClick }: NavbarProps) {
       >
         <HamburgerMenuIcon className="w-5 h-5" aria-hidden />
       </button>
-      <Link to="/app" className="flex items-center gap-2 text-white/70 hover:text-white transition-colors shrink-0">
-        <img src="/logo.svg" alt="CustomMarket" className="w-5 h-5" />
+        <Link to="/app" className="flex items-center gap-2 text-white/70 hover:text-white transition-colors shrink-0">
+        <img src="/logo.svg" alt="CustomMarket" className="w-5 h-5 text-white/90" />
         <span className="font-display font-bold text-lg tracking-tight">CustomMarket</span>
       </Link>
       <div className="w-9 shrink-0" aria-hidden="true" />

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { FileItem } from "../lib/fileParsing";
-import { filesApi, tabsApi, type DataTab, type StoredFile } from "../lib/api";
+import { API_BASE, filesApi, tabsApi, type DataTab, type StoredFile } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import FileUpload from "../components/FileUpload";
 import CollapsibleDataResearch from "../components/CollapsibleDataResearch";
@@ -28,6 +28,7 @@ export default function DashboardPage() {
   const [fileItems, setFileItems] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploadToPopupOpen, setUploadToPopupOpen] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
     if (tabs.length > 0 && uploadToTabId === UPLOAD_NEW_TAB) {
@@ -36,10 +37,21 @@ export default function DashboardPage() {
   }, [tabs, uploadToTabId]);
 
   useEffect(() => {
+    setApiError(null);
     tabsApi
       .list(token)
-      .then(setTabs)
-      .catch(() => setTabs([]));
+      .then((t) => {
+        setTabs(t);
+        setApiError(null);
+      })
+      .catch((err) => {
+        setTabs([]);
+        setApiError(
+          err instanceof Error
+            ? err.message
+            : `Cannot connect to API. Check VITE_API_URL in .env${API_BASE ? ` (current: ${API_BASE})` : " (using proxy)"}.`
+        );
+      });
   }, [token]);
 
   useEffect(() => {
@@ -158,6 +170,11 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 flex flex-col min-h-0 min-w-0 overflow-hidden">
+      {apiError && (
+        <div className="mb-4 rounded-lg border border-amber-500/50 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+          {apiError}
+        </div>
+      )}
       <div className="shrink-0">
         <h1 className="font-display font-bold text-xl text-white/90">Dashboard</h1>
         <p className="mt-2 text-sm text-white/60">

@@ -1,11 +1,15 @@
 /**
  * API client for CustomMarket backend.
- * Set VITE_API_URL in .env or leave default for local dev.
+ * Uses VITE_API_URL from .env. Empty = same origin (Vite proxy in dev).
+ * Set to backend URL for production, e.g. https://api.example.com
  */
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+export const API_BASE: string =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? "" : "http://localhost:8000");
 
 export function getApiUrl(path: string): string {
-  return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  const base = API_BASE || "";
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export async function apiFetch<T>(

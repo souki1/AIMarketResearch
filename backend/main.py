@@ -1,19 +1,19 @@
 """
-CustomMarket backend - PostgreSQL only.
+CustomMarket backend - PostgreSQL (users, tabs) + MongoDB (documents).
 """
 import csv
 import io
 import os
 import uuid
-from pathlib import Path
-
+from bson import Binary
 from dotenv import load_dotenv
+from pymongo import MongoClient, ReturnDocument
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from sqlalchemy import JSON, Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -28,8 +28,14 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/aimarket"
 )
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-in-production")
-UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "uploads"))
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+MONGODB_DB = os.getenv("MONGODB_DB", "custommarket")
+
+# MongoDB - flexible schema for documents
+_mongo_client = MongoClient(MONGODB_URI)
+_mongo_db = _mongo_client[MONGODB_DB]
+documents_coll = _mongo_db["documents"]
+counters_coll = _mongo_db["counters"]
 
 # Sync engine for migrations (create tables)
 SYNC_URL = DATABASE_URL.replace("+asyncpg", "").replace("postgresql+asyncpg", "postgresql")
@@ -61,24 +67,32 @@ class DataTab(Base):
     sort_order = Column(Integer, default=0)
 
 
-class StoredFile(Base):
-    __tablename__ = "stored_files"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    workspace_id = Column(String(36), nullable=False)
-    tab_id = Column(Integer, nullable=True)
-    filename = Column(String(255), nullable=False)
-    storage_path = Column(String(512), nullable=False)
-    mime_type = Column(String(128), nullable=True)
-    size = Column(Integer, nullable=True)
-    parsed_data = Column(JSON, nullable=True)
-
-
 def _init_db():
     try:
         Base.metadata.create_all(engine_sync)
     except Exception as e:
         print(f"PostgreSQL connection failed: {e}")
         print("Create backend/.env with: DATABASE_URL=postgresql+asyncpg://USER:PASSWORD@localhost:5432/aimarket")
+
+
+def _next_doc_seq() -> int:
+    """Get next numeric id for documents (frontend compatibility)."""
+    r = counters_coll.find_one_and_update(
+        {"_id": "document_seq"},
+        {"$inc": {"seq": 1}},
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+    return r["seq"]
+
+
+def _to_json_safe(obj):
+    """Convert parsed data to MongoDB-safe format (handles any structure)."""
+    if obj is None:
+        return None
+    if isinstance(obj, (list, dict, str, int, float, bool)):
+        return obj
+    return str(obj)
 
 
 def parse_excel_or_csv(content: bytes, filename: str) -> list[list[str]]:
@@ -268,29 +282,27 @@ async def rename_tab(tab_id: int, body: TabRename, authorization: str | None = H
     return {"id": tab.id, "name": tab.name, "sort_order": tab.sort_order}
 
 
-# --- Files ---
+# --- Files (MongoDB - flexible schema) ---
 @app.get("/api/files")
 async def list_files(tab_id: int | None = None, authorization: str | None = Header(None, alias="Authorization")):
     user = await get_current_user(authorization)
-    from sqlalchemy import select
-    async with async_session() as db:
-        q = select(StoredFile).where(StoredFile.workspace_id == user.workspace_id)
-        if tab_id is not None:
-            q = q.where(StoredFile.tab_id == tab_id)
-        r = await db.execute(q)
-        files = r.scalars().all()
-    return [
-        {
-            "id": f.id,
-            "filename": f.filename,
-            "storage_path": f.storage_path,
-            "mime_type": f.mime_type,
-            "size": f.size,
-            "tab_id": f.tab_id,
-            "parsed_data": f.parsed_data,
-        }
-        for f in files
-    ]
+    query = {"workspace_id": user.workspace_id}
+    if tab_id is not None:
+        query["tab_id"] = tab_id
+    cursor = documents_coll.find(query).sort("id", 1)
+    files = []
+    for doc in cursor:
+        files.append({
+            "id": doc["id"],
+            "document_id": doc.get("document_id", ""),
+            "filename": doc["filename"],
+            "storage_path": "",
+            "mime_type": doc.get("mime_type"),
+            "size": doc.get("size"),
+            "tab_id": doc.get("tab_id"),
+            "parsed_data": doc.get("parsed_data"),
+        })
+    return files
 
 
 @app.post("/api/files/upload")
@@ -305,31 +317,30 @@ async def upload_files(
         content = await uf.read()
         ext = (uf.filename or "").split(".")[-1].lower()
         parsed = parse_excel_or_csv(content, uf.filename or "") if ext in ("csv", "xlsx", "xls") else None
-        storage_name = f"{user.workspace_id}/{uuid.uuid4().hex}_{uf.filename}"
-        path = UPLOAD_DIR / storage_name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(content)
-        async with async_session() as db:
-            f = StoredFile(
-                workspace_id=user.workspace_id,
-                tab_id=tab_id,
-                filename=uf.filename or "file",
-                storage_path=str(path),
-                mime_type=uf.content_type,
-                size=len(content),
-                parsed_data=parsed,
-            )
-            db.add(f)
-            await db.commit()
-            await db.refresh(f)
+        doc_id = str(uuid.uuid4())
+        seq_id = _next_doc_seq()
+        parsed_safe = _to_json_safe(parsed) if parsed is not None else None
+        doc = {
+            "id": seq_id,
+            "document_id": doc_id,
+            "workspace_id": user.workspace_id,
+            "tab_id": tab_id,
+            "filename": uf.filename or "file",
+            "mime_type": uf.content_type,
+            "size": len(content),
+            "file_content": Binary(content),
+            "parsed_data": parsed_safe,
+        }
+        documents_coll.insert_one(doc)
         uploaded.append({
-            "id": f.id,
-            "filename": f.filename,
-            "storage_path": f.storage_path,
-            "mime_type": f.mime_type,
-            "size": f.size,
-            "tab_id": f.tab_id,
-            "parsed_data": f.parsed_data,
+            "id": seq_id,
+            "document_id": doc_id,
+            "filename": doc["filename"],
+            "storage_path": "",
+            "mime_type": doc["mime_type"],
+            "size": doc["size"],
+            "tab_id": tab_id,
+            "parsed_data": parsed_safe,
         })
     return {"uploaded": uploaded}
 
@@ -342,43 +353,26 @@ async def get_file_content(
 ):
     auth = authorization or (f"Bearer {token}" if token else None)
     user = await get_current_user(auth)
-    from sqlalchemy import select
-    async with async_session() as db:
-        r = await db.execute(
-            select(StoredFile).where(
-                StoredFile.id == file_id,
-                StoredFile.workspace_id == user.workspace_id,
-            )
-        )
-        f = r.scalar_one_or_none()
-    if not f:
+    doc = documents_coll.find_one({"id": file_id, "workspace_id": user.workspace_id})
+    if not doc:
         raise HTTPException(status_code=404, detail="File not found")
-    path = Path(f.storage_path)
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="File not found")
-    from fastapi.responses import FileResponse
-    return FileResponse(path, filename=f.filename)
+    content = doc.get("file_content")
+    if not content:
+        raise HTTPException(status_code=404, detail="File content not found")
+    from fastapi.responses import Response
+    return Response(
+        content=bytes(content),
+        media_type=doc.get("mime_type") or "application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{doc["filename"]}"'},
+    )
 
 
 @app.delete("/api/files/{file_id}")
 async def delete_file(file_id: int, authorization: str | None = Header(None, alias="Authorization")):
     user = await get_current_user(authorization)
-    from sqlalchemy import select
-    async with async_session() as db:
-        r = await db.execute(
-            select(StoredFile).where(
-                StoredFile.id == file_id,
-                StoredFile.workspace_id == user.workspace_id,
-            )
-        )
-        f = r.scalar_one_or_none()
-        if not f:
-            raise HTTPException(status_code=404, detail="File not found")
-        await db.delete(f)
-        await db.commit()
-    path = Path(f.storage_path)
-    if path.exists():
-        path.unlink(missing_ok=True)
+    r = documents_coll.delete_one({"id": file_id, "workspace_id": user.workspace_id})
+    if r.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="File not found")
     return {"ok": True}
 
 
@@ -390,12 +384,21 @@ async def health():
 @app.get("/health/db")
 async def health_db():
     from sqlalchemy import text
+    result = {}
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
-        return {"status": "ok", "database": "connected"}
+        result["postgresql"] = "connected"
     except Exception as e:
-        raise HTTPException(status_code=503, detail=str(e))
+        result["postgresql"] = str(e)
+    try:
+        _mongo_client.admin.command("ping")
+        result["mongodb"] = "connected"
+    except Exception as e:
+        result["mongodb"] = str(e)
+    if result.get("postgresql") != "connected" or result.get("mongodb") != "connected":
+        raise HTTPException(status_code=503, detail=result)
+    return {"status": "ok", **result}
 
 
 if __name__ == "__main__":

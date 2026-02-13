@@ -46,6 +46,7 @@ export type DataTab = {
   id: number;
   name: string;
   sort_order: number;
+  file_count?: number;
 };
 
 function fetchWithAuth(

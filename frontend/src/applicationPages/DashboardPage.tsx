@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { FileItem } from "../lib/fileParsing";
 import { API_BASE, filesApi, tabsApi, type DataTab, type StoredFile } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import FileUpload from "../components/FileUpload";
+import FileItemPreview from "../components/FileItemPreview";
 import CollapsibleDataResearch from "../components/CollapsibleDataResearch";
 
 function storedFileToItem(f: StoredFile): FileItem {
@@ -28,7 +29,9 @@ export default function DashboardPage() {
   const [fileItems, setFileItems] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploadToPopupOpen, setUploadToPopupOpen] = useState(false);
+  const [filesPopupOpen, setFilesPopupOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const tabClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (tabs.length > 0 && uploadToTabId === UPLOAD_NEW_TAB) {
@@ -61,13 +64,21 @@ export default function DashboardPage() {
   }, [tabs, selectedTabId]);
 
   useEffect(() => {
-    if (!uploadToPopupOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setUploadToPopupOpen(false);
+      if (e.key === "Escape") {
+        setUploadToPopupOpen(false);
+        setFilesPopupOpen(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [uploadToPopupOpen]);
+  }, [uploadToPopupOpen, filesPopupOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (tabClickTimeoutRef.current) clearTimeout(tabClickTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedTabId == null) {
@@ -162,11 +173,36 @@ export default function DashboardPage() {
     setEditingTabName(tab.name);
   }, []);
 
-  const handleRemove = useCallback((item: FileItem) => {
-    if (item.dbId) {
-      filesApi.delete(item.dbId, token).catch(() => {});
-    }
-  }, [token]);
+  const handleTabClick = useCallback(
+    (tab: DataTab, isDoubleClick: boolean) => {
+      if (tabClickTimeoutRef.current) {
+        clearTimeout(tabClickTimeoutRef.current);
+        tabClickTimeoutRef.current = null;
+      }
+      setSelectedTabId(tab.id);
+      if (isDoubleClick) {
+        startEditingTab(tab);
+      } else {
+        tabClickTimeoutRef.current = setTimeout(() => setFilesPopupOpen(true), 200);
+      }
+    },
+    [startEditingTab]
+  );
+
+  const handleRemove = useCallback(
+    (item: FileItem) => {
+      if (item.dbId) {
+        filesApi
+          .delete(item.dbId, token)
+          .then(() => {
+            setFileItems((prev) => prev.filter((f) => f.dbId !== item.dbId));
+            tabsApi.list(token).then(setTabs);
+          })
+          .catch(() => {});
+      }
+    },
+    [token]
+  );
 
   return (
     <div className="p-6 flex flex-col min-h-0 min-w-0 overflow-hidden">
@@ -243,6 +279,49 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )}
+              {filesPopupOpen && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center"
+                  onClick={() => setFilesPopupOpen(false)}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="files-popup-title"
+                >
+                  <div className="absolute inset-0 bg-black/50" aria-hidden />
+                  <div
+                    className="relative rounded-xl border border-white/20 bg-[rgb(17,23,28)] p-4 shadow-xl w-full max-w-md max-h-[70vh] flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 id="files-popup-title" className="font-semibold text-white/90 mb-3">
+                      Files in {tabs.find((t) => t.id === selectedTabId)?.name ?? "Tab"}
+                    </h3>
+                    <div className="overflow-y-auto flex-1 min-h-0">
+                      {loading ? (
+                        <p className="text-sm text-white/60">Loading...</p>
+                      ) : fileItems.length === 0 ? (
+                        <p className="text-sm text-white/60">No files in this tab</p>
+                      ) : (
+                        <ul className="space-y-1">
+                          {fileItems.map((it, i) => (
+                            <FileItemPreview
+                              key={`${it.filename}-${it.dbId ?? it.id}-${i}`}
+                              item={it}
+                              onRemove={() => handleRemove(it)}
+                            />
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFilesPopupOpen(false)}
+                      className="mt-3 w-full rounded-lg bg-white/15 py-2 text-sm font-medium text-white/90 hover:bg-white/20"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
               <div className="mt-2 flex flex-wrap items-center gap-1">
                 {tabs.map((t) =>
                   editingTabId === t.id ? (
@@ -266,9 +345,12 @@ export default function DashboardPage() {
                     <button
                       key={t.id}
                       type="button"
-                      onClick={() => setSelectedTabId(t.id)}
-                      onDoubleClick={() => startEditingTab(t)}
-                      title="Double-click to rename"
+                      onClick={() => handleTabClick(t, false)}
+                      onDoubleClick={(e) => {
+                        e.preventDefault();
+                        handleTabClick(t, true);
+                      }}
+                      title="Click to view files, double-click to rename"
                       className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                         selectedTabId === t.id
                           ? "bg-white/15 text-white"
@@ -276,6 +358,7 @@ export default function DashboardPage() {
                       }`}
                     >
                       {t.name}
+                      <span className="ml-1 text-white/50">({t.file_count ?? 0})</span>
                     </button>
                   )
                 )}
@@ -301,6 +384,7 @@ export default function DashboardPage() {
           items={fileItems}
           onItemsChange={handleItemsChange}
           onRemove={handleRemove}
+          hideFileList
         />
       </div>
 

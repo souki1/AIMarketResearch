@@ -1,10 +1,24 @@
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Root from "../Root";
 
 // Layout components (regular import – used as wrappers with Outlet)
 import MainLayout from "../layouts/MainLayout";
 import AppLayout from "../applicationPages/AppLayout";
+import { useAuth } from "../contexts/AuthContext";
+
+function AppGuard({ children }: { children: React.ReactNode }) {
+  const { token, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <span className="text-white/70">Loading...</span>
+      </div>
+    );
+  }
+  if (!token) return <Navigate to="/signin" replace />;
+  return <>{children}</>;
+}
 
 // Lazy load all page components
 const HomePage = lazy(() => import("../pages/HomePage"));
@@ -30,7 +44,11 @@ export const router = createBrowserRouter([
       { path: "signup", element: <SignUpPage /> },
       {
         path: "app",
-        element: <AppLayout />,
+        element: (
+          <AppGuard>
+            <AppLayout />
+          </AppGuard>
+        ),
         children: [
           { index: true, element: <DashboardPage /> },
           { path: "products", element: <AppProductsPage /> },

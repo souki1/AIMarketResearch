@@ -229,7 +229,17 @@ async def list_tabs(authorization: str | None = Header(None, alias="Authorizatio
             .order_by(DataTab.sort_order, DataTab.id)
         )
         tabs = r.scalars().all()
-    return [{"id": t.id, "name": t.name, "sort_order": t.sort_order} for t in tabs]
+    tab_ids = [t.id for t in tabs]
+    # MongoDB aggregation for file counts per tab
+    pipeline = [
+        {"$match": {"workspace_id": user.workspace_id, "tab_id": {"$in": tab_ids}}},
+        {"$group": {"_id": "$tab_id", "count": {"$sum": 1}}},
+    ]
+    counts = {r["_id"]: r["count"] for r in documents_coll.aggregate(pipeline)}
+    return [
+        {"id": t.id, "name": t.name, "sort_order": t.sort_order, "file_count": counts.get(t.id, 0)}
+        for t in tabs
+    ]
 
 
 class TabCreate(BaseModel):

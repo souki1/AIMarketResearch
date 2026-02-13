@@ -15,6 +15,8 @@ type FileUploadProps = {
   onFilesChange?: (items: FileItem[]) => void;
   /** Rendered between drop zone and file list (e.g. tabs, upload destination) */
   insertBetween?: React.ReactNode;
+  /** When true, hide the file list (e.g. when files are shown in a popup elsewhere) */
+  hideFileList?: boolean;
 };
 
 export default function FileUpload({
@@ -23,6 +25,7 @@ export default function FileUpload({
   onFilesChange,
   onRemove,
   insertBetween,
+  hideFileList = false,
 }: FileUploadProps) {
   const [internalItems, setInternalItems] = useState<FileItem[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -118,7 +121,7 @@ export default function FileUpload({
 
       {insertBetween}
 
-      {items.length > 0 && (
+      {!hideFileList && items.length > 0 && (
         <ul className="mt-1.5 space-y-0.5">
           {items.map((it, i) => (
             <FileItemPreview

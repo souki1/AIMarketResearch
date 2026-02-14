@@ -16,6 +16,8 @@ export type DataResearchTableProps = {
   /** Headers from first row, data rows after */
   headers: string[];
   rows: string[][];
+  /** Map display row index -> original row index (for filtered data). If omitted, displayIdx = originalIdx */
+  originalRowIndices?: number[];
   /** Hide the "Data Research" header when nested (e.g. in collapsible cards) */
   hideTitle?: boolean;
   /** Called when selection count changes (for parent to display count) */
@@ -24,6 +26,10 @@ export type DataResearchTableProps = {
   selection?: SelectionState;
   /** Called when selection changes (for controlled mode) */
   onSelectionChange?: (selection: SelectionState) => void;
+  /** Called when a cell is edited. (originalRowIdx, colIdx, newValue) */
+  onCellEdit?: (originalRowIdx: number, colIdx: number, value: string) => void;
+  /** Called when a header is edited. (colIdx, newValue) */
+  onHeaderEdit?: (colIdx: number, value: string) => void;
 };
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -31,10 +37,13 @@ const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 export default function DataResearchTable({
   headers,
   rows,
+  originalRowIndices,
   hideTitle = false,
   onSelectedCountChange,
   selection: controlledSelection,
   onSelectionChange,
+  onCellEdit,
+  onHeaderEdit,
 }: DataResearchTableProps) {
   const [internalRows, setInternalRows] = useState<Set<number>>(new Set());
   const [internalCols, setInternalCols] = useState<Set<number>>(new Set());
@@ -68,6 +77,9 @@ export default function DataResearchTable({
 
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [editingCell, setEditingCell] = useState<{ rowIdx: number; colIdx: number } | null>(null);
+  const [editingHeader, setEditingHeader] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState("");
 
   const totalRows = rows.length;
   const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
@@ -103,6 +115,42 @@ export default function DataResearchTable({
   };
 
   const allRowsSelected = pageRows.length > 0 && selectedRows.size === pageRows.length;
+
+  const getOriginalRowIdx = (displayRowIdx: number) => {
+    const idxInFiltered = startIdx + displayRowIdx;
+    return originalRowIndices?.[idxInFiltered] ?? idxInFiltered;
+  };
+
+  const handleCellDoubleClick = (displayRowIdx: number, colIdx: number) => {
+    if (!onCellEdit) return;
+    setEditingHeader(null);
+    const cellVal = pageRows[displayRowIdx]?.[colIdx] ?? "";
+    setEditingCell({ rowIdx: displayRowIdx, colIdx });
+    setEditValue(String(cellVal));
+  };
+
+  const handleHeaderDoubleClick = (colIdx: number) => {
+    if (!onHeaderEdit) return;
+    setEditingCell(null);
+    setEditingHeader(colIdx);
+    setEditValue(headers[colIdx] ?? "");
+  };
+
+  const handleEditCommit = () => {
+    if (editingCell && onCellEdit) {
+      const originalRowIdx = getOriginalRowIdx(editingCell.rowIdx);
+      onCellEdit(originalRowIdx, editingCell.colIdx, editValue);
+      setEditingCell(null);
+    } else if (editingHeader != null && onHeaderEdit) {
+      onHeaderEdit(editingHeader, editValue);
+      setEditingHeader(null);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingCell(null);
+    setEditingHeader(null);
+  };
 
   return (
     <div className={`flex flex-col h-full min-h-0 w-full overflow-hidden ${!hideTitle ? "rounded-lg border border-white/10 bg-white/5" : ""}`}>
@@ -181,7 +229,32 @@ export default function DataResearchTable({
                       className="rounded border-white/30"
                       title={`Select column: ${h}`}
                     />
-                    <span className="truncate max-w-[120px]" title={h}>{h}</span>
+                    {editingHeader === i ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleEditCommit}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleEditCommit();
+                          if (e.key === "Escape") handleEditCancel();
+                        }}
+                        autoFocus
+                        onClick={(e) => e.stopPropagation()}
+                        className="min-w-[80px] px-2 py-0.5 rounded border border-emerald-500/50 bg-white/10 text-white/90 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      />
+                    ) : (
+                      <span
+                        className={`truncate max-w-[120px] ${onHeaderEdit ? "cursor-cell" : ""}`}
+                        title={onHeaderEdit ? "Double-click to edit" : h}
+                        onDoubleClick={(e) => {
+                          e.preventDefault();
+                          handleHeaderDoubleClick(i);
+                        }}
+                      >
+                        {h}
+                      </span>
+                    )}
                   </label>
                 </th>
               ))}
@@ -204,11 +277,38 @@ export default function DataResearchTable({
                       className="rounded border-white/30"
                     />
                   </td>
-                  {headers.map((_, ci) => (
-                    <td key={ci} className="px-3 py-2">
-                      {row[ci] ?? ""}
-                    </td>
-                  ))}
+                  {headers.map((_, ci) => {
+                    const isEditing =
+                      editingCell?.rowIdx === ri &&
+                      editingCell?.colIdx === ci;
+                    return (
+                      <td
+                        key={ci}
+                        className="px-3 py-2"
+                        onDoubleClick={() => handleCellDoubleClick(ri, ci)}
+                        title={onCellEdit ? "Double-click to edit" : undefined}
+                      >
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onBlur={handleEditCommit}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleEditCommit();
+                              if (e.key === "Escape") handleEditCancel();
+                            }}
+                            autoFocus
+                            className="w-full min-w-[80px] px-2 py-0.5 rounded border border-emerald-500/50 bg-white/10 text-white/90 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                          />
+                        ) : (
+                          <span className={onCellEdit ? "cursor-cell" : ""}>
+                            {row[ci] ?? ""}
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}

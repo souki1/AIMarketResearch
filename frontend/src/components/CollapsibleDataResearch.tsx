@@ -381,6 +381,19 @@ function DataResearchOptions({
 type CollapsibleDataResearchProps = {
   items: FileItem[];
   onNoteSaved?: (fileId: number, notes: string) => void | Promise<void>;
+  onCellEdit?: (
+    fileId: number,
+    rowIdx: number,
+    colIdx: number,
+    value: string,
+    updatedTableData: string[][]
+  ) => void | Promise<void>;
+  onHeaderEdit?: (
+    fileId: number,
+    colIdx: number,
+    value: string,
+    updatedTableData: string[][]
+  ) => void | Promise<void>;
   onResearchSubmit?: (payload: {
     file_id: number;
     selected_rows: number[];
@@ -414,25 +427,31 @@ function filterRows(
   rows: string[][],
   searchQuery: string,
   columnFilters: Record<number, string>
-): string[][] {
+): { filteredRows: string[][]; originalIndices: number[] } {
   const search = searchQuery.trim().toLowerCase();
   const colFilters = Object.entries(columnFilters)
     .filter(([, v]) => v.trim() !== "")
     .map(([k, v]) => [Number(k), v.trim().toLowerCase()] as const);
 
-  if (search === "" && colFilters.length === 0) return rows;
+  if (search === "" && colFilters.length === 0) {
+    return { filteredRows: rows, originalIndices: rows.map((_, i) => i) };
+  }
 
-  return rows.filter((row) => {
+  const filteredRows: string[][] = [];
+  const originalIndices: number[] = [];
+  rows.forEach((row, idx) => {
     if (search !== "") {
       const rowText = row.join(" ").toLowerCase();
-      if (!rowText.includes(search)) return false;
+      if (!rowText.includes(search)) return;
     }
     for (const [colIdx, filterVal] of colFilters) {
       const cell = (row[colIdx] ?? "").toLowerCase();
-      if (!cell.includes(filterVal)) return false;
+      if (!cell.includes(filterVal)) return;
     }
-    return true;
+    filteredRows.push(row);
+    originalIndices.push(idx);
   });
+  return { filteredRows, originalIndices };
 }
 
 type FileFilterState = {
@@ -443,6 +462,8 @@ type FileFilterState = {
 export default function CollapsibleDataResearch({
   items,
   onNoteSaved,
+  onCellEdit,
+  onHeaderEdit,
   onResearchSubmit,
   onResearchAllSubmit,
 }: CollapsibleDataResearchProps) {
@@ -531,7 +552,11 @@ export default function CollapsibleDataResearch({
             </button>
             {!isMinimized && (() => {
               const state = getFilterState(key);
-              const filteredRows = filterRows(rows, state.search, state.columnFilters);
+              const { filteredRows, originalIndices } = filterRows(
+                rows,
+                state.search,
+                state.columnFilters
+              );
               return (
                 <>
                   <DataResearchOptions
@@ -567,6 +592,7 @@ export default function CollapsibleDataResearch({
                     <DataResearchTable
                       headers={headers}
                       rows={filteredRows}
+                      originalRowIndices={originalIndices}
                       hideTitle
                       selection={selectionByKey[key] ?? { rows: new Set(), columns: new Set() }}
                       onSelectionChange={(sel) =>
@@ -574,6 +600,30 @@ export default function CollapsibleDataResearch({
                       }
                       onSelectedCountChange={(count) =>
                         setSelectedCountByKey((prev) => ({ ...prev, [key]: count }))
+                      }
+                      onCellEdit={
+                        item.dbId && onCellEdit
+                          ? (rowIdx, colIdx, value) => {
+                              const newRows = rows.map((r, i) =>
+                                i === rowIdx
+                                  ? r.map((c, j) => (j === colIdx ? value : c))
+                                  : r
+                              );
+                              const updatedTableData = [headers, ...newRows];
+                              onCellEdit(item.dbId!, rowIdx, colIdx, value, updatedTableData);
+                            }
+                          : undefined
+                      }
+                      onHeaderEdit={
+                        item.dbId && onHeaderEdit
+                          ? (colIdx, value) => {
+                              const newHeaders = headers.map((h, i) =>
+                                i === colIdx ? value : h
+                              );
+                              const updatedTableData = [newHeaders, ...rows];
+                              onHeaderEdit(item.dbId!, colIdx, value, updatedTableData);
+                            }
+                          : undefined
                       }
                     />
                   </div>

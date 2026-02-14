@@ -126,6 +126,12 @@ export const filesApi = {
       body: JSON.stringify({ notes }),
       token: token ?? undefined,
     }),
+  updateParsedData: (id: number, parsedData: string[][], token?: string | null) =>
+    apiFetch<{ ok: boolean; parsed_data: string[][] }>(`/api/files/${id}/data`, {
+      method: "PATCH",
+      body: JSON.stringify({ parsed_data: parsedData }),
+      token: token ?? undefined,
+    }),
 };
 
 // Research Requests

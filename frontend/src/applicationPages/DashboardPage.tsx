@@ -226,6 +226,43 @@ export default function DashboardPage() {
     [token]
   );
 
+  const handleDataEdit = useCallback(
+    async (fileId: number, updatedTableData: string[][]) => {
+      await filesApi.updateParsedData(fileId, updatedTableData, token);
+      setFileItems((prev) =>
+        prev.map((f) =>
+          f.dbId === fileId ? { ...f, tableData: updatedTableData } : f
+        )
+      );
+    },
+    [token]
+  );
+
+  const handleCellEdit = useCallback(
+    async (
+      fileId: number,
+      _rowIdx: number,
+      _colIdx: number,
+      _value: string,
+      updatedTableData: string[][]
+    ) => {
+      await handleDataEdit(fileId, updatedTableData);
+    },
+    [handleDataEdit]
+  );
+
+  const handleHeaderEdit = useCallback(
+    async (
+      fileId: number,
+      _colIdx: number,
+      _value: string,
+      updatedTableData: string[][]
+    ) => {
+      await handleDataEdit(fileId, updatedTableData);
+    },
+    [handleDataEdit]
+  );
+
   const handleRemove = useCallback(
     (item: FileItem) => {
       if (item.dbId) {
@@ -431,6 +468,8 @@ export default function DashboardPage() {
         <CollapsibleDataResearch
           items={fileItems}
           onNoteSaved={handleNoteSaved}
+          onCellEdit={handleCellEdit}
+          onHeaderEdit={handleHeaderEdit}
           onResearchSubmit={handleResearchSubmit}
           onResearchAllSubmit={handleResearchAllSubmit}
         />

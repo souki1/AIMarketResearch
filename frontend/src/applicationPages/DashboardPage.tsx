@@ -13,6 +13,7 @@ function storedFileToItem(f: StoredFile): FileItem {
     tabId: f.tab_id ?? undefined,
     filename: f.filename,
     tableData: f.parsed_data ?? undefined,
+    notes: f.notes ?? "",
   };
 }
 
@@ -187,6 +188,16 @@ export default function DashboardPage() {
       }
     },
     [startEditingTab]
+  );
+
+  const handleNoteSaved = useCallback(
+    async (fileId: number, notes: string) => {
+      await filesApi.updateNotes(fileId, notes, token);
+      setFileItems((prev) =>
+        prev.map((f) => (f.dbId === fileId ? { ...f, notes } : f))
+      );
+    },
+    [token]
   );
 
   const handleRemove = useCallback(
@@ -391,7 +402,7 @@ export default function DashboardPage() {
       {loading ? (
         <p className="mt-6 text-sm text-white/60">Loading...</p>
       ) : fileItems.length > 0 ? (
-        <CollapsibleDataResearch items={fileItems} />
+        <CollapsibleDataResearch items={fileItems} onNoteSaved={handleNoteSaved} />
       ) : null}
     </div>
   );

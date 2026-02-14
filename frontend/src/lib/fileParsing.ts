@@ -8,6 +8,7 @@ export type FileItem = {
   filename: string;
   imageUrl?: string;
   tableData?: string[][];
+  notes?: string;
 };
 
 export function isImage(file: File) {

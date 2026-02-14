@@ -311,6 +311,7 @@ async def list_files(tab_id: int | None = None, authorization: str | None = Head
             "size": doc.get("size"),
             "tab_id": doc.get("tab_id"),
             "parsed_data": doc.get("parsed_data"),
+            "notes": doc.get("notes", ""),
         })
     return files
 
@@ -375,6 +376,26 @@ async def get_file_content(
         media_type=doc.get("mime_type") or "application/octet-stream",
         headers={"Content-Disposition": f'attachment; filename="{doc["filename"]}"'},
     )
+
+
+class FileNotesUpdate(BaseModel):
+    notes: str = ""
+
+
+@app.patch("/api/files/{file_id}")
+async def update_file_notes(
+    file_id: int,
+    body: FileNotesUpdate,
+    authorization: str | None = Header(None, alias="Authorization"),
+):
+    user = await get_current_user(authorization)
+    r = documents_coll.update_one(
+        {"id": file_id, "workspace_id": user.workspace_id},
+        {"$set": {"notes": body.notes}},
+    )
+    if r.matched_count == 0:
+        raise HTTPException(status_code=404, detail="File not found")
+    return {"ok": True, "notes": body.notes}
 
 
 @app.delete("/api/files/{file_id}")

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ReloadIcon,
   MixerHorizontalIcon,
@@ -13,6 +13,8 @@ export type DataResearchTableProps = {
   rows: string[][];
   /** Hide the "Data Research" header when nested (e.g. in collapsible cards) */
   hideTitle?: boolean;
+  /** Called when selection count changes (for parent to display count) */
+  onSelectedCountChange?: (count: number) => void;
 };
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -21,8 +23,13 @@ export default function DataResearchTable({
   headers,
   rows,
   hideTitle = false,
+  onSelectedCountChange,
 }: DataResearchTableProps) {
   const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    onSelectedCountChange?.(selected.size);
+  }, [selected.size, onSelectedCountChange]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 

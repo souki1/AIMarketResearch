@@ -40,6 +40,7 @@ export type StoredFile = {
   size: number | null;
   tab_id?: number | null;
   parsed_data?: string[][] | null;
+  notes?: string;
 };
 
 export type DataTab = {
@@ -118,6 +119,12 @@ export const filesApi = {
     fetchWithAuth(getApiUrl(`api/files/${id}`), { method: "DELETE" }, token).then((r) => {
       if (!r.ok) throw new Error("Failed to delete file");
       return r.json();
+    }),
+  updateNotes: (id: number, notes: string, token?: string | null) =>
+    apiFetch<{ ok: boolean; notes: string }>(`/api/files/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ notes }),
+      token: token ?? undefined,
     }),
 };
 

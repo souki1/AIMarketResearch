@@ -12,7 +12,7 @@ import {
   FileTextIcon,
 } from "@radix-ui/react-icons";
 import type { FileItem } from "../lib/fileParsing";
-import DataResearchTable from "./DataResearchTable";
+import DataResearchTable, { type SelectionState } from "./DataResearchTable";
 import FileView from "./FileView";
 
 type DataResearchOptionsProps = {
@@ -23,9 +23,26 @@ type DataResearchOptionsProps = {
   onColumnFilterChange: (colIdx: number, value: string) => void;
   onClearAllFilters: () => void;
   selectedCount?: number;
+  selectedRows?: Set<number>;
+  selectedColumns?: Set<number>;
+  totalRowCount?: number;
   fileId?: number;
   notes?: string;
   onNotesSave?: (notes: string) => void;
+  onResearchSubmit?: (payload: {
+    file_id: number;
+    selected_rows: number[];
+    selected_columns: number[];
+    why_fields: string;
+    what_result: string;
+  }) => Promise<void>;
+  onResearchAllSubmit?: (payload: {
+    file_id: number;
+    total_rows: number;
+    total_columns: number;
+    why_fields: string;
+    what_result: string;
+  }) => Promise<void>;
 };
 
 function DataResearchOptions({
@@ -36,11 +53,21 @@ function DataResearchOptions({
   onColumnFilterChange,
   onClearAllFilters,
   selectedCount = 0,
+  selectedRows,
+  selectedColumns,
+  totalRowCount = 0,
   fileId,
   notes = "",
   onNotesSave,
+  onResearchSubmit,
+  onResearchAllSubmit,
 }: DataResearchOptionsProps) {
   const [noteOpen, setNoteOpen] = useState(false);
+  const [researchPopupOpen, setResearchPopupOpen] = useState(false);
+  const [researchAllMode, setResearchAllMode] = useState(false);
+  const [researchSubmitting, setResearchSubmitting] = useState(false);
+  const [whyFields, setWhyFields] = useState("");
+  const [whatResult, setWhatResult] = useState("");
   const [noteDraft, setNoteDraft] = useState(notes);
   const [saving, setSaving] = useState(false);
 
@@ -54,6 +81,24 @@ function DataResearchOptions({
   useEffect(() => {
     if (noteOpen) setNoteDraft(notes);
   }, [noteOpen, notes]);
+
+  const hasSelection = (selectedCount ?? 0) > 0 || (selectedColumns?.size ?? 0) > 0;
+
+  const handleResearchSelectedClick = () => {
+    if (hasSelection) {
+      setWhyFields("");
+      setWhatResult("");
+      setResearchAllMode(false);
+      setResearchPopupOpen(true);
+    }
+  };
+
+  const handleResearchAllClick = () => {
+    setWhyFields("");
+    setWhatResult("");
+    setResearchAllMode(true);
+    setResearchPopupOpen(true);
+  };
 
   const handleSaveNote = async () => {
     if (onNotesSave) {
@@ -84,6 +129,7 @@ function DataResearchOptions({
         </div>
         <button
           type="button"
+          onClick={handleResearchAllClick}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium shrink-0"
         >
           <ReloadIcon className="w-4 h-4" />
@@ -91,7 +137,9 @@ function DataResearchOptions({
         </button>
         <button
           type="button"
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/15 text-white/80 text-sm shrink-0"
+          onClick={handleResearchSelectedClick}
+          disabled={!hasSelection}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/15 text-white/80 text-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ReloadIcon className="w-4 h-4" />
           Research Selected
@@ -219,6 +267,113 @@ function DataResearchOptions({
           </div>,
           document.body
         )}
+      {researchPopupOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center"
+            onClick={() => setResearchPopupOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="research-popup-title"
+          >
+            <div className="absolute inset-0 bg-black/50" aria-hidden />
+            <div
+              className="relative rounded-xl border border-white/20 bg-[rgb(17,23,28)] p-4 shadow-xl w-full max-w-lg mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 id="research-popup-title" className="font-semibold text-white/90 mb-4">
+                Research Selected
+              </h3>
+              <p className="text-sm text-white/60 mb-2">
+                {researchAllMode
+                  ? `All ${totalRowCount} rows, all ${headers.length} columns selected`
+                  : `${selectedCount ?? 0} rows, ${selectedColumns?.size ?? 0} columns selected`}
+              </p>
+              <p className="text-sm text-amber-200/90 mb-4">
+                Based on this info, an AI agent will be assigned to work on your request.
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-1.5">
+                    Why these fields?
+                  </label>
+                  <input
+                    type="text"
+                    value={whyFields}
+                    onChange={(e) => setWhyFields(e.target.value)}
+                    placeholder="Explain why you selected these fields..."
+                    className="w-full px-3 py-2 rounded-lg border border-white/20 bg-white/5 text-sm text-white/90 placeholder-white/40 focus:border-white/40 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-1.5">
+                    What result you want?
+                  </label>
+                  <input
+                    type="text"
+                    value={whatResult}
+                    onChange={(e) => setWhatResult(e.target.value)}
+                    placeholder="Describe the result you're looking for..."
+                    className="w-full px-3 py-2 rounded-lg border border-white/20 bg-white/5 text-sm text-white/90 placeholder-white/40 focus:border-white/40 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setResearchPopupOpen(false)}
+                  className="px-3 py-1.5 rounded-lg border border-white/20 text-white/80 text-sm hover:bg-white/10"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={
+                    researchSubmitting ||
+                    !fileId ||
+                    (researchAllMode ? !onResearchAllSubmit : !onResearchSubmit)
+                  }
+                  onClick={async () => {
+                    if (!fileId) return;
+                    setResearchSubmitting(true);
+                    try {
+                      if (researchAllMode) {
+                        if (onResearchAllSubmit) {
+                          await onResearchAllSubmit({
+                            file_id: fileId,
+                            total_rows: totalRowCount,
+                            total_columns: headers.length,
+                            why_fields: whyFields,
+                            what_result: whatResult,
+                          });
+                        }
+                      } else {
+                        if (onResearchSubmit) {
+                          await onResearchSubmit({
+                            file_id: fileId,
+                            selected_rows: Array.from(selectedRows ?? []),
+                            selected_columns: Array.from(selectedColumns ?? []),
+                            why_fields: whyFields,
+                            what_result: whatResult,
+                          });
+                        }
+                      }
+                      setResearchPopupOpen(false);
+                      setWhyFields("");
+                      setWhatResult("");
+                    } finally {
+                      setResearchSubmitting(false);
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50"
+                >
+                  {researchSubmitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
@@ -226,6 +381,20 @@ function DataResearchOptions({
 type CollapsibleDataResearchProps = {
   items: FileItem[];
   onNoteSaved?: (fileId: number, notes: string) => void | Promise<void>;
+  onResearchSubmit?: (payload: {
+    file_id: number;
+    selected_rows: number[];
+    selected_columns: number[];
+    why_fields: string;
+    what_result: string;
+  }) => Promise<void>;
+  onResearchAllSubmit?: (payload: {
+    file_id: number;
+    total_rows: number;
+    total_columns: number;
+    why_fields: string;
+    what_result: string;
+  }) => Promise<void>;
 };
 
 function getItemKey(item: FileItem, index: number): string {
@@ -271,10 +440,16 @@ type FileFilterState = {
   columnFilters: Record<number, string>;
 };
 
-export default function CollapsibleDataResearch({ items, onNoteSaved }: CollapsibleDataResearchProps) {
+export default function CollapsibleDataResearch({
+  items,
+  onNoteSaved,
+  onResearchSubmit,
+  onResearchAllSubmit,
+}: CollapsibleDataResearchProps) {
   const [minimizedIds, setMinimizedIds] = useState<Set<string>>(new Set());
   const [filterState, setFilterState] = useState<Record<string, FileFilterState>>({});
   const [selectedCountByKey, setSelectedCountByKey] = useState<Record<string, number>>({});
+  const [selectionByKey, setSelectionByKey] = useState<Record<string, SelectionState>>({});
 
   const getFilterState = useCallback((key: string): FileFilterState => {
     return filterState[key] ?? { search: "", columnFilters: {} };
@@ -367,7 +542,20 @@ export default function CollapsibleDataResearch({ items, onNoteSaved }: Collapsi
                     onColumnFilterChange={(colIdx, v) => setColumnFilter(key, colIdx, v)}
                     onClearAllFilters={() => clearAllFilters(key)}
                     selectedCount={selectedCountByKey[key] ?? 0}
+                    selectedRows={selectionByKey[key]?.rows}
+                    selectedColumns={selectionByKey[key]?.columns}
+                    totalRowCount={filteredRows.length}
                     fileId={item.dbId ?? undefined}
+                    onResearchSubmit={
+                      item.dbId && onResearchSubmit
+                        ? (payload) => onResearchSubmit(payload)
+                        : undefined
+                    }
+                    onResearchAllSubmit={
+                      item.dbId && onResearchAllSubmit
+                        ? (payload) => onResearchAllSubmit(payload)
+                        : undefined
+                    }
                     notes={item.notes ?? ""}
                     onNotesSave={
                       item.dbId && onNoteSaved
@@ -380,6 +568,10 @@ export default function CollapsibleDataResearch({ items, onNoteSaved }: Collapsi
                       headers={headers}
                       rows={filteredRows}
                       hideTitle
+                      selection={selectionByKey[key] ?? { rows: new Set(), columns: new Set() }}
+                      onSelectionChange={(sel) =>
+                        setSelectionByKey((prev) => ({ ...prev, [key]: sel }))
+                      }
                       onSelectedCountChange={(count) =>
                         setSelectedCountByKey((prev) => ({ ...prev, [key]: count }))
                       }

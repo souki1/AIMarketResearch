@@ -128,6 +128,38 @@ export const filesApi = {
     }),
 };
 
+// Research Requests
+export type ResearchRequestPayload = {
+  file_id: number;
+  selected_rows: number[];
+  selected_columns: number[];
+  why_fields: string;
+  what_result: string;
+};
+
+export type ResearchAllPayload = {
+  file_id: number;
+  total_rows: number;
+  total_columns: number;
+  why_fields: string;
+  what_result: string;
+};
+
+export const researchApi = {
+  create: (payload: ResearchRequestPayload, token?: string | null) =>
+    apiFetch<{ id: number; ok: boolean }>("/api/research-requests", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      token: token ?? undefined,
+    }),
+  createAll: (payload: ResearchAllPayload, token?: string | null) =>
+    apiFetch<{ id: number; ok: boolean }>("/api/research-all-requests", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      token: token ?? undefined,
+    }),
+};
+
 // Auth
 export const authApi = {
   login: (email: string, password: string) =>

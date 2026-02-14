@@ -22,5 +22,33 @@ CREATE TABLE data_tabs (
     sort_order   INTEGER DEFAULT 0
 );
 
+-- Research requests (selected rows/columns): user-submitted research tasks
+CREATE TABLE IF NOT EXISTS research_requests (
+    id              SERIAL PRIMARY KEY,
+    workspace_id    VARCHAR(36) NOT NULL,
+    file_id         INTEGER NOT NULL,
+    filename        VARCHAR(255) NOT NULL DEFAULT '',
+    selected_rows   JSONB NOT NULL DEFAULT '[]',
+    selected_columns JSONB NOT NULL DEFAULT '[]',
+    why_fields      TEXT NOT NULL DEFAULT '',
+    what_result     TEXT NOT NULL DEFAULT '',
+    status          VARCHAR(50) NOT NULL DEFAULT 'pending',
+    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Research All requests: all rows/columns selected (separate table)
+CREATE TABLE IF NOT EXISTS research_all_requests (
+    id              SERIAL PRIMARY KEY,
+    workspace_id    VARCHAR(36) NOT NULL,
+    file_id         INTEGER NOT NULL,
+    filename        VARCHAR(255) NOT NULL DEFAULT '',
+    total_rows      INTEGER NOT NULL DEFAULT 0,
+    total_columns   INTEGER NOT NULL DEFAULT 0,
+    why_fields      TEXT NOT NULL DEFAULT '',
+    what_result     TEXT NOT NULL DEFAULT '',
+    status          VARCHAR(50) NOT NULL DEFAULT 'pending',
+    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Documents/Files: stored in MongoDB (flexible schema, no fixed structure)
 -- MongoDB collections: documents, counters

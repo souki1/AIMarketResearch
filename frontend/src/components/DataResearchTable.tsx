@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ReloadIcon,
   MixerHorizontalIcon,
@@ -6,6 +6,11 @@ import {
   HamburgerMenuIcon,
   PlusIcon,
 } from "@radix-ui/react-icons";
+
+export type SelectionState = {
+  rows: Set<number>;
+  columns: Set<number>;
+};
 
 export type DataResearchTableProps = {
   /** Headers from first row, data rows after */
@@ -15,6 +20,10 @@ export type DataResearchTableProps = {
   hideTitle?: boolean;
   /** Called when selection count changes (for parent to display count) */
   onSelectedCountChange?: (count: number) => void;
+  /** Controlled selection - when provided, table uses this instead of internal state */
+  selection?: SelectionState;
+  /** Called when selection changes (for controlled mode) */
+  onSelectionChange?: (selection: SelectionState) => void;
 };
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -24,12 +33,39 @@ export default function DataResearchTable({
   rows,
   hideTitle = false,
   onSelectedCountChange,
+  selection: controlledSelection,
+  onSelectionChange,
 }: DataResearchTableProps) {
-  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [internalRows, setInternalRows] = useState<Set<number>>(new Set());
+  const [internalCols, setInternalCols] = useState<Set<number>>(new Set());
 
+  const isControlled = controlledSelection != null;
+  const selectedRows = isControlled ? controlledSelection.rows : internalRows;
+  const selectedColumns = isControlled ? controlledSelection.columns : internalCols;
+
+  const setSelectedRows = (fn: (prev: Set<number>) => Set<number>) => {
+    if (isControlled && onSelectionChange) {
+      const next = fn(selectedRows);
+      onSelectionChange({ rows: next, columns: selectedColumns });
+    } else {
+      setInternalRows(fn);
+    }
+  };
+  const setSelectedColumns = (fn: (prev: Set<number>) => Set<number>) => {
+    if (isControlled && onSelectionChange) {
+      const next = fn(selectedColumns);
+      onSelectionChange({ rows: selectedRows, columns: next });
+    } else {
+      setInternalCols(fn);
+    }
+  };
+
+  const onSelectedCountChangeRef = useRef(onSelectedCountChange);
+  onSelectedCountChangeRef.current = onSelectedCountChange;
   useEffect(() => {
-    onSelectedCountChange?.(selected.size);
-  }, [selected.size, onSelectedCountChange]);
+    onSelectedCountChangeRef.current?.(selectedRows.size);
+  }, [selectedRows.size]);
+
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
@@ -41,7 +77,7 @@ export default function DataResearchTable({
 
   const toggleRow = (idx: number) => {
     const globalIdx = startIdx + idx;
-    setSelected((prev) => {
+    setSelectedRows((prev) => {
       const next = new Set(prev);
       if (next.has(globalIdx)) next.delete(globalIdx);
       else next.add(globalIdx);
@@ -49,17 +85,24 @@ export default function DataResearchTable({
     });
   };
 
-  const toggleAll = () => {
-    if (selected.size === pageRows.length) {
-      setSelected(new Set());
+  const toggleAllRows = () => {
+    if (selectedRows.size === pageRows.length) {
+      setSelectedRows(() => new Set());
     } else {
-      setSelected(
-        new Set(pageRows.map((_, i) => startIdx + i))
-      );
+      setSelectedRows(() => new Set(pageRows.map((_, i) => startIdx + i)));
     }
   };
 
-  const allSelected = pageRows.length > 0 && selected.size === pageRows.length;
+  const toggleColumn = (colIdx: number) => {
+    setSelectedColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(colIdx)) next.delete(colIdx);
+      else next.add(colIdx);
+      return next;
+    });
+  };
+
+  const allRowsSelected = pageRows.length > 0 && selectedRows.size === pageRows.length;
 
   return (
     <div className={`flex flex-col h-full min-h-0 w-full overflow-hidden ${!hideTitle ? "rounded-lg border border-white/10 bg-white/5" : ""}`}>
@@ -119,9 +162,10 @@ export default function DataResearchTable({
               <th className="w-10 px-3 py-2 border-b border-white/10 text-left">
                 <input
                   type="checkbox"
-                  checked={allSelected}
-                  onChange={toggleAll}
+                  checked={allRowsSelected}
+                  onChange={toggleAllRows}
                   className="rounded border-white/30"
+                  title="Select all rows"
                 />
               </th>
               {headers.map((h, i) => (
@@ -129,7 +173,16 @@ export default function DataResearchTable({
                   key={i}
                   className="px-3 py-2 border-b border-white/10 text-left font-medium text-white/80"
                 >
-                  {h}
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedColumns.has(i)}
+                      onChange={() => toggleColumn(i)}
+                      className="rounded border-white/30"
+                      title={`Select column: ${h}`}
+                    />
+                    <span className="truncate max-w-[120px]" title={h}>{h}</span>
+                  </label>
                 </th>
               ))}
             </tr>
@@ -137,7 +190,7 @@ export default function DataResearchTable({
           <tbody>
             {pageRows.map((row, ri) => {
               const globalIdx = startIdx + ri;
-              const isSelected = selected.has(globalIdx);
+              const isSelected = selectedRows.has(globalIdx);
               return (
                 <tr
                   key={globalIdx}

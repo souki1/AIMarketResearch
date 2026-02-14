@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { FileItem } from "../lib/fileParsing";
-import { API_BASE, filesApi, tabsApi, type DataTab, type StoredFile } from "../lib/api";
+import { API_BASE, filesApi, tabsApi, researchApi, type DataTab, type StoredFile } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import FileUpload from "../components/FileUpload";
 import FileItemPreview from "../components/FileItemPreview";
@@ -188,6 +188,32 @@ export default function DashboardPage() {
       }
     },
     [startEditingTab]
+  );
+
+  const handleResearchSubmit = useCallback(
+    async (payload: {
+      file_id: number;
+      selected_rows: number[];
+      selected_columns: number[];
+      why_fields: string;
+      what_result: string;
+    }) => {
+      await researchApi.create(payload, token);
+    },
+    [token]
+  );
+
+  const handleResearchAllSubmit = useCallback(
+    async (payload: {
+      file_id: number;
+      total_rows: number;
+      total_columns: number;
+      why_fields: string;
+      what_result: string;
+    }) => {
+      await researchApi.createAll(payload, token);
+    },
+    [token]
   );
 
   const handleNoteSaved = useCallback(
@@ -402,7 +428,12 @@ export default function DashboardPage() {
       {loading ? (
         <p className="mt-6 text-sm text-white/60">Loading...</p>
       ) : fileItems.length > 0 ? (
-        <CollapsibleDataResearch items={fileItems} onNoteSaved={handleNoteSaved} />
+        <CollapsibleDataResearch
+          items={fileItems}
+          onNoteSaved={handleNoteSaved}
+          onResearchSubmit={handleResearchSubmit}
+          onResearchAllSubmit={handleResearchAllSubmit}
+        />
       ) : null}
     </div>
   );

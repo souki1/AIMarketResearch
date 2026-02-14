@@ -13,7 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, create_engine
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, Text, DateTime, create_engine
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -25,7 +27,7 @@ except ImportError:
 load_dotenv()
 
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/aimarket"
+    "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/custommarket"
 )
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-in-production")
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
@@ -65,6 +67,34 @@ class DataTab(Base):
     workspace_id = Column(String(36), nullable=False)
     name = Column(String(255), nullable=False)
     sort_order = Column(Integer, default=0)
+
+
+class ResearchRequest(Base):
+    __tablename__ = "research_requests"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    workspace_id = Column(String(36), nullable=False)
+    file_id = Column(Integer, nullable=False)
+    filename = Column(String(255), nullable=False, default="")
+    selected_rows = Column(JSONB, nullable=False, default=list)  # [1, 2, 3]
+    selected_columns = Column(JSONB, nullable=False, default=list)  # [0, 1]
+    why_fields = Column(Text, nullable=False, default="")
+    what_result = Column(Text, nullable=False, default="")
+    status = Column(String(50), nullable=False, default="pending")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
+class ResearchAllRequest(Base):
+    __tablename__ = "research_all_requests"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    workspace_id = Column(String(36), nullable=False)
+    file_id = Column(Integer, nullable=False)
+    filename = Column(String(255), nullable=False, default="")
+    total_rows = Column(Integer, nullable=False, default=0)
+    total_columns = Column(Integer, nullable=False, default=0)
+    why_fields = Column(Text, nullable=False, default="")
+    what_result = Column(Text, nullable=False, default="")
+    status = Column(String(50), nullable=False, default="pending")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
 
 def _init_db():
@@ -382,6 +412,22 @@ class FileNotesUpdate(BaseModel):
     notes: str = ""
 
 
+class ResearchRequestCreate(BaseModel):
+    file_id: int
+    selected_rows: list[int] = []
+    selected_columns: list[int] = []
+    why_fields: str = ""
+    what_result: str = ""
+
+
+class ResearchAllRequestCreate(BaseModel):
+    file_id: int
+    total_rows: int = 0
+    total_columns: int = 0
+    why_fields: str = ""
+    what_result: str = ""
+
+
 @app.patch("/api/files/{file_id}")
 async def update_file_notes(
     file_id: int,
@@ -405,6 +451,63 @@ async def delete_file(file_id: int, authorization: str | None = Header(None, ali
     if r.deleted_count == 0:
         raise HTTPException(status_code=404, detail="File not found")
     return {"ok": True}
+
+
+# --- Research Requests (PostgreSQL) ---
+@app.post("/api/research-requests")
+async def create_research_request(
+    body: ResearchRequestCreate,
+    authorization: str | None = Header(None, alias="Authorization"),
+):
+    user = await get_current_user(authorization)
+    # Verify file exists and belongs to workspace (in MongoDB documents)
+    doc = documents_coll.find_one({"id": body.file_id, "workspace_id": user.workspace_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="File not found")
+    filename = doc.get("filename", "")
+    async with async_session() as db:
+        req = ResearchRequest(
+            workspace_id=user.workspace_id,
+            file_id=body.file_id,
+            filename=filename,
+            selected_rows=body.selected_rows,
+            selected_columns=body.selected_columns,
+            why_fields=body.why_fields,
+            what_result=body.what_result,
+            status="pending",
+        )
+        db.add(req)
+        await db.commit()
+        await db.refresh(req)
+    return {"id": req.id, "ok": True}
+
+
+# --- Research All Requests (PostgreSQL - separate table) ---
+@app.post("/api/research-all-requests")
+async def create_research_all_request(
+    body: ResearchAllRequestCreate,
+    authorization: str | None = Header(None, alias="Authorization"),
+):
+    user = await get_current_user(authorization)
+    doc = documents_coll.find_one({"id": body.file_id, "workspace_id": user.workspace_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="File not found")
+    filename = doc.get("filename", "")
+    async with async_session() as db:
+        req = ResearchAllRequest(
+            workspace_id=user.workspace_id,
+            file_id=body.file_id,
+            filename=filename,
+            total_rows=body.total_rows,
+            total_columns=body.total_columns,
+            why_fields=body.why_fields,
+            what_result=body.what_result,
+            status="pending",
+        )
+        db.add(req)
+        await db.commit()
+        await db.refresh(req)
+    return {"id": req.id, "ok": True}
 
 
 @app.get("/health")

@@ -4,8 +4,10 @@ CustomMarket backend - PostgreSQL (users, tabs) + MongoDB (documents).
 import csv
 import io
 import os
+import re
 import uuid
 from bson import Binary
+import httpx
 from dotenv import load_dotenv
 from pymongo import MongoClient, ReturnDocument
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
@@ -32,6 +34,8 @@ DATABASE_URL = os.getenv(
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-in-production")
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
 MONGODB_DB = os.getenv("MONGODB_DB", "custommarket")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama2:latest")
 
 # MongoDB - flexible schema for documents
 _mongo_client = MongoClient(MONGODB_URI)
@@ -97,6 +101,36 @@ class ResearchAllRequest(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
 
+class AnalyzeQuery(Base):
+    __tablename__ = "analyze_query"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    workspace_id = Column(String(36), nullable=False)
+    research_request_id = Column(Integer, nullable=True)
+    research_all_request_id = Column(Integer, nullable=True)
+    file_id = Column(Integer, nullable=False)
+    filename = Column(String(255), nullable=False, default="")
+    query_template = Column(Text, nullable=False, default="")
+    selected_columns = Column(JSONB, nullable=False, default=list)
+    why_fields = Column(Text, nullable=False, default="")
+    what_result = Column(Text, nullable=False, default="")
+    row_count = Column(Integer, nullable=False, default=0)
+    column_count = Column(Integer, nullable=False, default=0)
+    status = Column(String(50), nullable=False, default="pending")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
+class SearchableQuery(Base):
+    __tablename__ = "searchable_query"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    analyze_query_id = Column(Integer, nullable=False)
+    workspace_id = Column(String(36), nullable=False)
+    row_index = Column(Integer, nullable=False, default=0)
+    row_values = Column(JSONB, nullable=False, default=dict)
+    query_text = Column(Text, nullable=False, default="")
+    status = Column(String(50), nullable=False, default="pending")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
 def _init_db():
     try:
         Base.metadata.create_all(engine_sync)
@@ -123,6 +157,123 @@ def _to_json_safe(obj):
     if isinstance(obj, (list, dict, str, int, float, bool)):
         return obj
     return str(obj)
+
+
+# Common LLM filler phrases to strip (order matters - longer first)
+_LLM_FILLER_PATTERNS = [
+    r"^(?:Sure!?|Okay!?|Certainly!?)\s*",
+    r"^(?:Based on (?:the )?information provided,?\s*)?(?:here is|here's) (?:a |the )?(?:short )?search query (?:that you can use|below):?\s*",
+    r"^(?:You can use (?:the )?following (?:search )?query:?\s*)?",
+    r"^(?:The (?:search )?query (?:is|would be):?\s*)?",
+    r"^[^\[\w]*(?:query|search):\s*",
+    r"^[\[].*$",  # line starting with [ is likely the query
+]
+
+
+def _extract_query_only(raw: str, column_names: list[str]) -> str:
+    """Strip LLM filler and return only the searchable query."""
+    if not raw:
+        return ""
+    text = raw.strip().strip('"\'')
+    # Remove common filler prefixes from the whole response
+    for pat in _LLM_FILLER_PATTERNS:
+        text = re.sub(pat, "", text, flags=re.IGNORECASE).strip()
+    # Split into lines and find the best candidate
+    lines = [ln.strip().strip('"\'') for ln in text.split("\n") if ln.strip()]
+    for line in lines:
+        # Prefer line that has [placeholder] - that's the query
+        if "[" in line and "]" in line:
+            return line
+        # Or text after colon (e.g. "Query: alternative suppliers [MPN]")
+        if ":" in line:
+            after = line.split(":", 1)[-1].strip().strip('"\'')
+            if after and len(after) < 100:
+                return after
+    # Fallback: first non-empty line that's short enough to be a query
+    for line in lines:
+        if line and len(line) < 150:
+            return line
+    return ""
+
+
+def _call_ollama_for_query_template(
+    column_names: list[str], why_fields: str, what_result: str
+) -> str:
+    """Call local Ollama LLM to generate a search query. AI must analyze user requirement + field names, then build the query."""
+    columns_str = ", ".join(column_names)
+    placeholders_example = " ".join(f"[{c}]" for c in column_names)
+    prompt = f"""ANALYZE the user's requirement and the selected fields. Then output ONE Google search query TEMPLATE.
+
+IMPORTANT: You output a TEMPLATE with [ColumnName] placeholders. The system will replace each [ColumnName] with the actual ROW VALUE (e.g. [Part Name] becomes "NTN Tapered Roller Bearing", [Manufacturer Part] becomes "4T-30205"). The final search query will have VALUES in quotes, NOT column headers. Never put "Part Name" or headers as literal text—only [ColumnName] format.
+
+STEP 1 - ANALYZE:
+- User's requirement: {why_fields or 'Not specified'}
+- User's desired result: {what_result or 'Not specified'}
+- Selected fields (use as [ColumnName] placeholders): {columns_str}
+
+STEP 2 - BUILD THE TEMPLATE:
+Include: (1) search terms from user intent in "quotes", (2) each column as [ColumnName] so it gets replaced with actual values.
+Example: "alternative suppliers" "price" "vendor" {placeholders_example}
+When filled, this becomes: "alternative suppliers" "price" "vendor" "NTN Tapered Roller Bearing" "Bearings" "NTN" "4T-30205"
+
+Output ONLY the template, nothing else:"""
+    try:
+        with httpx.Client(timeout=60.0) as client:
+            r = client.post(
+                f"{OLLAMA_URL.rstrip('/')}/api/generate",
+                json={
+                    "model": OLLAMA_MODEL,
+                    "prompt": prompt,
+                    "stream": False,
+                    "system": "You output a search query TEMPLATE with [ColumnName] placeholders. Each placeholder will be replaced with the actual row value (e.g. [Part Name] -> 'Siemens Circuit Breaker'). The final query has values in quotes, not headers. Output only the template.",
+                },
+            )
+            r.raise_for_status()
+            data = r.json()
+            raw = (data.get("response") or "").strip()
+            extracted = _extract_query_only(raw, column_names)
+            if not extracted:
+                raise HTTPException(
+                    status_code=503,
+                    detail="LLM did not return a valid query. Please try again or rephrase your request.",
+                )
+            return extracted
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"LLM unavailable: {str(e)}. Ensure Ollama is running and the model is loaded.",
+        )
+
+
+def _fill_query_template(
+    template: str, column_names: list[str], row_values: list[str]
+) -> str:
+    """Replace [ColumnName] placeholders with actual row values. Values are wrapped in " " for precise Google search."""
+    result = template
+    for col_name, val in zip(column_names, row_values):
+        placeholder = f"[{col_name}]"
+        raw_val = str(val or "").strip()
+        # Wrap in double quotes for precise/exact match in Google search
+        quoted_val = f'"{raw_val}"' if raw_val else ""
+        result = result.replace(placeholder, quoted_val)
+    # Replace any remaining [X] with empty string (in case LLM used different format)
+    result = re.sub(r"\[\w[^\]]*\]", "", result)
+    return " ".join(result.split())  # normalize whitespace
+
+
+def _get_parsed_data(doc: dict) -> tuple[list[str], list[list[str]]]:
+    """Extract headers and data rows from MongoDB document parsed_data."""
+    parsed = doc.get("parsed_data")
+    if not parsed or not isinstance(parsed, list):
+        return [], []
+    rows = [[str(c or "") for c in r] for r in parsed]
+    if not rows:
+        return [], []
+    headers = rows[0]
+    data_rows = rows[1:]
+    return headers, data_rows
 
 
 def parse_excel_or_csv(content: bytes, filename: str) -> list[list[str]]:
@@ -460,11 +611,28 @@ async def create_research_request(
     authorization: str | None = Header(None, alias="Authorization"),
 ):
     user = await get_current_user(authorization)
-    # Verify file exists and belongs to workspace (in MongoDB documents)
     doc = documents_coll.find_one({"id": body.file_id, "workspace_id": user.workspace_id})
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     filename = doc.get("filename", "")
+    headers, data_rows = _get_parsed_data(doc)
+    if not headers or not data_rows:
+        raise HTTPException(status_code=400, detail="File has no tabular data")
+
+    col_indices = [i for i in body.selected_columns if 0 <= i < len(headers)]
+    row_indices = [i for i in body.selected_rows if 0 <= i < len(data_rows)]
+    if not col_indices:
+        col_indices = list(range(len(headers)))
+    if not row_indices:
+        row_indices = list(range(len(data_rows)))
+
+    column_names = [headers[i] for i in col_indices]
+    rows_to_process = [data_rows[i] for i in row_indices]
+
+    query_template = _call_ollama_for_query_template(
+        column_names, body.why_fields, body.what_result
+    )
+
     async with async_session() as db:
         req = ResearchRequest(
             workspace_id=user.workspace_id,
@@ -479,7 +647,41 @@ async def create_research_request(
         db.add(req)
         await db.commit()
         await db.refresh(req)
-    return {"id": req.id, "ok": True}
+
+        analyze = AnalyzeQuery(
+            workspace_id=user.workspace_id,
+            research_request_id=req.id,
+            research_all_request_id=None,
+            file_id=body.file_id,
+            filename=filename,
+            query_template=query_template,
+            selected_columns=column_names,
+            why_fields=body.why_fields,
+            what_result=body.what_result,
+            row_count=len(rows_to_process),
+            column_count=len(column_names),
+            status="completed",
+        )
+        db.add(analyze)
+        await db.commit()
+        await db.refresh(analyze)
+
+        for row_idx, row in enumerate(rows_to_process):
+            row_vals = [row[c] if c < len(row) else "" for c in col_indices]
+            row_values_dict = dict(zip(column_names, row_vals))
+            query_text = _fill_query_template(query_template, column_names, row_vals)
+            sq = SearchableQuery(
+                analyze_query_id=analyze.id,
+                workspace_id=user.workspace_id,
+                row_index=row_idx,
+                row_values=row_values_dict,
+                query_text=query_text,
+                status="pending",
+            )
+            db.add(sq)
+        await db.commit()
+
+    return {"id": req.id, "analyze_id": analyze.id, "searchable_count": len(rows_to_process), "ok": True}
 
 
 # --- Research All Requests (PostgreSQL - separate table) ---
@@ -493,13 +695,29 @@ async def create_research_all_request(
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     filename = doc.get("filename", "")
+    headers, data_rows = _get_parsed_data(doc)
+    if not headers or not data_rows:
+        raise HTTPException(status_code=400, detail="File has no tabular data")
+
+    col_count = min(body.total_columns, len(headers)) or len(headers)
+    row_count = min(body.total_rows, len(data_rows)) or len(data_rows)
+    col_indices = list(range(col_count))
+    row_indices = list(range(row_count))
+
+    column_names = [headers[i] for i in col_indices]
+    rows_to_process = [data_rows[i] for i in row_indices]
+
+    query_template = _call_ollama_for_query_template(
+        column_names, body.why_fields, body.what_result
+    )
+
     async with async_session() as db:
         req = ResearchAllRequest(
             workspace_id=user.workspace_id,
             file_id=body.file_id,
             filename=filename,
-            total_rows=body.total_rows,
-            total_columns=body.total_columns,
+            total_rows=row_count,
+            total_columns=col_count,
             why_fields=body.why_fields,
             what_result=body.what_result,
             status="pending",
@@ -507,7 +725,41 @@ async def create_research_all_request(
         db.add(req)
         await db.commit()
         await db.refresh(req)
-    return {"id": req.id, "ok": True}
+
+        analyze = AnalyzeQuery(
+            workspace_id=user.workspace_id,
+            research_request_id=None,
+            research_all_request_id=req.id,
+            file_id=body.file_id,
+            filename=filename,
+            query_template=query_template,
+            selected_columns=column_names,
+            why_fields=body.why_fields,
+            what_result=body.what_result,
+            row_count=len(rows_to_process),
+            column_count=len(column_names),
+            status="completed",
+        )
+        db.add(analyze)
+        await db.commit()
+        await db.refresh(analyze)
+
+        for row_idx, row in enumerate(rows_to_process):
+            row_vals = [row[c] if c < len(row) else "" for c in col_indices]
+            row_values_dict = dict(zip(column_names, row_vals))
+            query_text = _fill_query_template(query_template, column_names, row_vals)
+            sq = SearchableQuery(
+                analyze_query_id=analyze.id,
+                workspace_id=user.workspace_id,
+                row_index=row_idx,
+                row_values=row_values_dict,
+                query_text=query_text,
+                status="pending",
+            )
+            db.add(sq)
+        await db.commit()
+
+    return {"id": req.id, "analyze_id": analyze.id, "searchable_count": len(rows_to_process), "ok": True}
 
 
 @app.get("/health")

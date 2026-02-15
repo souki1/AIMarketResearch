@@ -5,32 +5,25 @@ from fastapi import HTTPException
 
 from app.core.config import OLLAMA_MODEL, OLLAMA_URL
 
-_LLM_FILLER_PATTERNS = [
-    r"^(?:Sure!?|Okay!?|Certainly!?)\s*",
-    r"^(?:Based on (?:the )?information provided,?\s*)?(?:here is|here's) (?:a |the )?(?:short )?search query (?:that you can use|below):?\s*",
-    r"^(?:You can use (?:the )?following (?:search )?query:?\s*)?",
-    r"^(?:The (?:search )?query (?:is|would be):?\s*)?",
-    r"^[^\[\w]*(?:query|search):\s*",
-    r"^[\[].*$",
-]
-
-
 def _extract_query_only(raw: str, column_names: list[str]) -> str:
+    """Extract the search query template from LLM response. Reject JSON or malformed output."""
     if not raw:
         return ""
     text = raw.strip().strip('"\'')
-    for pat in _LLM_FILLER_PATTERNS:
-        text = re.sub(pat, "", text, flags=re.IGNORECASE).strip()
+    # Reject JSON-like output (LLM sometimes returns {"key": "val"} instead of a query)
+    if text.strip().startswith("{") and "}" in text:
+        return ""
     lines = [ln.strip().strip('"\'') for ln in text.split("\n") if ln.strip()]
     for line in lines:
-        if "[" in line and "]" in line:
+        # Prefer line with [ColumnName] placeholders - that's the real template
+        if "[" in line and "]" in line and "{" not in line and "}" not in line:
             return line
-        if ":" in line:
+        if ":" in line and "{" not in line:
             after = line.split(":", 1)[-1].strip().strip('"\'')
-            if after and len(after) < 100:
+            if after and len(after) < 200 and "{" not in after:
                 return after
     for line in lines:
-        if line and len(line) < 150:
+        if line and len(line) < 200 and "{" not in line:
             return line
     return ""
 
@@ -42,19 +35,19 @@ def call_ollama_for_query_template(
     placeholders_example = " ".join(f"[{c}]" for c in column_names)
     prompt = f"""ANALYZE the user's requirement and the selected fields. Then output ONE Google search query TEMPLATE.
 
-IMPORTANT: You output a TEMPLATE with [ColumnName] placeholders. The system will replace each [ColumnName] with the actual ROW VALUE (e.g. [Part Name] becomes "NTN Tapered Roller Bearing", [Manufacturer Part] becomes "4T-30205"). The final search query will have VALUES in quotes, NOT column headers. Never put "Part Name" or headers as literal text—only [ColumnName] format.
+IMPORTANT: You output a TEMPLATE with [ColumnName] placeholders. The system will replace each [ColumnName] with the actual ROW VALUE from the file. Never put column headers as literal text—only [ColumnName] format. Do NOT use generic default keywords. Extract keywords ONLY from the user's actual words below.
 
-STEP 1 - ANALYZE:
-- User's requirement: {why_fields or 'Not specified'}
+STEP 1 - ANALYZE (use these exact inputs, not examples):
+- User's requirement (why these fields): {why_fields or 'Not specified'}
 - User's desired result: {what_result or 'Not specified'}
-- Selected fields (use as [ColumnName] placeholders): {columns_str}
+- Selected fields (MUST use each as [ColumnName]): {columns_str}
 
 STEP 2 - BUILD THE TEMPLATE:
-Include: (1) search terms from user intent in "quotes", (2) each column as [ColumnName] so it gets replaced with actual values.
-Example: "alternative suppliers" "price" "vendor" {placeholders_example}
-When filled, this becomes: "alternative suppliers" "price" "vendor" "NTN Tapered Roller Bearing" "Bearings" "NTN" "4T-30205"
+(1) Extract search keywords from the user's requirement and desired result above. If they say "price vendor competitors" use those. If they say "datasheet specifications" use those. NEVER use "alternative suppliers price vendor" unless the user actually wrote those words.
+(2) Add ALL column placeholders: {placeholders_example}
+(3) Format: "keyword1" "keyword2" [Column1] [Column2] ...
 
-Output ONLY the template, nothing else:"""
+Output ONLY a single-line search query. Do NOT output JSON. Do NOT output Template: or any prefix. Example: "price" "vendor" [Part Name] [Manufacturer] [Manufacturer Part Nr.]"""
     try:
         with httpx.Client(timeout=60.0) as client:
             r = client.post(
@@ -63,7 +56,7 @@ Output ONLY the template, nothing else:"""
                     "model": OLLAMA_MODEL,
                     "prompt": prompt,
                     "stream": False,
-                    "system": "You output a search query TEMPLATE with [ColumnName] placeholders. Each placeholder will be replaced with the actual row value (e.g. [Part Name] -> 'Siemens Circuit Breaker'). The final query has values in quotes, not headers. Output only the template.",
+                    "system": "You output a single-line search query string with [ColumnName] placeholders. Never output JSON. Never output Template: or any prefix. Use exact column names in brackets.",
                 },
             )
             r.raise_for_status()
@@ -71,10 +64,9 @@ Output ONLY the template, nothing else:"""
             raw = (data.get("response") or "").strip()
             extracted = _extract_query_only(raw, column_names)
             if not extracted:
-                raise HTTPException(
-                    status_code=503,
-                    detail="LLM did not return a valid query. Please try again or rephrase your request.",
-                )
+                # Fallback: build template from placeholders when LLM returns JSON or invalid output
+                placeholders = " ".join(f"[{c}]" for c in column_names)
+                return placeholders
             return extracted
     except HTTPException:
         raise
@@ -86,8 +78,10 @@ Output ONLY the template, nothing else:"""
 
 
 def fill_query_template(
-    template: str, column_names: list[str], row_values: list[str]
+    template: str, column_names: list[str], row_values: list[str],
+    intent_keywords: str = "",
 ) -> str:
+    """Replace [ColumnName] placeholders with row values. Returns Google-searchable query."""
     result = template
     for col_name, val in zip(column_names, row_values):
         placeholder = f"[{col_name}]"
@@ -95,7 +89,20 @@ def fill_query_template(
         quoted_val = f'"{raw_val}"' if raw_val else ""
         result = result.replace(placeholder, quoted_val)
     result = re.sub(r"\[\w[^\]]*\]", "", result)
-    return " ".join(result.split())
+    result = " ".join(result.split())
+    # Fallback: if template produced empty/short result, build query from intent + values
+    if not result or len(result) < 10:
+        parts = []
+        if intent_keywords:
+            for kw in intent_keywords.split():
+                if kw.strip():
+                    parts.append(f'"{kw.strip()}"')
+        for val in row_values:
+            v = str(val or "").strip()
+            if v:
+                parts.append(f'"{v}"')
+        result = " ".join(parts)
+    return result
 
 
 def get_parsed_data(doc: dict) -> tuple[list[str], list[list[str]]]:

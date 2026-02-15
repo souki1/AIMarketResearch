@@ -71,10 +71,13 @@ async def create_research_request(
         await db.commit()
         await db.refresh(analyze)
 
+        intent_keywords = f"{body.why_fields} {body.what_result}".strip()
         for row_idx, row in enumerate(rows_to_process):
             row_vals = [row[c] if c < len(row) else "" for c in col_indices]
             row_values_dict = dict(zip(column_names, row_vals))
-            query_text = fill_query_template(query_template, column_names, row_vals)
+            query_text = fill_query_template(
+                query_template, column_names, row_vals, intent_keywords=intent_keywords
+            )
             sq = SearchableQuery(
                 analyze_query_id=analyze.id,
                 workspace_id=user.workspace_id,
@@ -151,10 +154,13 @@ async def create_research_all_request(
         await db.commit()
         await db.refresh(analyze)
 
+        intent_keywords = f"{body.why_fields} {body.what_result}".strip()
         for row_idx, row in enumerate(rows_to_process):
             row_vals = [row[c] if c < len(row) else "" for c in col_indices]
             row_values_dict = dict(zip(column_names, row_vals))
-            query_text = fill_query_template(query_template, column_names, row_vals)
+            query_text = fill_query_template(
+                query_template, column_names, row_vals, intent_keywords=intent_keywords
+            )
             sq = SearchableQuery(
                 analyze_query_id=analyze.id,
                 workspace_id=user.workspace_id,

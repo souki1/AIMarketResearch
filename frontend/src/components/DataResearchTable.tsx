@@ -6,6 +6,7 @@ import {
   HamburgerMenuIcon,
   PlusIcon,
 } from "@radix-ui/react-icons";
+import { Checkbox } from "@radix-ui/themes";
 
 export type SelectionState = {
   rows: Set<number>;
@@ -86,33 +87,6 @@ export default function DataResearchTable({
   const currentPage = Math.min(page, totalPages);
   const startIdx = (currentPage - 1) * rowsPerPage;
   const pageRows = rows.slice(startIdx, startIdx + rowsPerPage);
-
-  const toggleRow = (idx: number) => {
-    const globalIdx = startIdx + idx;
-    setSelectedRows((prev) => {
-      const next = new Set(prev);
-      if (next.has(globalIdx)) next.delete(globalIdx);
-      else next.add(globalIdx);
-      return next;
-    });
-  };
-
-  const toggleAllRows = () => {
-    if (selectedRows.size === pageRows.length) {
-      setSelectedRows(() => new Set());
-    } else {
-      setSelectedRows(() => new Set(pageRows.map((_, i) => startIdx + i)));
-    }
-  };
-
-  const toggleColumn = (colIdx: number) => {
-    setSelectedColumns((prev) => {
-      const next = new Set(prev);
-      if (next.has(colIdx)) next.delete(colIdx);
-      else next.add(colIdx);
-      return next;
-    });
-  };
 
   const allRowsSelected = pageRows.length > 0 && selectedRows.size === pageRows.length;
 
@@ -207,12 +181,15 @@ export default function DataResearchTable({
         <table className="min-w-full text-sm text-white/90">
           <thead className="sticky top-0 bg-[rgb(17,23,28)] z-10">
             <tr>
-              <th className="w-10 px-3 py-2 border-b border-white/10 text-left">
-                <input
-                  type="checkbox"
+              <th className="w-10 px-3 py-2 border-b border-white/10 text-left align-middle">
+                <Checkbox
+                  color="gray"
+                  highContrast
                   checked={allRowsSelected}
-                  onChange={toggleAllRows}
-                  className="rounded border-white/30"
+                  onCheckedChange={(checked) => {
+                    if (checked) setSelectedRows(() => new Set(pageRows.map((_, i) => startIdx + i)));
+                    else setSelectedRows(() => new Set());
+                  }}
                   title="Select all rows"
                 />
               </th>
@@ -221,12 +198,19 @@ export default function DataResearchTable({
                   key={i}
                   className="px-3 py-2 border-b border-white/10 text-left font-medium text-white/80"
                 >
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <Checkbox
+                      color="gray"
+                      highContrast
                       checked={selectedColumns.has(i)}
-                      onChange={() => toggleColumn(i)}
-                      className="rounded border-white/30"
+                      onCheckedChange={(checked) => {
+                        if (checked) setSelectedColumns((prev) => new Set([...prev, i]));
+                        else setSelectedColumns((prev) => {
+                          const next = new Set(prev);
+                          next.delete(i);
+                          return next;
+                        });
+                      }}
                       title={`Select column: ${h}`}
                     />
                     {editingHeader === i ? (
@@ -269,12 +253,19 @@ export default function DataResearchTable({
                   key={globalIdx}
                   className="border-b border-white/5 hover:bg-white/5"
                 >
-                  <td className="px-3 py-2">
-                    <input
-                      type="checkbox"
+                  <td className="px-3 py-2 align-middle">
+                    <Checkbox
+                      color="gray"
+                      highContrast
                       checked={isSelected}
-                      onChange={() => toggleRow(ri)}
-                      className="rounded border-white/30"
+                      onCheckedChange={(checked) => {
+                        if (checked) setSelectedRows((prev) => new Set([...prev, globalIdx]));
+                        else setSelectedRows((prev) => {
+                          const next = new Set(prev);
+                          next.delete(globalIdx);
+                          return next;
+                        });
+                      }}
                     />
                   </td>
                   {headers.map((_, ci) => {

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, Uploa
 from fastapi.responses import Response
 from bson import Binary
 
-from app.core.mongodb import documents_coll, next_doc_seq, to_json_safe
+from app.core.mongodb import documents_coll, next_doc_seq, search_results_coll, to_json_safe
 from app.db.models import User
 from app.schemas import FileNotesUpdate, FileParsedDataUpdate
 from app.services.file_parser import parse_excel_or_csv
@@ -124,6 +124,35 @@ async def update_file_parsed_data(
     if r.matched_count == 0:
         raise HTTPException(status_code=404, detail="File not found")
     return {"ok": True, "parsed_data": parsed_safe}
+
+
+@router.get("/{file_id}/search-results")
+async def get_file_search_results(
+    file_id: int,
+    user: User = Depends(get_current_user),
+):
+    """Get search results for a file, keyed by data row index."""
+    doc = documents_coll.find_one({"id": file_id, "workspace_id": user.workspace_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="File not found")
+    cursor = search_results_coll.find(
+        {"file_id": file_id, "workspace_id": user.workspace_id}
+    ).sort("created_at", -1)
+    by_row: dict[int, dict] = {}
+    seen_rows: set[int] = set()
+    for sr in cursor:
+        row_idx = sr.get("data_row_index", sr.get("row_index", -1))
+        if row_idx < 0 or row_idx in seen_rows:
+            continue
+        seen_rows.add(row_idx)
+        results = sr.get("results") or []
+        by_row[row_idx] = {
+            "results_count": len(results),
+            "results": results,
+            "query_text": sr.get("query_text", ""),
+            "query_used": sr.get("query_used", ""),
+        }
+    return {"by_row": by_row}
 
 
 @router.delete("/{file_id}")

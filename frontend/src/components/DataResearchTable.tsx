@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   ReloadIcon,
   MixerHorizontalIcon,
@@ -11,6 +12,13 @@ import { Checkbox } from "@radix-ui/themes";
 export type SelectionState = {
   rows: Set<number>;
   columns: Set<number>;
+};
+
+export type SearchResultForRow = {
+  results_count: number;
+  results: Record<string, unknown>[];
+  query_text: string;
+  query_used: string;
 };
 
 export type DataResearchTableProps = {
@@ -31,6 +39,8 @@ export type DataResearchTableProps = {
   onCellEdit?: (originalRowIdx: number, colIdx: number, value: string) => void;
   /** Called when a header is edited. (colIdx, newValue) */
   onHeaderEdit?: (colIdx: number, value: string) => void;
+  /** Search results by original row index - for coloring and popup */
+  searchResultsByRow?: Record<number, SearchResultForRow>;
 };
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -45,6 +55,7 @@ export default function DataResearchTable({
   onSelectionChange,
   onCellEdit,
   onHeaderEdit,
+  searchResultsByRow,
 }: DataResearchTableProps) {
   const [internalRows, setInternalRows] = useState<Set<number>>(new Set());
   const [internalCols, setInternalCols] = useState<Set<number>>(new Set());
@@ -81,6 +92,7 @@ export default function DataResearchTable({
   const [editingCell, setEditingCell] = useState<{ rowIdx: number; colIdx: number } | null>(null);
   const [editingHeader, setEditingHeader] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [resultsPopupRow, setResultsPopupRow] = useState<SearchResultForRow | null>(null);
 
   const totalRows = rows.length;
   const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
@@ -247,7 +259,10 @@ export default function DataResearchTable({
           <tbody>
             {pageRows.map((row, ri) => {
               const globalIdx = startIdx + ri;
+              const originalRowIdx = getOriginalRowIdx(ri);
               const isSelected = selectedRows.has(globalIdx);
+              const searchInfo = searchResultsByRow?.[originalRowIdx];
+              const hasSearchResults = searchInfo && searchInfo.results_count > 0;
               return (
                 <tr
                   key={globalIdx}
@@ -272,12 +287,20 @@ export default function DataResearchTable({
                     const isEditing =
                       editingCell?.rowIdx === ri &&
                       editingCell?.colIdx === ci;
+                    const isFirstCol = ci === 0;
+                    const showSearchHighlight = isFirstCol && hasSearchResults;
                     return (
                       <td
                         key={ci}
-                        className="px-3 py-2"
+                        className={`px-3 py-2 ${showSearchHighlight ? "bg-emerald-500/15" : ""}`}
                         onDoubleClick={() => handleCellDoubleClick(ri, ci)}
-                        title={onCellEdit ? "Double-click to edit" : undefined}
+                        title={
+                          showSearchHighlight
+                            ? `Click badge to view ${searchInfo!.results_count} search results`
+                            : onCellEdit
+                              ? "Double-click to edit"
+                              : undefined
+                        }
                       >
                         {isEditing ? (
                           <input
@@ -295,6 +318,25 @@ export default function DataResearchTable({
                         ) : (
                           <span className={onCellEdit ? "cursor-cell" : ""}>
                             {row[ci] ?? ""}
+                            {showSearchHighlight && (
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                className="ml-1.5 inline-flex cursor-pointer items-center rounded bg-emerald-500/30 px-1.5 py-0.5 text-xs text-emerald-200 hover:bg-emerald-500/40"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (searchInfo) setResultsPopupRow(searchInfo);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    if (searchInfo) setResultsPopupRow(searchInfo);
+                                  }
+                                }}
+                              >
+                                {searchInfo!.results_count} results
+                              </span>
+                            )}
                           </span>
                         )}
                       </td>
@@ -374,6 +416,72 @@ export default function DataResearchTable({
           </div>
         </div>
       </div>
+      {resultsPopupRow &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center"
+            onClick={() => setResultsPopupRow(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="results-popup-title"
+          >
+            <div className="absolute inset-0 bg-black/50" aria-hidden />
+            <div
+              className="relative rounded-xl border border-white/20 bg-[rgb(17,23,28)] shadow-xl w-full max-w-2xl max-h-[85vh] mx-4 flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 id="results-popup-title" className="font-semibold text-white/90 px-4 py-3 border-b border-white/10 shrink-0">
+                Search results ({resultsPopupRow.results_count})
+              </h3>
+              {resultsPopupRow.query_text && (
+                <p className="px-4 py-2 text-sm text-white/60 border-b border-white/10 shrink-0">
+                  Query: {resultsPopupRow.query_text}
+                </p>
+              )}
+              <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
+                {resultsPopupRow.results.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg border border-white/10 bg-white/5 p-3 space-y-2"
+                  >
+                    {Object.entries(item).map(([key, val]) => {
+                      if (val == null || val === "") return null;
+                      const str = typeof val === "object" ? JSON.stringify(val) : String(val);
+                      const isLink = key.toLowerCase().includes("link") && str.startsWith("http");
+                      return (
+                        <div key={key} className="text-sm">
+                          <span className="text-white/50 font-medium">{key}:</span>{" "}
+                          {isLink ? (
+                            <a
+                              href={str}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-emerald-400 hover:underline break-all"
+                            >
+                              {str}
+                            </a>
+                          ) : (
+                            <span className="text-white/90 break-words">{str}</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-3 border-t border-white/10 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setResultsPopupRow(null)}
+                  className="w-full rounded-lg bg-white/15 py-2 text-sm font-medium text-white/90 hover:bg-white/20"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

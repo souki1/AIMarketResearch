@@ -8,6 +8,7 @@ _mongo_client = MongoClient(MONGODB_URI)
 _mongo_db = _mongo_client[MONGODB_DB]
 documents_coll = _mongo_db["documents"]
 counters_coll = _mongo_db["counters"]
+search_results_coll = _mongo_db["search_results"]
 
 
 def next_doc_seq() -> int:

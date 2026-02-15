@@ -132,6 +132,13 @@ export const filesApi = {
       body: JSON.stringify({ parsed_data: parsedData }),
       token: token ?? undefined,
     }),
+  getSearchResults: (id: number, token?: string | null) =>
+    apiFetch<{
+      by_row: Record<
+        number,
+        { results_count: number; results: Record<string, unknown>[]; query_text: string; query_used: string }
+      >;
+    }>(`/api/files/${id}/search-results`, { token: token ?? undefined }),
 };
 
 // Research Requests

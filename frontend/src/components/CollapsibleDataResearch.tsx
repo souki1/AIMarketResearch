@@ -408,6 +408,7 @@ type CollapsibleDataResearchProps = {
     why_fields: string;
     what_result: string;
   }) => Promise<void>;
+  searchResultsByFile?: Record<number, Record<number, import("./DataResearchTable").SearchResultForRow>>;
 };
 
 function getItemKey(item: FileItem, index: number): string {
@@ -466,6 +467,7 @@ export default function CollapsibleDataResearch({
   onHeaderEdit,
   onResearchSubmit,
   onResearchAllSubmit,
+  searchResultsByFile,
 }: CollapsibleDataResearchProps) {
   const [minimizedIds, setMinimizedIds] = useState<Set<string>>(new Set());
   const [filterState, setFilterState] = useState<Record<string, FileFilterState>>({});
@@ -601,6 +603,7 @@ export default function CollapsibleDataResearch({
                       onSelectedCountChange={(count) =>
                         setSelectedCountByKey((prev) => ({ ...prev, [key]: count }))
                       }
+                      searchResultsByRow={item.dbId ? searchResultsByFile?.[item.dbId] : undefined}
                       onCellEdit={
                         item.dbId && onCellEdit
                           ? (rowIdx, colIdx, value) => {

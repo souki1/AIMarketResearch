@@ -32,6 +32,9 @@ export default function DashboardPage() {
   const [uploadToPopupOpen, setUploadToPopupOpen] = useState(false);
   const [filesPopupOpen, setFilesPopupOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [searchResultsByFile, setSearchResultsByFile] = useState<
+    Record<number, Record<number, { results_count: number; results: Record<string, unknown>[]; query_text: string; query_used: string }>>
+  >({});
   const tabClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -81,6 +84,19 @@ export default function DashboardPage() {
     };
   }, []);
 
+  const fetchSearchResults = useCallback(
+    async (fileId: number) => {
+      if (!token) return;
+      try {
+        const { by_row } = await filesApi.getSearchResults(fileId, token);
+        setSearchResultsByFile((prev) => ({ ...prev, [fileId]: by_row }));
+      } catch {
+        // ignore
+      }
+    },
+    [token]
+  );
+
   useEffect(() => {
     if (selectedTabId == null) {
       setFileItems([]);
@@ -91,10 +107,15 @@ export default function DashboardPage() {
     filesApi
       .list(selectedTabId, token)
       .then((files) => files.map(storedFileToItem))
-      .then(setFileItems)
+      .then((items) => {
+        setFileItems(items);
+        items.forEach((it) => {
+          if (it.dbId) fetchSearchResults(it.dbId);
+        });
+      })
       .catch(() => setFileItems([]))
       .finally(() => setLoading(false));
-  }, [selectedTabId, token]);
+  }, [selectedTabId, token, fetchSearchResults]);
 
   const handleItemsChange = useCallback(
     (newItems: FileItem[]) => {
@@ -199,8 +220,9 @@ export default function DashboardPage() {
       what_result: string;
     }) => {
       await researchApi.create(payload, token);
+      fetchSearchResults(payload.file_id);
     },
-    [token]
+    [token, fetchSearchResults]
   );
 
   const handleResearchAllSubmit = useCallback(
@@ -212,8 +234,9 @@ export default function DashboardPage() {
       what_result: string;
     }) => {
       await researchApi.createAll(payload, token);
+      fetchSearchResults(payload.file_id);
     },
-    [token]
+    [token, fetchSearchResults]
   );
 
   const handleNoteSaved = useCallback(
@@ -472,6 +495,7 @@ export default function DashboardPage() {
           onHeaderEdit={handleHeaderEdit}
           onResearchSubmit={handleResearchSubmit}
           onResearchAllSubmit={handleResearchAllSubmit}
+          searchResultsByFile={searchResultsByFile}
         />
       ) : null}
     </div>

@@ -1,11 +1,14 @@
 """Research API routes."""
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.database import async_session
-from app.core.mongodb import documents_coll
+from app.core.mongodb import documents_coll, search_results_coll
 from app.db.models import AnalyzeQuery, ResearchAllRequest, ResearchRequest, SearchableQuery, User
 from app.schemas import ResearchAllRequestCreate, ResearchRequestCreate
 from app.services.llm import call_ollama_for_query_template, fill_query_template, get_parsed_data
+from app.services.serper import is_serper_configured, search_serper
 from app.api.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/research-requests", tags=["research"])
@@ -73,6 +76,7 @@ async def create_research_request(
 
         intent_keywords = f"{body.why_fields} {body.what_result}".strip()
         for row_idx, row in enumerate(rows_to_process):
+            data_row_index = row_indices[row_idx]
             row_vals = [row[c] if c < len(row) else "" for c in col_indices]
             row_values_dict = dict(zip(column_names, row_vals))
             query_text = fill_query_template(
@@ -87,6 +91,24 @@ async def create_research_request(
                 status="pending",
             )
             db.add(sq)
+            await db.flush()
+            if query_text and is_serper_configured():
+                try:
+                    results, query_used = await search_serper(query_text)
+                    search_results_coll.insert_one({
+                        "searchable_query_id": sq.id,
+                        "analyze_query_id": analyze.id,
+                        "workspace_id": user.workspace_id,
+                        "file_id": body.file_id,
+                        "data_row_index": data_row_index,
+                        "query_text": query_text,
+                        "query_used": query_used,
+                        "results": results,
+                        "created_at": datetime.utcnow(),
+                    })
+                    sq.status = "completed"
+                except HTTPException:
+                    raise
         await db.commit()
 
     return {"id": req.id, "analyze_id": analyze.id, "searchable_count": len(rows_to_process), "ok": True}
@@ -156,6 +178,7 @@ async def create_research_all_request(
 
         intent_keywords = f"{body.why_fields} {body.what_result}".strip()
         for row_idx, row in enumerate(rows_to_process):
+            data_row_index = row_idx
             row_vals = [row[c] if c < len(row) else "" for c in col_indices]
             row_values_dict = dict(zip(column_names, row_vals))
             query_text = fill_query_template(
@@ -170,6 +193,24 @@ async def create_research_all_request(
                 status="pending",
             )
             db.add(sq)
+            await db.flush()
+            if query_text and is_serper_configured():
+                try:
+                    results, query_used = await search_serper(query_text)
+                    search_results_coll.insert_one({
+                        "searchable_query_id": sq.id,
+                        "analyze_query_id": analyze.id,
+                        "workspace_id": user.workspace_id,
+                        "file_id": body.file_id,
+                        "data_row_index": data_row_index,
+                        "query_text": query_text,
+                        "query_used": query_used,
+                        "results": results,
+                        "created_at": datetime.utcnow(),
+                    })
+                    sq.status = "completed"
+                except HTTPException:
+                    raise
         await db.commit()
 
     return {"id": req.id, "analyze_id": analyze.id, "searchable_count": len(rows_to_process), "ok": True}

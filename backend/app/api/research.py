@@ -2,6 +2,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import update
 
 from app.core.database import async_session
 from app.core.mongodb import documents_coll, search_results_coll
@@ -75,6 +76,7 @@ async def create_research_request(
         await db.refresh(analyze)
 
         intent_keywords = f"{body.why_fields} {body.what_result}".strip()
+        searchable_queries: list[tuple[SearchableQuery, int, str]] = []
         for row_idx, row in enumerate(rows_to_process):
             data_row_index = row_indices[row_idx]
             row_vals = [row[c] if c < len(row) else "" for c in col_indices]
@@ -92,6 +94,10 @@ async def create_research_request(
             )
             db.add(sq)
             await db.flush()
+            searchable_queries.append((sq, data_row_index, query_text))
+        await db.commit()
+
+        for sq, data_row_index, query_text in searchable_queries:
             if query_text and is_serper_configured():
                 try:
                     results, query_used = await search_serper(query_text)
@@ -106,10 +112,13 @@ async def create_research_request(
                         "results": results,
                         "created_at": datetime.utcnow(),
                     })
-                    sq.status = "completed"
+                    async with async_session() as db2:
+                        await db2.execute(
+                            update(SearchableQuery).where(SearchableQuery.id == sq.id).values(status="completed")
+                        )
+                        await db2.commit()
                 except HTTPException:
                     raise
-        await db.commit()
 
     return {"id": req.id, "analyze_id": analyze.id, "searchable_count": len(rows_to_process), "ok": True}
 
@@ -177,6 +186,7 @@ async def create_research_all_request(
         await db.refresh(analyze)
 
         intent_keywords = f"{body.why_fields} {body.what_result}".strip()
+        searchable_queries: list[tuple[SearchableQuery, int, str]] = []
         for row_idx, row in enumerate(rows_to_process):
             data_row_index = row_idx
             row_vals = [row[c] if c < len(row) else "" for c in col_indices]
@@ -194,6 +204,10 @@ async def create_research_all_request(
             )
             db.add(sq)
             await db.flush()
+            searchable_queries.append((sq, data_row_index, query_text))
+        await db.commit()
+
+        for sq, data_row_index, query_text in searchable_queries:
             if query_text and is_serper_configured():
                 try:
                     results, query_used = await search_serper(query_text)
@@ -208,9 +222,12 @@ async def create_research_all_request(
                         "results": results,
                         "created_at": datetime.utcnow(),
                     })
-                    sq.status = "completed"
+                    async with async_session() as db2:
+                        await db2.execute(
+                            update(SearchableQuery).where(SearchableQuery.id == sq.id).values(status="completed")
+                        )
+                        await db2.commit()
                 except HTTPException:
                     raise
-        await db.commit()
 
     return {"id": req.id, "analyze_id": analyze.id, "searchable_count": len(rows_to_process), "ok": True}

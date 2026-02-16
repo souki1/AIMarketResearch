@@ -35,19 +35,19 @@ def call_ollama_for_query_template(
     placeholders_example = " ".join(f"[{c}]" for c in column_names)
     prompt = f"""ANALYZE the user's requirement and the selected fields. Then output ONE Google search query TEMPLATE.
 
-IMPORTANT: You output a TEMPLATE with [ColumnName] placeholders. The system will replace each [ColumnName] with the actual ROW VALUE from the file. Never put column headers as literal text—only [ColumnName] format. Do NOT use generic default keywords. Extract keywords ONLY from the user's actual words below.
+CRITICAL: The search will use ACTUAL VALUES from each row (e.g. Part Name="A10VSO18", Manufacturer="Bosch Rexroth"). You output a TEMPLATE with [ColumnName] placeholders. The system replaces each [ColumnName] with the real cell value from that row. Use EXACT column names in brackets.
 
-STEP 1 - ANALYZE (use these exact inputs, not examples):
-- User's requirement (why these fields): {why_fields or 'Not specified'}
-- User's desired result: {what_result or 'Not specified'}
-- Selected fields (MUST use each as [ColumnName]): {columns_str}
+STEP 1 - ANALYZE:
+- User's requirement: {why_fields or 'Not specified'}
+- Desired result: {what_result or 'Not specified'}
+- Columns (use each as [ColumnName]): {columns_str}
 
-STEP 2 - BUILD THE TEMPLATE:
-(1) Extract search keywords from the user's requirement and desired result above. If they say "price vendor competitors" use those. If they say "datasheet specifications" use those. NEVER use "alternative suppliers price vendor" unless the user actually wrote those words.
-(2) Add ALL column placeholders: {placeholders_example}
-(3) Format: "keyword1" "keyword2" [Column1] [Column2] ...
+STEP 2 - BUILD TEMPLATE:
+(1) Add intent keywords from user's words (e.g. "price" "vendor" "competitors" if they said that).
+(2) Add ALL column placeholders so each row's Part Name, Manufacturer, etc. are searched: {placeholders_example}
+(3) Format: "keyword1" "keyword2" [Part Name] [Manufacturer] [Manufacturer Part Nr.] ...
 
-Output ONLY a single-line search query. Do NOT output JSON. Do NOT output Template: or any prefix. Example: "price" "vendor" [Part Name] [Manufacturer] [Manufacturer Part Nr.]"""
+Output ONLY one line. No JSON. No prefix. Example: "price" "vendor" [Part Name] [Product Group] [Manufacturer] [Manufacturer Part Nr.]"""
     try:
         with httpx.Client(timeout=60.0) as client:
             r = client.post(
@@ -81,16 +81,17 @@ def fill_query_template(
     template: str, column_names: list[str], row_values: list[str],
     intent_keywords: str = "",
 ) -> str:
-    """Replace [ColumnName] placeholders with row values. Returns Google-searchable query."""
+    """Replace [ColumnName] and ["ColumnName"] placeholders with actual row values."""
     result = template
     for col_name, val in zip(column_names, row_values):
-        placeholder = f"[{col_name}]"
         raw_val = str(val or "").strip()
         quoted_val = f'"{raw_val}"' if raw_val else ""
-        result = result.replace(placeholder, quoted_val)
+        result = result.replace(f'["{col_name}"]', quoted_val)
+        result = result.replace(f"[{col_name}]", quoted_val)
+    result = re.sub(r'\["[^\]]*"\]', "", result)
     result = re.sub(r"\[\w[^\]]*\]", "", result)
     result = " ".join(result.split())
-    # Fallback: if template produced empty/short result, build query from intent + values
+    # Fallback: if empty/short, build from intent + all column values
     if not result or len(result) < 10:
         parts = []
         if intent_keywords:
@@ -102,7 +103,16 @@ def fill_query_template(
             if v:
                 parts.append(f'"{v}"')
         result = " ".join(parts)
-    return result
+    # Deduplicate: keep first occurrence of each quoted term (LLM may repeat placeholders)
+    terms = re.findall(r'"([^"]+)"', result)
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for t in terms:
+        key = t.strip().lower()
+        if key and key not in seen:
+            seen.add(key)
+            deduped.append(f'"{t}"')
+    return "+".join(deduped) if deduped else result.replace(" ", "+")
 
 
 def get_parsed_data(doc: dict) -> tuple[list[str], list[list[str]]]:

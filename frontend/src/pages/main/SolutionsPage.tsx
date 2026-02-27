@@ -66,11 +66,11 @@ export default function SolutionsPage() {
       </section>
 
       {/* Solutions grid with descriptions */}
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-3 gap-8">
             {solutions.map((s) => (
-              <div key={s.title} className="p-8 rounded-xl bg-white border border-slate-100 card-hover">
+              <div key={s.title} className="relative z-10 p-8 rounded-xl bg-white border border-black box-border card-hover hover:z-20">
                 <h2 className="font-display text-xl font-semibold text-brand">{s.title}</h2>
                 <ul className="mt-6 space-y-4">
                   {s.items.map((item) => (
@@ -96,7 +96,7 @@ export default function SolutionsPage() {
             </p>
           </div>
           <div className="grid lg:grid-cols-2 gap-8">
-            <div className="p-6 md:p-8 rounded-xl bg-white border border-slate-100">
+            <div className="p-6 md:p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow">
               <SimpleBarChart
                 items={adoptionByRole}
                 title="Adoption by role"
@@ -105,7 +105,7 @@ export default function SolutionsPage() {
                 barColor="bg-accent"
               />
             </div>
-            <div className="p-6 md:p-8 rounded-xl bg-white border border-slate-100">
+            <div className="p-6 md:p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow">
               <SimpleBarChart
                 items={adoptionByUseCase}
                 title="Adoption by use case"

@@ -25,15 +25,15 @@ export default function BarChart({
   const max = maxValue ?? Math.max(...data.map((d) => d.value), 1);
 
   return (
-    <div className="w-full">
-      <h3 className="font-display font-semibold text-brand text-lg">{title}</h3>
+    <div className="w-full min-w-0">
+      <h3 className="font-display font-semibold text-brand text-lg break-words">{title}</h3>
       {description && <p className="mt-1 text-sm text-slate-600">{description}</p>}
       <div className="mt-6 space-y-4">
         {data.map((item) => (
           <div key={item.label}>
-            <div className="flex justify-between text-sm mb-1">
-              <span className="font-medium text-slate-700">{item.label}</span>
-              <span className="text-slate-600 tabular-nums">
+            <div className="flex justify-between gap-2 text-sm mb-1">
+              <span className="font-medium text-slate-700 break-words min-w-0">{item.label}</span>
+              <span className="text-slate-600 tabular-nums shrink-0">
                 {item.value}
                 {valueSuffix}
               </span>

@@ -51,7 +51,7 @@ export default function Footer() {
   return (
     <footer className="bg-brand text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-10 lg:gap-8">
           <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <Link to="/" className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
@@ -93,7 +93,7 @@ export default function Footer() {
           <p className="text-sm text-white/50">
             © {new Date().getFullYear()} CustomMarket Research. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-sm text-white/50">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 text-sm text-white/50">
             <Link to="/company" className="hover:text-white transition-colors">
               Privacy
             </Link>

@@ -1,6 +1,6 @@
 export default function TrustBar() {
   return (
-    <div className="trust-bar fixed top-0 left-0 right-0 z-50 border-b border-white/10">
+    <div className="trust-bar fixed top-0 left-0 right-0 z-50 border-b border-white/10 hidden md:block">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5">
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs font-medium">
           <span className="flex items-center gap-1.5">

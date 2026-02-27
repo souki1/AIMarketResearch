@@ -65,11 +65,11 @@ export default function ProductsPage() {
       </section>
 
       {/* Product cards */}
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-8">
             {products.map((p) => (
-              <Link key={p.title} to={p.to} className="block p-8 rounded-xl bg-white border border-slate-100 card-hover">
+              <Link key={p.title} to={p.to} className="block p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow card-hover">
                 <h2 className="font-display text-xl font-semibold text-brand">{p.title}</h2>
                 <p className="mt-3 text-slate-600">{p.description}</p>
                 <span className="mt-4 inline-flex items-center gap-1 text-accent font-medium text-sm">
@@ -95,7 +95,7 @@ export default function ProductsPage() {
                 Customers use CustomMarket from survey design through to sharing results. The chart shows the percentage of customers who use the platform for each stage of the workflow—so you can see how one product supports the full lifecycle.
               </p>
             </div>
-            <div className="p-6 md:p-8 rounded-xl bg-white border border-slate-100">
+            <div className="p-6 md:p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow">
               <SimpleBarChart
                 items={usageByWorkflow}
                 title="Platform usage by workflow stage"
@@ -111,7 +111,7 @@ export default function ProductsPage() {
       <section className="py-12 md:py-16 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="p-6 md:p-8 rounded-xl bg-slate-50 border border-slate-100 order-2 lg:order-1">
+            <div className="p-6 md:p-8 rounded-xl bg-slate-50 border border-slate-300 shadow-sm hover:shadow-md transition-shadow order-2 lg:order-1">
               <BarChart
                 data={aiAdoptionData}
                 title="How customers use AI"
@@ -133,25 +133,27 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Capabilities list */}
+      {/* Key capabilities cards */}
       <section className="section-alt py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="font-display text-2xl font-bold text-brand text-center mb-4">Key capabilities</h2>
           <p className="text-center text-slate-600 max-w-xl mx-auto mb-8">
             Everything you need to run enterprise-grade, AI-driven market research in one platform.
           </p>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {productCapabilities.map((cap) => (
-              <li key={cap} className="flex items-center gap-2 text-slate-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                {cap}
-              </li>
+              <div key={cap} className="p-6 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow card-hover">
+                <span className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0 mb-3">
+                  <span className="text-accent">✓</span>
+                </span>
+                <p className="text-slate-700 font-medium">{cap}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      <section className="py-10 border-t border-slate-100">
+      <section className="py-10 border-t border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="font-display text-2xl font-bold text-brand">See the platform in action</h2>
           <p className="mt-2 text-slate-600">Request a personalized demo for your organization.</p>

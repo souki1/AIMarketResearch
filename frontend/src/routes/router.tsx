@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Root from "../Root";
+import ErrorFallback from "../components/ErrorFallback";
 
 // Layout components (regular import – used as wrappers with Outlet)
 import MainLayout from "../layouts/MainLayout";
@@ -14,12 +15,14 @@ const CustomersPage = lazy(() => import("../pages/main/CustomersPage"));
 const ResourcesPage = lazy(() => import("../pages/main/ResourcesPage"));
 const CompanyPage = lazy(() => import("../pages/main/CompanyPage"));
 const EnterprisePage = lazy(() => import("../pages/main/EnterprisePage"));
+const NotFoundPage = lazy(() => import("../pages/main/NotFoundPage"));
 
 
 export const router = createBrowserRouter([ 
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorFallback />,
     children: [
       // { path: "signin", element: <SignInPage /> },
       // { path: "signup", element: <SignUpPage /> },
@@ -48,6 +51,7 @@ export const router = createBrowserRouter([
           { path: "resources", element: <ResourcesPage /> },
           { path: "company", element: <CompanyPage /> },
           { path: "enterprise", element: <EnterprisePage /> },
+          { path: "*", element: <NotFoundPage /> },
         ],
       },
     ],

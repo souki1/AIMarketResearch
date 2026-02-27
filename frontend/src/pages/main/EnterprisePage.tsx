@@ -46,7 +46,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      <section className="py-10 border-t border-slate-100">
+      <section className="py-10 border-t border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-sm font-medium text-slate-500">Compliance & certifications</p>
           <div className="mt-6 flex flex-wrap justify-center gap-8">

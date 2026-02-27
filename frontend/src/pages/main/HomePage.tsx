@@ -132,23 +132,23 @@ export default function HomePage() {
             <p className="mt-6 text-lg text-slate-600 max-w-xl">
               Custom surveys, global panels, and AI-driven analytics—built for scale, security, and compliance. Our AI turns raw data into clear narratives and recommended actions so your team can act faster. Trusted by 500+ enterprises worldwide.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
               <Link
                 to="/company"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors min-h-[44px]"
               >
                 Request a demo
                 <ChevronRightIcon className="w-4 h-4" />
               </Link>
               <Link
                 to="/enterprise"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]"
               >
                 Enterprise
               </Link>
               <Link
                 to="/company"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-slate-600 hover:text-brand transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-slate-600 hover:text-brand transition-colors min-h-[44px]"
               >
                 Contact Sales
               </Link>
@@ -172,7 +172,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {stats.map((s) => (
@@ -404,16 +404,16 @@ export default function HomePage() {
           <p className="mt-4 text-white/80">
             Join 500+ enterprises using CustomMarket for secure, compliant, and AI-powered insights.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
             <Link
               to="/company"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand bg-white hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand bg-white hover:bg-slate-100 transition-colors min-h-[44px]"
             >
               Request a demo
             </Link>
             <Link
               to="/enterprise"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white border-2 border-white/40 hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white border-2 border-white/40 hover:bg-white/10 transition-colors min-h-[44px]"
             >
               Enterprise solutions
             </Link>

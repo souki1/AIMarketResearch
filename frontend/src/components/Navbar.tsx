@@ -16,7 +16,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-10 left-0 right-0 z-40 bg-white border-b border-slate-200/80">
+      <nav className="fixed top-0 md:top-10 left-0 right-0 z-40 bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-lg bg-brand flex items-center justify-center">
@@ -76,7 +76,7 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="lg:hidden p-2.5 rounded-lg text-brand hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-brand hover:bg-slate-100 transition-colors"
               aria-label="Toggle menu"
               onClick={() => setMobileMenuOpen((o) => !o)}
             >
@@ -108,7 +108,7 @@ export default function Navbar() {
               <Link
                 key={label}
                 to={path}
-                className="py-3 px-3 rounded-lg text-brand font-medium hover:bg-slate-50"
+                className="py-3 px-3 rounded-lg text-brand font-medium hover:bg-slate-50 min-h-[44px] flex items-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {label}
@@ -118,13 +118,13 @@ export default function Navbar() {
               Enterprise
             </Link>
             <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
-              <Link to="/signin" className="w-full py-3 rounded-lg text-center font-medium text-slate-600 bg-slate-100 hover:bg-slate-200" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/signin" className="w-full py-3 rounded-lg text-center font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
                 Sign in
               </Link>
-              <Link to="/company" className="w-full py-3 rounded-lg text-center font-medium text-white bg-brand hover:bg-brand-light" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/company" className="w-full py-3 rounded-lg text-center font-medium text-white bg-brand hover:bg-brand-light min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
                 Request a demo
               </Link>
-              <Link to="/company" className="w-full py-3 rounded-lg text-center font-semibold text-brand border border-slate-300" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/company" className="w-full py-3 rounded-lg text-center font-semibold text-brand border border-slate-300 min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
                 Contact Sales
               </Link>
             </div>

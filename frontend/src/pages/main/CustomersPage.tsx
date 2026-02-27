@@ -26,7 +26,7 @@ const industriesServed = [
 export default function CustomersPage() {
   return (
     <div>
-      <section className="bg-white border-b border-slate-100 py-12 md:py-16">
+      <section className="bg-white border-b border-slate-300 shadow-sm py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider">Customers</p>
           <h1 className="font-display text-4xl sm:text-5xl font-bold text-brand mt-2 max-w-2xl">
@@ -38,12 +38,12 @@ export default function CustomersPage() {
         </div>
       </section>
 
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="font-display text-2xl font-bold text-brand text-center mb-8">What customers say</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {stories.map((s) => (
-              <div key={s.author} className="p-8 rounded-xl bg-white border border-slate-100 card-hover">
+              <div key={s.author} className="p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow card-hover">
                 <p className="text-slate-700 leading-relaxed">&ldquo;{s.quote}&rdquo;</p>
                 <p className="mt-6 font-medium text-brand">{s.author}</p>
               </div>
@@ -60,7 +60,7 @@ export default function CustomersPage() {
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {outcomes.map((o) => (
-              <div key={o.label} className="text-center p-6 rounded-xl bg-white border border-slate-100">
+              <div key={o.label} className="text-center p-6 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow">
                 <p className="font-display text-3xl font-bold text-accent">{o.value}</p>
                 <p className="mt-2 text-slate-600">{o.label}</p>
               </div>

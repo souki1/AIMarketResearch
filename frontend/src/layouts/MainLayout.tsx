@@ -8,7 +8,7 @@ export default function MainLayout() {
     <>
       <TrustBar />
       <Navbar />
-      <main className="flex-1 pt-[104px]">
+      <main className="flex-1 pt-16 md:pt-[104px]">
         <Outlet />
       </main>
       <Footer />

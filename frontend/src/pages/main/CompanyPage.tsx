@@ -28,16 +28,16 @@ export default function CompanyPage() {
         </div>
       </section>
 
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-8">
-            <div>
+            <div className="p-6 rounded-xl border border-slate-300 shadow-sm">
               <h2 className="font-display text-2xl font-bold text-brand">Our mission</h2>
               <p className="mt-4 text-slate-600 leading-relaxed">
                 We believe every enterprise deserves access to high-quality market intelligence without compromising on security or compliance. By combining global panels, flexible surveys, and AI-driven analytics, we enable organizations to understand their markets and act with confidence. Our goal is to make advanced research accessible—so more teams can make decisions backed by data.
               </p>
             </div>
-            <div>
+            <div className="p-6 rounded-xl border border-slate-300 shadow-sm">
               <h2 className="font-display text-2xl font-bold text-brand">What we offer</h2>
               <p className="mt-4 text-slate-600 leading-relaxed">
                 A single, AI-driven platform for the full research lifecycle: survey design and deployment, panel and audience access, real-time analytics, and AI-generated summaries and recommendations. We invest in security, compliance, and support so you can focus on strategy and execution.
@@ -52,7 +52,7 @@ export default function CompanyPage() {
           <h2 className="font-display text-2xl font-bold text-brand text-center mb-8">Our values</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {values.map((v) => (
-              <div key={v.title} className="p-8 rounded-xl bg-white border border-slate-100 card-hover">
+              <div key={v.title} className="p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow card-hover">
                 <h3 className="font-display text-lg font-semibold text-brand">{v.title}</h3>
                 <p className="mt-3 text-slate-600 text-sm leading-relaxed">{v.text}</p>
               </div>
@@ -80,7 +80,7 @@ export default function CompanyPage() {
         </div>
       </section>
 
-      <section className="py-10 md:py-14">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
@@ -94,17 +94,17 @@ export default function CompanyPage() {
                 <input
                   type="text"
                   placeholder="Full name"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-black text-black placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                 />
                 <input
                   type="email"
                   placeholder="Work email"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-black text-black placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                 />
                 <input
                   type="text"
                   placeholder="Company"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-black text-black placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                 />
                 <button
                   type="submit"

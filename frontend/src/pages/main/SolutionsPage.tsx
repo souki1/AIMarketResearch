@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import SimpleBarChart from "../components/SimpleBarChart";
+import SimpleBarChart from "../../components/SimpleBarChart";
 
 const solutions = [
   {

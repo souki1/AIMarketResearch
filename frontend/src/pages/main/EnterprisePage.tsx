@@ -34,7 +34,7 @@ export default function EnterprisePage() {
 
       <section className="section-alt py-10 md:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <h2 className="font-display text-2xl font-bold text-brand text-center mb-8">What’s included</h2>
+          <h2 className="font-display text-2xl font-bold text-brand text-center mb-8">What's included</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {capabilities.map((c) => (
               <div key={c.title} className="p-6 rounded-xl bg-white border border-slate-100 card-hover">

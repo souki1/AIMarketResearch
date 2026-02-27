@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import BarChart from "../components/BarChart";
+import BarChart from "../../components/BarChart";
 
 const stats = [
   { value: "500+", label: "Enterprise customers" },

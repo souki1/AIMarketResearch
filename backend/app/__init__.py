@@ -1,1 +1,0 @@
-"""CustomMarket backend application."""

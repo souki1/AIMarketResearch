@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import type { FileItem } from "../lib/fileParsing";
-import FileView from "./FileView";
+import FileView from "../application/components/FileView";
 import {
   DragHandleDots1Icon,
   ChevronDownIcon,

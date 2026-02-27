@@ -86,7 +86,7 @@ export default function CompanyPage() {
             <div>
               <h2 className="font-display text-2xl font-bold text-brand">Contact us</h2>
               <p className="mt-4 text-slate-600">
-                Request a demo or speak with our sales team about your requirements. We’ll walk you through the platform and answer your questions.
+                Request a demo or speak with our sales team about your requirements. We'll walk you through the platform and answer your questions.
               </p>
             </div>
             <div>
@@ -122,7 +122,7 @@ export default function CompanyPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="font-display text-2xl font-bold text-brand text-center">Careers</h2>
           <p className="mt-2 text-slate-600 text-center max-w-xl mx-auto">
-            We’re building the future of enterprise market research. If you’re passionate about data, AI, and helping teams make better decisions, we’d love to hear from you.
+            We're building the future of enterprise market research. If you're passionate about data, AI, and helping teams make better decisions, we'd love to hear from you.
           </p>
           <div className="mt-8 flex justify-center">
             <Link to="/company" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-brand border-2 border-brand hover:bg-brand hover:text-white transition-colors">

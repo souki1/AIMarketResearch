@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import SimpleBarChart from "../components/SimpleBarChart";
-import BarChart from "../components/BarChart";
+import SimpleBarChart from "../../components/SimpleBarChart";
+import BarChart from "../../components/BarChart";
 
 const products = [
   {

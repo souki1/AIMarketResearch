@@ -2,23 +2,29 @@ import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 
 const resources = [
-  { title: "Documentation", description: "API reference, guides, and best practices for technical teams.", to: "#" },
-  { title: "Case studies", description: "How enterprises use CustomMarket for product and market research.", to: "#" },
-  { title: "Blog", description: "Industry trends, product updates, and research methodology.", to: "#" },
-  { title: "Support", description: "Help center, SLAs, and dedicated support for enterprise customers.", to: "#" },
+  { title: "Platform documentation", description: "API references, data models, and integration guides for sourcing stacks.", to: "#" },
+  { title: "Procurement playbooks", description: "Actionable guides for supplier qualification, RFQ optimization, and award governance.", to: "#" },
+  { title: "Industry insights", description: "Manufacturing sourcing trends, risk outlooks, and category intelligence.", to: "#" },
+  { title: "Customer support", description: "Implementation help, workflow enablement, and team onboarding resources.", to: "#" },
 ];
 
 export default function ResourcesPage() {
   return (
     <div>
-      <section className="bg-white border-b border-slate-100 py-12 md:py-16">
+      <section
+        className="bg-white border-b border-slate-100 py-12 md:py-16 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(245,245,247,0.9), rgba(245,245,247,0.94)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&q=80')",
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider">Resources</p>
           <h1 className="font-display text-4xl sm:text-5xl font-bold text-brand mt-2 max-w-2xl">
-            Learn, integrate, and scale
+            Learn, deploy, and scale sourcing intelligence
           </h1>
           <p className="mt-6 text-lg text-slate-600 max-w-xl">
-            Documentation, case studies, and support to help your team get the most from CustomMarket.
+            Documentation and guides to help your teams get the most from part-level research, vendor comparison, and recommendations.
           </p>
         </div>
       </section>
@@ -40,10 +46,21 @@ export default function ResourcesPage() {
         </div>
       </section>
 
+      <section className="py-2 md:py-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <img
+            src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=80"
+            alt="Procurement and operations team workshop"
+            className="w-full h-[220px] md:h-[300px] object-cover rounded-xl border border-slate-100"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
       <section className="section-alt py-10 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="font-display text-2xl font-bold text-brand">Stay updated</h2>
-          <p className="mt-2 text-slate-600">Product updates and research insights in your inbox.</p>
+          <p className="mt-2 text-slate-600">Sourcing intelligence updates and procurement best practices in your inbox.</p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
             <input
               type="email"

@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --dubois-global-background-color: rgb(17, 23, 28);
-  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --color-brand: #0f172a;
-  --color-brand-light: #1e293b;
-  --color-accent: #0369a1;
-  --color-accent-light: #0ea5e9;
-  --color-surface: #f8fafc;
-  --color-muted: #64748b;
+  --font-sans: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-brand: #1d1d1f;
+  --color-brand-light: #2a2a2d;
+  --color-accent: #0071e3;
+  --color-accent-light: #2997ff;
+  --color-surface: #f5f5f7;
+  --color-muted: rgba(0, 0, 0, 0.8);
+  --sk-focus-color: #0071e3;
 }
 
 :root {
-  --dubois-global-background-color: rgb(17, 23, 28);
+  --dubois-global-background-color: #000000;
 }
 
 * {
@@ -27,63 +27,261 @@ html {
 
 body {
   font-family: var(--font-sans);
-  color: var(--color-brand);
-  background: #ffffff;
+  color: #1d1d1f;
+  background: #eef1f4;
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.374px;
 }
 
 .font-display {
   font-family: var(--font-display);
 }
 
-/* Enterprise: subtle section backgrounds */
 .section-alt {
-  background: #f8fafc;
+  background: #000000;
+  color: #ffffff;
 }
 
-/* Card hover: subtle elevation */
+.section-alt .text-brand,
+.section-alt .text-slate-700,
+.section-alt .text-slate-800 {
+  color: #ffffff;
+}
+
+.section-alt .text-slate-600,
+.section-alt .text-slate-500,
+.section-alt .text-slate-400 {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.section-alt .bg-white,
+.section-alt .bg-slate-50 {
+  background: #272729;
+}
+
+.section-alt .border-slate-300,
+.section-alt .border-slate-200,
+.section-alt .border-slate-100 {
+  border-color: #2a2a2d;
+}
+
 .card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
+
 .card-hover:hover {
-  box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.08), 0 8px 32px -8px rgba(15, 23, 42, 0.06);
-  transform: translateY(-1px);
+  box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0;
+  transform: translateY(-2px);
 }
 
-/* Trust bar / banner */
 .trust-bar {
-  background: #0f172a;
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  backdrop-filter: saturate(180%) blur(20px);
 }
 
-/* App layout: smooth scrollbar matching dark theme */
-.scrollbar-app {
-  scroll-behavior: smooth;
+.apple-glass-nav {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.scrollbar-app::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+.apple-pill-link {
+  border-radius: 980px;
 }
 
-.scrollbar-app::-webkit-scrollbar-track {
-  background: rgb(17, 23, 28);
+.apple-cta-primary {
+  background: #0071e3;
+  color: #ffffff;
+  border: 1px solid transparent;
 }
 
-.scrollbar-app::-webkit-scrollbar-thumb {
-  background: rgb(55, 65, 75);
-  border-radius: 4px;
+.apple-cta-primary:hover {
+  background: #0066cc;
 }
 
-.scrollbar-app::-webkit-scrollbar-thumb:hover {
-  background: rgb(71, 85, 98);
+.apple-cta-secondary {
+  border: 1px solid #0066cc;
+  color: #0066cc;
+  background: transparent;
 }
 
-.scrollbar-app {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(55, 65, 75) rgb(17, 23, 28);
+.apple-cta-secondary:hover {
+  text-decoration: underline;
+}
+
+.apple-site h1,
+.apple-site h2 {
+  line-height: 1.1;
+  letter-spacing: -0.28px;
+}
+
+.apple-site h3 {
+  line-height: 1.19;
+  letter-spacing: 0.2px;
+}
+
+.bg-brand {
+  background-color: #1d1d1f;
+}
+
+.bg-brand:hover {
+  background-color: #2a2a2d;
+}
+
+.text-accent,
+.text-accent-light {
+  color: #0071e3;
+}
+
+.border-slate-300,
+.border-slate-200,
+.border-slate-100 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.bg-slate-50,
+.bg-white {
+  background: #f5f5f7;
+}
+
+.text-slate-600 {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.text-slate-500,
+.text-slate-400 {
+  color: rgba(0, 0, 0, 0.48);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--sk-focus-color);
+  outline-offset: 2px;
+}
+
+/* Enterprise app shell — modern B2B surface + subtle structure */
+.enterprise-app {
+  background-color: #f3f4f6;
+  background-image: linear-gradient(180deg, #fafbfc 0%, #eef1f4 55%, #e8ebef 100%);
+}
+
+.enterprise-main {
+  isolation: isolate;
+}
+
+.enterprise-main-grid {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 20%, transparent 75%);
+}
+
+.enterprise-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .enterprise-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .enterprise-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@keyframes fadeScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── Apple-style scroll reveal ── */
+.sr {
+  opacity: 0;
+  transform: translateY(48px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.sr.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sr-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.sr-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.sr-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.sr-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.sr-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.sr-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger children: apply --sr-i via style attribute on each child */
+.sr-stagger > .sr { transition-delay: calc(var(--sr-i, 0) * 0.1s); }
+.sr-stagger > .sr-left { transition-delay: calc(var(--sr-i, 0) * 0.1s); }
+.sr-stagger > .sr-right { transition-delay: calc(var(--sr-i, 0) * 0.1s); }
+
+/* ── 3D showcase canvas ── */
+.showcase-canvas canvas {
+  outline: none;
+  touch-action: pan-y;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sr, .sr-scale, .sr-left, .sr-right {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

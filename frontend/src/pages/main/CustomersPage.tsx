@@ -1,39 +1,38 @@
 import { Link } from "react-router-dom";
 
 const stories = [
-  { quote: "CustomMarket gave us a single platform for global research with the compliance and scale we need.", author: "VP Insights, Fortune 500 technology company" },
-  { quote: "We cut time-to-insight by 50% and improved governance with role-based access and audit trails.", author: "Head of Market Research, global financial services firm" },
-  { quote: "The AI summaries and recommended actions help our team act faster on what matters.", author: "Director of Product, enterprise SaaS" },
-  { quote: "We moved from spreadsheets and multiple tools to one AI-driven platform. Game changer for our team.", author: "Senior Manager, Brand & Insights, retail" },
-  { quote: "The ability to run surveys and get AI-generated insights in the same place has streamlined our entire process.", author: "Head of CX, healthcare" },
+  { quote: "We reduced sourcing cycles by nearly a third while improving supplier quality outcomes.", author: "VP Procurement, manufacturing company" },
+  { quote: "Decision intelligence gave our category teams a shared view of risk, cost, and delivery trade-offs.", author: "Head of Strategic Sourcing, manufacturing enterprise" },
+  { quote: "Our plant teams now trust recommendations because the AI reasoning is transparent and actionable.", author: "Director of Operations, industrial manufacturing group" },
+  { quote: "We replaced fragmented spreadsheets with one workflow from supplier intake to award governance.", author: "Senior Category Manager, multi-plant manufacturer" },
+  { quote: "Supplier disruptions are now flagged early enough for us to act before production is impacted.", author: "Supply Chain Excellence Lead, manufacturing network" },
 ];
 
 const outcomes = [
-  { value: "50%", label: "Faster time to insight (typical)" },
-  { value: "1", label: "Single platform for design, field, and analysis" },
-  { value: "150+", label: "Countries supported for global studies" },
+  { value: "31%", label: "Average reduction in sourcing cycle time" },
+  { value: "22%", label: "Average improvement in on-time supplier delivery" },
+  { value: "1", label: "Unified platform for sourcing intelligence and decisions" },
 ];
 
-const industriesServed = [
-  "Technology & SaaS",
-  "Financial services",
-  "Healthcare & pharma",
-  "Retail & CPG",
-  "Manufacturing & B2B",
-  "Media & entertainment",
-];
+const industriesServed = ["Discrete manufacturing", "Process manufacturing", "Industrial manufacturing", "Multi-plant operations", "Factory supply networks", "Contract manufacturing"];
 
 export default function CustomersPage() {
   return (
     <div>
-      <section className="bg-white border-b border-slate-300 shadow-sm py-12 md:py-16">
+      <section
+        className="bg-white border-b border-slate-300 shadow-sm py-12 md:py-16 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(245,245,247,0.9), rgba(245,245,247,0.94)), url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1600&q=80')",
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider">Customers</p>
           <h1 className="font-display text-4xl sm:text-5xl font-bold text-brand mt-2 max-w-2xl">
-            Trusted by leading enterprises
+            Trusted by manufacturing sourcing leaders
           </h1>
           <p className="mt-6 text-lg text-slate-600 max-w-xl">
-            Organizations across industries use CustomMarket for secure, scalable, AI-driven market intelligence. See what they say about the platform and the outcomes they achieve.
+            Teams use Partsource to cut manual supplier research, compare vendors faster, and choose the best source for every part with data-backed recommendations.
           </p>
         </div>
       </section>
@@ -52,11 +51,22 @@ export default function CustomersPage() {
         </div>
       </section>
 
+      <section className="py-2 md:py-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <img
+            src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1400&q=80"
+            alt="Manufacturing leadership team reviewing sourcing performance"
+            className="w-full h-[240px] md:h-[320px] object-cover rounded-xl border border-slate-100"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
       <section className="section-alt py-10 md:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="font-display text-2xl font-bold text-brand text-center mb-4">Typical outcomes</h2>
           <p className="text-center text-slate-600 max-w-xl mx-auto mb-8">
-            Customers report faster insights, better governance, and one platform from design to delivery.
+            Customers report faster awards, stronger supplier performance, and more reliable decisions.
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {outcomes.map((o) => (
@@ -73,7 +83,7 @@ export default function CustomersPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="font-display text-2xl font-bold text-brand text-center mb-6">Industries we serve</h2>
           <p className="text-center text-slate-600 max-w-xl mx-auto mb-10">
-            Our AI-driven platform is used by product, marketing, strategy, and insights teams across these sectors.
+            Our AI-powered platform supports procurement and operations teams across these manufacturing sectors.
           </p>
           <ul className="flex flex-wrap justify-center gap-4">
             {industriesServed.map((ind) => (
@@ -87,8 +97,8 @@ export default function CustomersPage() {
 
       <section className="section-alt py-10 border-t border-slate-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="font-display text-2xl font-bold text-brand">Join 500+ enterprises</h2>
-          <p className="mt-2 text-slate-600">Get a personalized demo for your organization.</p>
+          <h2 className="font-display text-2xl font-bold text-brand">Join leading sourcing organizations</h2>
+          <p className="mt-2 text-slate-600">Get a personalized demo tailored to your procurement workflow.</p>
           <Link to="/company" className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white bg-brand hover:bg-brand-light">
             Request a demo
           </Link>

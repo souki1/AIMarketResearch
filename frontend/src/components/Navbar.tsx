@@ -16,17 +16,17 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 md:top-10 left-0 right-0 z-40 bg-white border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <nav className="apple-glass-nav fixed top-0 left-0 right-0 z-40 shadow-[0_1px_0_rgba(255,255,255,0.06)]">
+        <div className="enterprise-container h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-brand flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
               <svg viewBox="0 0 32 32" fill="none" className="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1.5" fill="none" />
                 <path d="M8 16c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 <path d="M16 8v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             </div>
-            <span className="font-display font-bold text-lg text-brand tracking-tight">CustomMarket</span>
+            <span className="font-display font-semibold text-lg text-white tracking-[-0.28px]">Partsource</span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
@@ -36,8 +36,8 @@ export default function Navbar() {
                 <Link
                   key={label}
                   to={path}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive ? "text-accent bg-slate-100" : "text-slate-600 hover:text-brand hover:bg-slate-50"
+                  className={`px-4 py-2 rounded-xl text-xs font-normal tracking-[-0.12px] transition-colors ${
+                    isActive ? "text-white bg-white/15" : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   {label}
@@ -46,7 +46,7 @@ export default function Navbar() {
             })}
             <Link
               to="/enterprise"
-              className="px-4 py-2 rounded-lg text-sm font-medium text-accent hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-normal text-accent-light hover:bg-white/10 transition-colors"
             >
               Enterprise
             </Link>
@@ -56,19 +56,19 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-2">
               <Link
                 to="/signin"
-                className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-brand hover:bg-slate-50 transition-colors"
+                className="px-4 py-2.5 rounded-xl text-xs font-normal text-white/85 hover:text-white hover:bg-white/10 transition-colors"
               >
                 Sign in
               </Link>
               <Link
                 to="/company"
-                className="px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-brand hover:bg-brand-light transition-colors"
+                className="apple-cta-primary px-4 py-2.5 rounded-xl text-xs font-normal transition-colors"
               >
                 Request a demo
               </Link>
               <Link
                 to="/company"
-                className="px-4 py-2.5 rounded-lg text-sm font-semibold text-brand border border-slate-300 hover:bg-slate-50 transition-colors"
+                className="apple-cta-secondary apple-pill-link px-4 py-2.5 text-xs font-normal transition-colors"
               >
                 Contact Sales
               </Link>
@@ -76,7 +76,7 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-brand hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors"
               aria-label="Toggle menu"
               onClick={() => setMobileMenuOpen((o) => !o)}
             >
@@ -99,7 +99,7 @@ export default function Navbar() {
         )}
 
         <div
-          className={`lg:hidden absolute top-16 left-0 right-0 bg-white border-b border-slate-100 shadow-lg transition-all duration-200 overflow-hidden z-20 ${
+          className={`lg:hidden absolute top-16 left-0 right-0 bg-black/95 border-b border-white/10 transition-all duration-200 overflow-hidden z-20 ${
             mobileMenuOpen ? "max-h-[calc(100vh-4rem)] opacity-100" : "max-h-0 opacity-0 border-transparent"
           }`}
         >
@@ -108,23 +108,23 @@ export default function Navbar() {
               <Link
                 key={label}
                 to={path}
-                className="py-3 px-3 rounded-lg text-brand font-medium hover:bg-slate-50 min-h-[44px] flex items-center"
+                className="py-3 px-3 rounded-lg text-white font-medium hover:bg-white/10 min-h-[44px] flex items-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {label}
               </Link>
             ))}
-            <Link to="/enterprise" className="py-3 px-3 rounded-lg text-accent font-medium hover:bg-slate-50" onClick={() => setMobileMenuOpen(false)}>
+            <Link to="/enterprise" className="py-3 px-3 rounded-lg text-accent-light font-medium hover:bg-white/10" onClick={() => setMobileMenuOpen(false)}>
               Enterprise
             </Link>
-            <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
-              <Link to="/signin" className="w-full py-3 rounded-lg text-center font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
+            <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-2">
+              <Link to="/signin" className="w-full py-3 rounded-lg text-center font-medium text-white/85 bg-white/10 hover:bg-white/15 min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
                 Sign in
               </Link>
-              <Link to="/company" className="w-full py-3 rounded-lg text-center font-medium text-white bg-brand hover:bg-brand-light min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/company" className="w-full py-3 rounded-lg text-center font-medium text-white bg-accent hover:bg-[#0066cc] min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
                 Request a demo
               </Link>
-              <Link to="/company" className="w-full py-3 rounded-lg text-center font-semibold text-brand border border-slate-300 min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/company" className="w-full py-3 rounded-full text-center font-medium text-accent-light border border-accent-light min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
                 Contact Sales
               </Link>
             </div>

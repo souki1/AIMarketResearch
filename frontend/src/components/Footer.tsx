@@ -4,9 +4,9 @@ const columns = [
   {
     title: "Products",
     links: [
-      { label: "Surveys & Panels", to: "/products" },
-      { label: "Analytics & Reporting", to: "/products" },
-      { label: "AI Insights", to: "/products" },
+      { label: "Part research", to: "/products" },
+      { label: "Vendor comparison", to: "/products" },
+      { label: "Recommendations", to: "/products" },
       { label: "Integrations", to: "/products" },
     ],
   },
@@ -49,8 +49,8 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="bg-brand text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <footer className="bg-black text-white border-t border-white/10">
+      <div className="enterprise-container py-14 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-10 lg:gap-8">
           <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <Link to="/" className="flex items-center gap-2.5">
@@ -61,26 +61,21 @@ export default function Footer() {
                   <path d="M16 8v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </div>
-              <span className="font-display font-bold text-lg tracking-tight">CustomMarket</span>
+              <span className="font-display font-semibold text-lg tracking-[-0.28px]">Partsource</span>
             </Link>
             <p className="mt-4 text-sm text-white/60 max-w-[220px]">
-              Enterprise market intelligence and AI-powered insights. Scale with confidence.
+              AI-powered research and comparison for parts—find suppliers, compare pricing, and get intelligent recommendations.
             </p>
-            <div className="mt-6 flex items-center gap-4 text-xs text-white/50">
-              <span>SOC 2 Type II</span>
-              <span>GDPR</span>
-              <span>ISO 27001</span>
-            </div>
           </div>
           {columns.map((col) => (
             <div key={col.title}>
-              <h3 className="font-display font-semibold text-sm uppercase tracking-wider text-white/90 mb-4">
+              <h3 className="font-display font-semibold text-sm uppercase tracking-[0.2px] text-white/90 mb-4">
                 {col.title}
               </h3>
               <ul className="space-y-3">
                 {col.links.map(({ label, to }) => (
                   <li key={label}>
-                    <Link to={to} className="text-sm text-white/60 hover:text-white transition-colors">
+                    <Link to={to} className="text-sm text-white/60 hover:text-accent-light transition-colors">
                       {label}
                     </Link>
                   </li>
@@ -91,7 +86,7 @@ export default function Footer() {
         </div>
         <div className="mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/50">
-            © {new Date().getFullYear()} CustomMarket Research. All rights reserved.
+            © {new Date().getFullYear()} Partsource. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 text-sm text-white/50">
             <Link to="/company" className="hover:text-white transition-colors">

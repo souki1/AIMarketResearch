@@ -108,10 +108,6 @@ export default function PartShowcase() {
                     <span className="font-semibold text-accent">${minPrice.toLocaleString()}</span>
                     {" – "}${maxPrice.toLocaleString()}
                   </p>
-                  <p className="mt-4 inline-flex items-center gap-1 text-accent text-sm font-semibold opacity-70 group-hover:opacity-100 transition-opacity">
-                    Scroll to explore
-                    <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-                  </p>
                 </div>
               </div>
               <div className="pointer-events-none absolute -right-6 -top-6 hidden h-28 w-28 rounded-full bg-accent/8 blur-3xl lg:block" aria-hidden />

@@ -199,10 +199,6 @@ export default function HomePage() {
               <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]">
                 Explore platform
               </Link>
-              <a href="#part-showcase" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-slate-600 hover:text-accent transition-colors min-h-[44px]">
-                See it in action
-                <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-              </a>
             </div>
           </div>
         </div>

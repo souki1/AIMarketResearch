@@ -139,10 +139,15 @@ export default function ProductsPage() {
   return (
     <div ref={revealRef}>
       <section
-        className="bg-white border-b border-slate-100 bg-cover bg-center min-h-screen flex items-center"
+        className="border-b border-slate-100 min-h-screen flex items-center"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(245,245,247,0.9), rgba(245,245,247,0.94)), url('https://images.unsplash.com/photo-1586528116493-40d0f0e0f4c8?auto=format&fit=crop&w=1600&q=80')",
+          /* Layers: accent glows on top, linear gradient base below */
+          backgroundImage: [
+            "radial-gradient(ellipse 110% 65% at 100% 0%, rgba(0, 113, 227, 0.14), transparent 52%)",
+            "radial-gradient(ellipse 75% 55% at 0% 100%, rgba(59, 130, 246, 0.09), transparent 48%)",
+            "linear-gradient(168deg, #eff6ff 0%, #f8fafc 18%, #f1f5f9 42%, #eef2ff 72%, #f8fafc 100%)",
+          ].join(", "),
+          backgroundColor: "#f8fafc",
         }}
       >
         <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-12 md:py-16 lg:py-20 shrink-0">
@@ -166,6 +171,26 @@ export default function ProductsPage() {
               An AI-powered research and comparison platform for manufacturing teams: find suppliers, analyze pricing and availability, compare options with clarity, and get ranked recommendations—so
               strategic sourcing is data-driven, not guesswork.
             </p>
+            <div
+              className="sr mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full"
+              style={{ "--sr-i": 3 } as CSSProperties}
+            >
+              <a
+                href="#product-demo"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-brand-light min-h-[44px] w-full sm:w-auto"
+              >
+                Interactive product demo
+                <ChevronRightIcon className="w-4 h-4 shrink-0" aria-hidden />
+              </a>
+              <a
+                href={CALENDLY_DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-slate-200 bg-white/90 px-6 py-3 text-sm font-semibold text-brand backdrop-blur-sm transition hover:border-accent hover:bg-white min-h-[44px] w-full sm:w-auto"
+              >
+                Book a live walkthrough
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -221,7 +246,7 @@ export default function ProductsPage() {
       </section>
 
       {/* Interactive product UI (from former Solutions page) */}
-      <section id="product-demo" className="scroll-mt-20 py-14 md:py-20 bg-surface border-b border-slate-200/80">
+      <section id="product-demo" className="scroll-mt-24 py-14 md:py-20 bg-surface border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mb-12 md:mb-16 sr">
             <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider">What we build</p>
@@ -419,14 +444,13 @@ export default function ProductsPage() {
           <p className="sr mt-2 text-slate-600 max-w-lg mx-auto">
             Request a personalized walkthrough or talk to us about tailoring workflows to your categories and plants.
           </p>
-          <div className="sr mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="sr mt-6 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
             <a
-              href={CALENDLY_DEMO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#product-demo"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white bg-brand hover:bg-brand-light min-h-[44px]"
             >
-              Request a demo
+              Interactive demo
+              <ChevronRightIcon className="w-4 h-4" aria-hidden />
             </a>
             <a
               href={CALENDLY_DEMO_URL}
@@ -434,7 +458,15 @@ export default function ProductsPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 min-h-[44px]"
             >
-              Contact Sales
+              Request a demo
+            </a>
+            <a
+              href={CALENDLY_DEMO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 min-h-[44px]"
+            >
+              Contact sales
             </a>
           </div>
         </div>

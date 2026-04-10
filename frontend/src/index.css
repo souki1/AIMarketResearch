@@ -63,6 +63,12 @@ body {
   background: #272729;
 }
 
+/* Opacity utilities don’t match `.bg-slate-50` above—without this, thead rows stay light while `.text-brand` is forced to white. */
+.section-alt .bg-slate-50\/90,
+.section-alt .bg-slate-50\/80 {
+  background-color: #272729;
+}
+
 .section-alt .border-slate-300,
 .section-alt .border-slate-200,
 .section-alt .border-slate-100 {

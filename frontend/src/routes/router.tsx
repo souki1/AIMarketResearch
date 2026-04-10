@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Root from "../Root";
 import ErrorFallback from "../components/ErrorFallback";
 
@@ -10,7 +10,6 @@ import MainLayout from "../layouts/MainLayout";
 // Lazy load all page components
 const HomePage = lazy(() => import("../pages/main/HomePage"));
 const ProductsPage = lazy(() => import("../pages/main/ProductsPage"));
-const SolutionsPage = lazy(() => import("../pages/main/SolutionsPage"));
 const CustomersPage = lazy(() => import("../pages/main/CustomersPage"));
 const ResourcesPage = lazy(() => import("../pages/main/ResourcesPage"));
 const CompanyPage = lazy(() => import("../pages/main/CompanyPage"));
@@ -24,29 +23,13 @@ export const router = createBrowserRouter([
     element: <Root />,
     errorElement: <ErrorFallback />,
     children: [
-      // { path: "signin", element: <SignInPage /> },
-      // { path: "signup", element: <SignUpPage /> },
-      // {
-      //   path: "app",
-      //   element: (
-      //     <AppGuard>
-      //       <AppLayout />
-      //     </AppGuard>
-      //   ),
-      //   children: [
-      //     { index: true, element: <FilesPage /> },
-      //     { path: "research/:fileId", element: <ResearchPage /> },
-      //     { path: "products", element: <AppProductsPage /> },
-      //     { path: "customers", element: <AppCustomersPage /> },
-      //     { path: "settings", element: <AppSettingsPage /> },
-      //   ],
-      // },
+
       {
         element: <MainLayout />,
         children: [
           { index: true, element: <HomePage /> },
           { path: "products", element: <ProductsPage /> },
-          { path: "solutions", element: <SolutionsPage /> },
+          { path: "solutions", element: <Navigate to="/products" replace /> },
           { path: "customers", element: <CustomersPage /> },
           { path: "resources", element: <ResourcesPage /> },
           { path: "company", element: <CompanyPage /> },

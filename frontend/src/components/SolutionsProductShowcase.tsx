@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import partImage from "../assets/images/download (1).jpg";
 
 /** Single demo part across all three panels so labels stay consistent */
 const DEMO_PART = {
@@ -176,15 +177,28 @@ export default function SolutionsProductShowcase() {
         <div className="min-w-0 rounded-2xl border border-slate-200/90 bg-white shadow-[0_28px_90px_-28px_rgba(0,0,0,0.2)] overflow-hidden ring-1 ring-black/5 lg:order-1 text-[13px] sm:text-sm">
           <WindowChrome title="Partsource · Supplier compare" subtitle={`Part ${DEMO_PART.number}`} />
           <PanelContext>
-            <p className="text-slate-700">
-              <span className="font-mono font-semibold text-brand break-all">{DEMO_PART.number}</span>
-              <span className="text-slate-400 mx-1.5">·</span>
-              <span>{DEMO_PART.title}</span>
-            </p>
-            <p className="mt-2.5 pt-2.5 border-t border-slate-100 text-slate-500 leading-snug">
-              Each row is one supplier quote on this part.{" "}
-              <span className="text-brand font-medium">Top</span> marks the recommended shortlist pick (AI score + fit).
-            </p>
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 sm:items-start">
+              <div className="shrink-0 mx-auto sm:mx-0 w-[112px] h-[112px] sm:w-[100px] sm:h-[100px] rounded-xl overflow-hidden bg-white border border-slate-200 shadow-sm">
+                <img
+                  src={partImage}
+                  alt={`${DEMO_PART.title} (${DEMO_PART.number})`}
+                  className="w-full h-full object-contain p-2"
+                  width={100}
+                  height={100}
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-slate-700">
+                  <span className="font-mono font-semibold text-brand break-all">{DEMO_PART.number}</span>
+                  <span className="text-slate-400 mx-1.5">·</span>
+                  <span>{DEMO_PART.title}</span>
+                </p>
+                <p className="mt-2.5 pt-2.5 border-t border-slate-100 text-slate-500 leading-snug">
+                  Each row is one supplier quote on this part.{" "}
+                  <span className="text-brand font-medium">Top</span> marks the recommended shortlist pick (AI score + fit).
+                </p>
+              </div>
+            </div>
           </PanelContext>
           <div className="p-4 sm:p-6 bg-[#fafafa]">
             <div className="flex flex-wrap gap-2 mb-4">

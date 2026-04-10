@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { CALENDLY_DEMO_URL } from "../../constants/booking";
 
 const stories = [
   { quote: "We reduced sourcing cycles by nearly a third while improving supplier quality outcomes.", author: "VP Procurement, manufacturing company" },
@@ -99,9 +99,14 @@ export default function CustomersPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="font-display text-2xl font-bold text-brand">Join leading sourcing organizations</h2>
           <p className="mt-2 text-slate-600">Get a personalized demo tailored to your procurement workflow.</p>
-          <Link to="/company" className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white bg-brand hover:bg-brand-light">
+          <a
+            href={CALENDLY_DEMO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white bg-brand hover:bg-brand-light"
+          >
             Request a demo
-          </Link>
+          </a>
         </div>
       </section>
     </div>

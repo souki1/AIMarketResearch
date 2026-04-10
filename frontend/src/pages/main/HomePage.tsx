@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import BarChart from "../../components/BarChart";
 import PretextHeroReserve from "../../components/enterprise/PretextHeroReserve";
-import partImage from "../../assets/images/download (1).jpg";
 import PartShowcase from "../../components/PartShowcase";
+import { CALENDLY_DEMO_URL } from "../../constants/booking";
 
 const HERO_HEADLINE_TEXT =
   "Find, analyze, and choose the best supplier and pricing for any part";
@@ -164,68 +164,46 @@ export default function HomePage() {
           HERO
       ════════════════════════════════════════════════════════════════ */}
       <section
-        className="bg-white border-b border-slate-100 bg-cover bg-center"
+        className="bg-white border-b border-slate-100 bg-cover bg-center min-h-[85vh] md:min-h-[88vh] lg:min-h-[92vh] flex items-center"
         style={{
           backgroundImage:
             "linear-gradient(rgba(245,245,247,0.9), rgba(245,245,247,0.94)), url('https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1600&q=80')",
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-16 lg:py-20">
-          <div className="grid gap-10 lg:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-center">
-            <div className="max-w-2xl lg:max-w-none">
-              <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider mb-4">
-                AI-powered strategic sourcing and decision intelligence
-              </p>
-              <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")}>
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand leading-[1.1] tracking-tight">
-                  Find, analyze, and choose the best supplier and pricing for
-                  <span className="text-accent"> any part</span>
-                </h1>
-              </PretextHeroReserve>
-              <p className="mt-6 text-lg text-slate-600 max-w-xl">
-                An AI-powered research and comparison platform for manufacturing teams. Enter a part number—we gather data from multiple sources, compare vendors on price, availability, and reliability, and deliver intelligent recommendations for the best decision.
-              </p>
-              <p className="mt-4 text-base text-slate-500 max-w-xl italic">
-                We turn complex supplier research into instant, data-driven decisions.
-              </p>
-              <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
-                <Link to="/company" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors min-h-[44px]">
-                  Request a demo <ChevronRightIcon className="w-4 h-4" />
-                </Link>
-                <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]">
-                  Explore platform
-                </Link>
-                <a href="#part-showcase" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-slate-600 hover:text-accent transition-colors min-h-[44px]">
-                  See it in action
-                  <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-                </a>
-              </div>
+        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28 lg:py-36">
+          <div className="w-full flex flex-col items-center text-center">
+            <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider mb-4">
+              AI-powered strategic sourcing and decision intelligence
+            </p>
+            <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")} className="max-w-6xl mx-auto">
+              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand leading-[1.1] tracking-tight">
+                Find, analyze, and choose the best supplier and pricing for
+                <span className="text-accent"> any part</span>
+              </h1>
+            </PretextHeroReserve>
+            <p className="mt-6 text-lg text-slate-600 max-w-4xl mx-auto">
+              An AI-powered research and comparison platform for manufacturing teams. Enter a part number—we gather data from multiple sources, compare vendors on price, availability, and reliability, and deliver intelligent recommendations for the best decision.
+            </p>
+            <p className="mt-4 text-base text-slate-500 max-w-4xl mx-auto italic">
+              We turn complex supplier research into instant, data-driven decisions.
+            </p>
+            <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <a
+                href={CALENDLY_DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors min-h-[44px]"
+              >
+                Request a demo <ChevronRightIcon className="w-4 h-4" />
+              </a>
+              <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]">
+                Explore platform
+              </Link>
+              <a href="#part-showcase" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-slate-600 hover:text-accent transition-colors min-h-[44px]">
+                See it in action
+                <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+              </a>
             </div>
-
-            {/* Hero right — part teaser */}
-            <a href="#part-showcase" className="group relative w-full min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] block">
-              <div className="relative h-full w-full rounded-2xl border border-white/40 bg-white/30 backdrop-blur-xl shadow-[0_8px_60px_-12px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] p-5 sm:p-6 transition-all duration-300 group-hover:shadow-[0_12px_50px_-10px_rgba(0,113,227,0.18)] group-hover:border-accent/30">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] rounded-2xl overflow-hidden bg-white/60 border border-white/50 shadow-sm flex items-center justify-center">
-                    <img src={partImage} alt="Harmonic Drive Gearbox" className="w-full h-full object-contain p-3" />
-                  </div>
-                  <span className="mt-4 inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent/10 text-accent">Gearboxes &amp; Speed Reducers</span>
-                  <h3 className="mt-2 font-display text-base sm:text-lg font-bold text-brand leading-snug">Harmonic Drive Gearbox</h3>
-                  <p className="mt-1 text-xs sm:text-sm text-slate-500 font-mono tracking-tight">HD-CSD-25-160-2A-GR</p>
-                  <p className="mt-3 text-sm text-slate-600">
-                    <span className="font-semibold text-brand">5 vendors</span> &middot;{" "}
-                    <span className="font-semibold text-accent">$865</span>
-                    {" – "}$1,410
-                  </p>
-                  <p className="mt-4 inline-flex items-center gap-1 text-accent text-sm font-semibold opacity-70 group-hover:opacity-100 transition-opacity">
-                    Scroll to explore
-                    <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-                  </p>
-                </div>
-              </div>
-              <div className="pointer-events-none absolute -right-6 -top-6 hidden h-28 w-28 rounded-full bg-accent/8 blur-3xl lg:block" aria-hidden />
-              <div className="pointer-events-none absolute -bottom-8 -left-8 hidden h-36 w-36 rounded-full bg-blue-200/20 blur-3xl lg:block" aria-hidden />
-            </a>
           </div>
         </div>
       </section>
@@ -404,9 +382,14 @@ export default function HomePage() {
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">Ready to source smarter?</h2>
           <p className="mt-4 text-white/80">See how Partsource turns part-level research into instant, data-driven supplier decisions for your team.</p>
           <div className="mt-10 flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
-            <Link to="/company" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand bg-white hover:bg-slate-100 transition-colors min-h-[44px]">
+            <a
+              href={CALENDLY_DEMO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand bg-white hover:bg-slate-100 transition-colors min-h-[44px]"
+            >
               Request a demo
-            </Link>
+            </a>
             <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white border-2 border-white/40 hover:bg-white/10 transition-colors min-h-[44px]">
               Enterprise solutions
             </Link>

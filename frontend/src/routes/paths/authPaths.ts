@@ -1,4 +1,2 @@
-export const AUTH_ROUTES = {
-  SIGNIN: "/signin",
-  SIGNUP: "/signup",
-} as const;
+/** Auth paths — empty while the marketing site has no sign-in/up routes. */
+export const AUTH_ROUTES = {} as const;

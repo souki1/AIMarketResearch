@@ -5,6 +5,7 @@ export const ROUTES = {
   HOME: "/",
   ...AUTH_ROUTES,
   PRODUCTS: "/products",
+  /** @deprecated Use PRODUCTS — `/solutions` redirects to `/products`. */
   SOLUTIONS: "/solutions",
   CUSTOMERS: "/customers",
   RESOURCES: "/resources",

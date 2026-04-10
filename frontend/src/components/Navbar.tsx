@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { HamburgerMenuIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { CALENDLY_DEMO_URL } from "../constants/booking";
 
 const navLinks: { label: string; path: string }[] = [
   { label: "Products", path: "/products" },
-  { label: "Solutions", path: "/solutions" },
   { label: "Customers", path: "/customers" },
   { label: "Resources", path: "/resources" },
   { label: "Company", path: "/company" },
@@ -54,24 +54,22 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden lg:flex items-center gap-2">
-              <Link
-                to="/signin"
-                className="px-4 py-2.5 rounded-xl text-xs font-normal text-white/85 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                Sign in
-              </Link>
-              <Link
-                to="/company"
+              <a
+                href={CALENDLY_DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="apple-cta-primary px-4 py-2.5 rounded-xl text-xs font-normal transition-colors"
               >
                 Request a demo
-              </Link>
-              <Link
-                to="/company"
+              </a>
+              <a
+                href={CALENDLY_DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="apple-cta-secondary apple-pill-link px-4 py-2.5 text-xs font-normal transition-colors"
               >
                 Contact Sales
-              </Link>
+              </a>
             </div>
 
             <button
@@ -118,15 +116,24 @@ export default function Navbar() {
               Enterprise
             </Link>
             <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-2">
-              <Link to="/signin" className="w-full py-3 rounded-lg text-center font-medium text-white/85 bg-white/10 hover:bg-white/15 min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
-                Sign in
-              </Link>
-              <Link to="/company" className="w-full py-3 rounded-lg text-center font-medium text-white bg-accent hover:bg-[#0066cc] min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
+              <a
+                href={CALENDLY_DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 rounded-lg text-center font-medium text-white bg-accent hover:bg-[#0066cc] min-h-[44px] flex items-center justify-center"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Request a demo
-              </Link>
-              <Link to="/company" className="w-full py-3 rounded-full text-center font-medium text-accent-light border border-accent-light min-h-[44px] flex items-center justify-center" onClick={() => setMobileMenuOpen(false)}>
+              </a>
+              <a
+                href={CALENDLY_DEMO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 rounded-full text-center font-medium text-accent-light border border-accent-light min-h-[44px] flex items-center justify-center"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Contact Sales
-              </Link>
+              </a>
             </div>
           </div>
         </div>

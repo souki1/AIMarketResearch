@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useMemo } from "react";
+import partImage from "../assets/images/download (1).jpg";
 
 /* ══════════════════════════════════════════════════════════════
    DATA
@@ -91,6 +92,31 @@ export default function PartShowcase() {
         <div className="relative py-20 sm:py-28 bg-[#fafafa] text-brand overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle,rgba(41,151,255,0.04),transparent_70%)]" aria-hidden />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+
+            {/* Featured part — teaser (from home hero) */}
+            <div className="sr group relative w-full max-w-xl mx-auto min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] mb-10 sm:mb-14">
+              <div className="relative h-full w-full rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-[0_8px_60px_-12px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] p-5 sm:p-6 transition-all duration-300 group-hover:shadow-[0_12px_50px_-10px_rgba(0,113,227,0.18)] group-hover:border-accent/30">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex items-center justify-center">
+                    <img src={partImage} alt="Harmonic Drive Gearbox" className="w-full h-full object-contain p-3" />
+                  </div>
+                  <span className="mt-4 inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent/10 text-accent">Gearboxes &amp; Speed Reducers</span>
+                  <h3 className="mt-2 font-display text-base sm:text-lg font-bold text-brand leading-snug">Harmonic Drive Gearbox</h3>
+                  <p className="mt-1 text-xs sm:text-sm text-slate-500 font-mono tracking-tight">HD-CSD-25-160-2A-GR</p>
+                  <p className="mt-3 text-sm text-slate-600">
+                    <span className="font-semibold text-brand">{demoPart.vendors.length} vendors</span> &middot;{" "}
+                    <span className="font-semibold text-accent">${minPrice.toLocaleString()}</span>
+                    {" – "}${maxPrice.toLocaleString()}
+                  </p>
+                  <p className="mt-4 inline-flex items-center gap-1 text-accent text-sm font-semibold opacity-70 group-hover:opacity-100 transition-opacity">
+                    Scroll to explore
+                    <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                  </p>
+                </div>
+              </div>
+              <div className="pointer-events-none absolute -right-6 -top-6 hidden h-28 w-28 rounded-full bg-accent/8 blur-3xl lg:block" aria-hidden />
+              <div className="pointer-events-none absolute -bottom-8 -left-8 hidden h-36 w-36 rounded-full bg-blue-200/20 blur-3xl lg:block" aria-hidden />
+            </div>
 
             {/* Header */}
             <div className="text-center mb-10 sm:mb-14">

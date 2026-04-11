@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import "./App.css";
 
 function Root() {
@@ -12,6 +13,7 @@ function Root() {
       }
     >
       <Outlet />
+      <Analytics />
     </Suspense>
   );
 }

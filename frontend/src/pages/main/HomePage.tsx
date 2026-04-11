@@ -1,13 +1,10 @@
 import { useRef, useEffect } from "react";
+import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import BarChart from "../../components/BarChart";
-import PretextHeroReserve from "../../components/enterprise/PretextHeroReserve";
 import PartShowcase from "../../components/PartShowcase";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
-
-const HERO_HEADLINE_TEXT =
-  "Find, analyze, and choose the best supplier and pricing for any part";
 
 const stats = [
   { value: "2,400+", label: "Active supplier networks" },
@@ -164,41 +161,57 @@ export default function HomePage() {
           HERO
       ════════════════════════════════════════════════════════════════ */}
       <section
-        className="bg-white border-b border-slate-100 bg-cover bg-center min-h-[85vh] md:min-h-[88vh] lg:min-h-[92vh] flex items-center"
+        className="border-b border-slate-100 min-h-screen flex items-center"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(245,245,247,0.9), rgba(245,245,247,0.94)), url('https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1600&q=80')",
+          /* Layers: accent glows on top, linear gradient base below */
+          backgroundImage: [
+            "radial-gradient(ellipse 110% 65% at 100% 0%, rgba(0, 113, 227, 0.14), transparent 52%)",
+            "radial-gradient(ellipse 75% 55% at 0% 100%, rgba(59, 130, 246, 0.09), transparent 48%)",
+            "linear-gradient(168deg, #eff6ff 0%, #f8fafc 18%, #f1f5f9 42%, #eef2ff 72%, #f8fafc 100%)",
+          ].join(", "),
+          backgroundColor: "#f8fafc",
         }}
       >
-        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28 lg:py-36">
-          <div className="w-full flex flex-col items-center text-center">
-            <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider mb-4">
-              AI-powered strategic sourcing and decision intelligence
+        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-12 md:py-16 lg:py-20 shrink-0">
+          <div className="sr-stagger w-full flex flex-col text-center">
+            <p
+              className="sr font-display text-accent font-semibold text-sm sm:text-base uppercase tracking-[0.18em] sm:tracking-[0.2em] w-full"
+              style={{ "--sr-i": 0 } as CSSProperties}
+            >
+              Products &amp; solutions
             </p>
-            <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")} className="max-w-6xl mx-auto">
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand leading-[1.1] tracking-tight">
-                Find, analyze, and choose the best supplier and pricing for
-                <span className="text-accent"> any part</span>
-              </h1>
-            </PretextHeroReserve>
-            <p className="mt-6 text-lg text-slate-600 max-w-4xl mx-auto">
-              An AI-powered research and comparison platform for manufacturing teams. Enter a part number—we gather data from multiple sources, compare vendors on price, availability, and reliability, and deliver intelligent recommendations for the best decision.
+            <h1
+              className="sr font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand mt-4 w-full max-w-none leading-tight text-balance"
+              style={{ "--sr-i": 1 } as CSSProperties}
+            >
+              Strategic sourcing and intelligent workflows for every part
+            </h1>
+            <p
+              className="sr mt-6 text-lg text-slate-600 w-full max-w-none leading-relaxed text-pretty"
+              style={{ "--sr-i": 2 } as CSSProperties}
+            >
+              An AI-powered research and comparison platform for manufacturing teams: find suppliers, analyze pricing and availability, compare options with clarity, and get ranked recommendations—so
+              strategic sourcing is data-driven, not guesswork.
             </p>
-            <p className="mt-4 text-base text-slate-500 max-w-4xl mx-auto italic">
-              We turn complex supplier research into instant, data-driven decisions.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <div
+              className="sr mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full"
+              style={{ "--sr-i": 3 } as CSSProperties}
+            >
+              <a
+                href="#product-demo"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-brand-light min-h-[44px] w-full sm:w-auto"
+              >
+                Interactive product demo
+                <ChevronRightIcon className="w-4 h-4 shrink-0" aria-hidden />
+              </a>
               <a
                 href={CALENDLY_DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-slate-200 bg-white/90 px-6 py-3 text-sm font-semibold text-brand backdrop-blur-sm transition hover:border-accent hover:bg-white min-h-[44px] w-full sm:w-auto"
               >
-                Request a demo <ChevronRightIcon className="w-4 h-4" />
+                Book a live walkthrough
               </a>
-              <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]">
-                Explore platform
-              </Link>
             </div>
           </div>
         </div>
@@ -221,7 +234,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="sr-stagger grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {stats.map((s, i) => (
-              <div key={s.label} className="sr text-center" style={{ "--sr-i": i } as React.CSSProperties}>
+              <div key={s.label} className="sr text-center" style={{ "--sr-i": i } as CSSProperties}>
                 <p className="font-display text-3xl md:text-4xl font-bold text-brand">{s.value}</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">{s.label}</p>
               </div>
@@ -242,7 +255,7 @@ export default function HomePage() {
           </div>
           <div className="sr-stagger grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {howItWorks.map((item, i) => (
-              <div key={item.step} className="sr relative p-8 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as React.CSSProperties}>
+              <div key={item.step} className="sr relative p-8 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as CSSProperties}>
                 <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-accent/10 text-accent font-display font-bold text-lg">{item.step}</span>
                 <h3 className="mt-4 font-display text-lg font-semibold text-brand">{item.title}</h3>
                 <p className="mt-2 text-slate-600 text-sm leading-relaxed">{item.text}</p>
@@ -304,7 +317,7 @@ export default function HomePage() {
           </div>
           <div className="sr-stagger grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {aiImpactData.map((item, i) => (
-              <div key={item.label} className="sr relative p-6 rounded-2xl bg-slate-50 border border-slate-100 text-center overflow-hidden card-hover" style={{ "--sr-i": i } as React.CSSProperties}>
+              <div key={item.label} className="sr relative p-6 rounded-2xl bg-slate-50 border border-slate-100 text-center overflow-hidden card-hover" style={{ "--sr-i": i } as CSSProperties}>
                 <div className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-lg bg-accent/15 text-accent">{aiImpactIcons[item.iconKey]}</div>
                 <p className="font-display text-4xl sm:text-5xl font-bold text-accent tabular-nums">{item.value}%</p>
                 <p className="mt-2 text-sm font-medium text-slate-700 leading-snug">{item.label}</p>
@@ -326,7 +339,7 @@ export default function HomePage() {
           </div>
           <div className="sr-stagger grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {industries.map((ind, i) => (
-              <div key={ind.name} className="sr p-6 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as React.CSSProperties}>
+              <div key={ind.name} className="sr p-6 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as CSSProperties}>
                 <h3 className="font-display font-semibold text-brand">{ind.name}</h3>
                 <p className="mt-2 text-sm text-slate-600">{ind.desc}</p>
               </div>
@@ -344,7 +357,7 @@ export default function HomePage() {
           </div>
           <div className="sr-stagger grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {useCases.map((uc, i) => (
-              <div key={uc} className="sr flex items-start gap-4 p-4 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as React.CSSProperties}>
+              <div key={uc} className="sr flex items-start gap-4 p-4 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as CSSProperties}>
                 <span className="shrink-0 w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center">{useCaseIcon}</span>
                 <p className="pt-1.5 text-sm font-medium text-slate-800 leading-snug">{uc}</p>
               </div>
@@ -362,7 +375,7 @@ export default function HomePage() {
           </div>
           <div className="sr-stagger grid md:grid-cols-3 gap-8">
             {features.map((f, i) => (
-              <div key={f.title} className="sr p-8 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as React.CSSProperties}>
+              <div key={f.title} className="sr p-8 rounded-xl bg-white border border-slate-100 card-hover" style={{ "--sr-i": i } as CSSProperties}>
                 <div className="w-12 h-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-5">{f.icon}</div>
                 <h3 className="font-display text-xl font-semibold text-brand">{f.title}</h3>
                 <p className="mt-2 text-slate-600">{f.description}</p>

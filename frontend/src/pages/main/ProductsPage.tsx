@@ -4,8 +4,12 @@ import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import SimpleBarChart from "../../components/SimpleBarChart";
 import BarChart from "../../components/BarChart";
+import PretextHeroReserve from "../../components/enterprise/PretextHeroReserve";
 import SolutionsProductShowcase from "../../components/SolutionsProductShowcase";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
+
+const HERO_HEADLINE_TEXT =
+  "Find, analyze, and choose the best supplier and pricing for any part";
 
 const products = [
   {
@@ -139,9 +143,8 @@ export default function ProductsPage() {
   return (
     <div ref={revealRef}>
       <section
-        className="border-b border-slate-100 min-h-screen flex items-center"
+        className="border-b border-slate-100 min-h-[85vh] md:min-h-[88vh] lg:min-h-[92vh] flex items-center"
         style={{
-          /* Layers: accent glows on top, linear gradient base below */
           backgroundImage: [
             "radial-gradient(ellipse 110% 65% at 100% 0%, rgba(0, 113, 227, 0.14), transparent 52%)",
             "radial-gradient(ellipse 75% 55% at 0% 100%, rgba(59, 130, 246, 0.09), transparent 48%)",
@@ -150,46 +153,35 @@ export default function ProductsPage() {
           backgroundColor: "#f8fafc",
         }}
       >
-        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-12 md:py-16 lg:py-20 shrink-0">
-          <div className="sr-stagger w-full flex flex-col text-center">
-            <p
-              className="sr font-display text-accent font-semibold text-sm sm:text-base uppercase tracking-[0.18em] sm:tracking-[0.2em] w-full"
-              style={{ "--sr-i": 0 } as CSSProperties}
-            >
-              Products &amp; solutions
+        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28 lg:py-36">
+          <div className="w-full flex flex-col items-center text-center">
+            <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider mb-4">
+              AI-powered strategic sourcing and decision intelligence
             </p>
-            <h1
-              className="sr font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand mt-4 w-full max-w-none leading-tight text-balance"
-              style={{ "--sr-i": 1 } as CSSProperties}
-            >
-              Strategic sourcing and intelligent workflows for every part
-            </h1>
-            <p
-              className="sr mt-6 text-lg text-slate-600 w-full max-w-none leading-relaxed text-pretty"
-              style={{ "--sr-i": 2 } as CSSProperties}
-            >
-              An AI-powered research and comparison platform for manufacturing teams: find suppliers, analyze pricing and availability, compare options with clarity, and get ranked recommendations—so
-              strategic sourcing is data-driven, not guesswork.
+            <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")} className="max-w-6xl mx-auto">
+              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand leading-[1.1] tracking-tight">
+                Find, analyze, and choose the best supplier and pricing for
+                <span className="text-accent"> any part</span>
+              </h1>
+            </PretextHeroReserve>
+            <p className="mt-6 text-lg text-slate-600 max-w-4xl mx-auto">
+              An AI-powered research and comparison platform for manufacturing teams. Enter a part number—we gather data from multiple sources, compare vendors on price, availability, and reliability, and deliver intelligent recommendations for the best decision.
             </p>
-            <div
-              className="sr mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full"
-              style={{ "--sr-i": 3 } as CSSProperties}
-            >
-              <a
-                href="#product-demo"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-brand-light min-h-[44px] w-full sm:w-auto"
-              >
-                Interactive product demo
-                <ChevronRightIcon className="w-4 h-4 shrink-0" aria-hidden />
-              </a>
+            <p className="mt-4 text-base text-slate-500 max-w-4xl mx-auto italic">
+              We turn complex supplier research into instant, data-driven decisions.
+            </p>
+            <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
               <a
                 href={CALENDLY_DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-slate-200 bg-white/90 px-6 py-3 text-sm font-semibold text-brand backdrop-blur-sm transition hover:border-accent hover:bg-white min-h-[44px] w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors min-h-[44px]"
               >
-                Book a live walkthrough
+                Request a demo <ChevronRightIcon className="w-4 h-4" />
               </a>
+              <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]">
+                Explore platform
+              </Link>
             </div>
           </div>
         </div>

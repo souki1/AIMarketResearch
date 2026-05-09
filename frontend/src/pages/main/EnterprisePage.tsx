@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
+import Seo from "../../components/Seo";
 
 const outcomes = [
   { title: "One stack", detail: "Parts & awards across plants." },
@@ -113,6 +114,11 @@ const capabilities = [
 export default function EnterprisePage() {
   return (
     <div>
+      <Seo
+        title="Enterprise — Security, Integration & Deployment | Partsource"
+        description="Enterprise Partsource: SAML and SCIM, APIs and environments, security exhibits, and phased rollout for multi-plant manufacturing sourcing."
+        canonicalPath="/enterprise"
+      />
       <section
         className="relative w-full overflow-hidden border-b border-slate-200/40 min-h-[min(78vh,760px)] flex flex-col items-center justify-center"
         aria-labelledby="enterprise-hero-heading"

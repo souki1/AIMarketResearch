@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
+import Seo from "../../components/Seo";
 
 const values = [
   {
@@ -62,6 +63,11 @@ const pricingTiers = [
 export default function CompanyPage() {
   return (
     <div>
+      <Seo
+        title="Company — About Partsource | Partsource"
+        description="Partsource designs for measurable procurement outcomes: faster sourcing, explainable AI recommendations, and enterprise reliability for manufacturing teams."
+        canonicalPath="/company"
+      />
       <section className="relative overflow-hidden border-b border-slate-200/60 min-h-[78vh] md:min-h-[82vh] flex items-center">
         <div
           className="absolute inset-0 bg-cover bg-center"

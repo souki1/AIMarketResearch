@@ -7,6 +7,7 @@ import BarChart from "../../components/BarChart";
 import PretextHeroReserve from "../../components/enterprise/PretextHeroReserve";
 import SolutionsProductShowcase from "../../components/SolutionsProductShowcase";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
+import Seo from "../../components/Seo";
 
 const HERO_HEADLINE_TEXT =
   "Find, analyze, and choose the best supplier and pricing for any part";
@@ -150,6 +151,11 @@ export default function ProductsPage() {
 
   return (
     <div ref={revealRef}>
+      <Seo
+        title="Products — Part Research, Vendor Comparison & Awards | Partsource"
+        description="Find, analyze, and choose the best supplier and pricing for any part. Multi-source OEM and aftermarket research, fair vendor comparison, and explainable AI recommendations."
+        canonicalPath="/products"
+      />
       <section
         className="relative overflow-hidden border-b border-slate-200/60 min-h-[88vh] md:min-h-[90vh] lg:min-h-[92vh] flex items-center"
         aria-labelledby="products-hero-heading"

@@ -6,6 +6,24 @@ import BarChart from "../../components/BarChart";
 import HeroProductMockup from "../../components/HeroProductMockup";
 import PartShowcase from "../../components/PartShowcase";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
+import { SITE_CANONICAL_ORIGIN } from "../../constants/site";
+import Seo from "../../components/Seo";
+
+const homeJsonLd: Record<string, unknown>[] = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Partsource",
+    url: SITE_CANONICAL_ORIGIN,
+    logo: `${SITE_CANONICAL_ORIGIN}/logo.svg`,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Partsource",
+    url: SITE_CANONICAL_ORIGIN,
+  },
+];
 
 const stats = [
   { value: "2,400+", label: "Active supplier networks" },
@@ -164,6 +182,12 @@ export default function HomePage() {
 
   return (
     <div ref={revealRef}>
+      <Seo
+        title="Partsource — AI-Powered Part Sourcing & Supplier Comparison"
+        description="AI-powered strategic sourcing and decision intelligence. Find, analyze, and choose the best suppliers and pricing for OEM and aftermarket parts."
+        canonicalPath="/"
+        jsonLd={homeJsonLd}
+      />
       {/* ════════════════════════════════════════════════════════════════
           HERO
       ════════════════════════════════════════════════════════════════ */}

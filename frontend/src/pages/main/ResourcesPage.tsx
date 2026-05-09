@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Seo from "../../components/Seo";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 const heroBg =
@@ -60,6 +61,11 @@ const reads = [
 export default function ResourcesPage() {
   return (
     <div className="resources-hub bg-[#eef1f4]">
+      <Seo
+        title="Resources — Docs, Guides & Sourcing Playbooks | Partsource"
+        description="Integration and API notes, sourcing playbooks, and diligence resources for OEM and aftermarket procurement teams adopting Partsource."
+        canonicalPath="/resources"
+      />
       <section className="relative overflow-hidden border-b border-slate-200/80 min-h-[min(52vh,480px)] flex items-end">
         <div
           className="absolute inset-0 bg-cover bg-center"

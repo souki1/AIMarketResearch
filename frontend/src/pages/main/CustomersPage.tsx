@@ -12,6 +12,7 @@ import {
   TimerIcon,
 } from "@radix-ui/react-icons";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
+import Seo from "../../components/Seo";
 
 /**
  * Reference brands in manufacturing & procurement tech. Logos resolved via public logo CDNs
@@ -181,6 +182,11 @@ const industriesServed: { label: string; blurb: string; Icon: typeof CubeIcon; i
 export default function CustomersPage() {
   return (
     <div className="customers-page bg-[#eef1f4]">
+      <Seo
+        title="Customers — Manufacturing Part Sourcing at Scale | Partsource"
+        description="Compare parts, price, and logistics at manufacturing scale. OEM and aftermarket research, landed cost, and lead-time signals for procurement and plant teams."
+        canonicalPath="/customers"
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-slate-200/80" aria-labelledby="customers-hero-heading">
         <div

@@ -1,9 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import Seo from "../../components/Seo";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 
 export default function NotFoundPage() {
+  const { pathname } = useLocation();
+
   return (
     <section className="min-h-[60vh] flex items-center justify-center px-4">
+      <Seo
+        title="Page not found | Partsource"
+        description="The page you requested could not be found."
+        canonicalPath={pathname || "/"}
+        noIndex
+      />
       <div className="max-w-xl mx-auto text-center">
         <p className="font-display text-6xl font-bold text-slate-200">404</p>
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-brand mt-4">

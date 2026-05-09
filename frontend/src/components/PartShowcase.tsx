@@ -1,5 +1,7 @@
-import { useRef, useEffect, useState, useMemo } from "react";
-import partImage from "../assets/images/download (1).jpg";
+import { useRef, useEffect, useState, useMemo, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, ContactShadows, Environment, Float } from "@react-three/drei";
+import * as THREE from "three";
 
 /* ══════════════════════════════════════════════════════════════
    DATA
@@ -23,13 +25,174 @@ const demoPart = {
 const regions = ["All Regions", "Asia Pacific", "Europe", "Americas", "Middle East"] as const;
 
 const keyNumbers = [
-  { value: "$780", label: "Lowest price", sub: "Apex Drives India" },
-  { value: "99%", label: "Highest reliability", sub: "SureGear Industries" },
-  { value: "3 wks", label: "Fastest lead time", sub: "SureGear Industries" },
-  { value: "10", label: "Vendors compared", sub: "Across 4 regions, 10 countries" },
-  { value: "38%", label: "Price variance", sub: "$780 – $1,480 spread" },
-  { value: "87%", label: "Decision confidence", sub: "AI-weighted score" },
+  { value: "$780", label: "Floor price", sub: "Lowest quote in grid" },
+  { value: "99%", label: "Reliability bar", sub: "Top vendor signal" },
+  { value: "3 wks", label: "Fast lane", sub: "Shortest lead window" },
+  { value: "10", label: "Suppliers", sub: "Regions & lanes" },
+  { value: "38%", label: "Spread", sub: "Price variance" },
+  { value: "87%", label: "Confidence", sub: "Composite score" },
 ];
+
+/* ══════════════════════════════════════════════════════════════
+   3D MODEL — Procedural Harmonic Drive Gearbox
+   ══════════════════════════════════════════════════════════════ */
+
+function HarmonicDriveMesh() {
+  const group = useRef<THREE.Group>(null!);
+
+  useFrame((_, delta) => {
+    if (group.current) group.current.rotation.y += delta * 0.35;
+  });
+
+  const boltCount = 12;
+  const innerToothCount = 56;
+
+  return (
+    <group ref={group} rotation={[Math.PI / 7, 0, 0]} position={[0, -0.1, 0]}>
+      {/* Outer flange */}
+      <mesh castShadow receiveShadow position={[0, 0.05, 0]}>
+        <cylinderGeometry args={[1.7, 1.7, 0.18, 96]} />
+        <meshStandardMaterial color="#9ea4ad" metalness={0.95} roughness={0.18} />
+      </mesh>
+
+      {/* Bolt holes around the flange */}
+      {Array.from({ length: boltCount }).map((_, i) => {
+        const angle = (i / boltCount) * Math.PI * 2;
+        const r = 1.5;
+        return (
+          <mesh
+            key={`bolt-${i}`}
+            position={[Math.cos(angle) * r, 0.05, Math.sin(angle) * r]}
+            castShadow
+          >
+            <cylinderGeometry args={[0.09, 0.09, 0.22, 24]} />
+            <meshStandardMaterial color="#1a1c1f" metalness={0.6} roughness={0.6} />
+          </mesh>
+        );
+      })}
+
+      {/* Recessed inner ring */}
+      <mesh position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[1.18, 1.18, 0.04, 64]} />
+        <meshStandardMaterial color="#2a2c30" metalness={0.7} roughness={0.4} />
+      </mesh>
+
+      {/* Inner gear ring (where teeth sit) */}
+      <mesh position={[0, 0.18, 0]}>
+        <torusGeometry args={[0.85, 0.06, 24, 96]} />
+        <meshStandardMaterial color="#4a4d52" metalness={0.85} roughness={0.25} />
+      </mesh>
+
+      {/* Inner gear teeth — instanced look via small boxes */}
+      {Array.from({ length: innerToothCount }).map((_, i) => {
+        const angle = (i / innerToothCount) * Math.PI * 2;
+        const r = 0.78;
+        return (
+          <mesh
+            key={`tooth-${i}`}
+            position={[Math.cos(angle) * r, 0.18, Math.sin(angle) * r]}
+            rotation={[0, -angle, 0]}
+            castShadow
+          >
+            <boxGeometry args={[0.07, 0.08, 0.12]} />
+            <meshStandardMaterial color="#c8ccd2" metalness={0.95} roughness={0.12} />
+          </mesh>
+        );
+      })}
+
+      {/* Decorative blue accent ring on flange face */}
+      <mesh position={[0, 0.16, 0]}>
+        <torusGeometry args={[1.25, 0.03, 16, 96]} />
+        <meshStandardMaterial
+          color="#0071e3"
+          metalness={0.9}
+          roughness={0.15}
+          emissive="#2997ff"
+          emissiveIntensity={0.5}
+        />
+      </mesh>
+
+      {/* Output shaft (centered) */}
+      <mesh position={[0, 0.45, 0]} castShadow>
+        <cylinderGeometry args={[0.32, 0.32, 0.5, 32]} />
+        <meshStandardMaterial color="#5a5e64" metalness={0.95} roughness={0.18} />
+      </mesh>
+
+      {/* Output shaft cap with key slot accent */}
+      <mesh position={[0, 0.72, 0]} castShadow>
+        <cylinderGeometry args={[0.36, 0.32, 0.08, 32]} />
+        <meshStandardMaterial color="#0071e3" metalness={0.85} roughness={0.2} />
+      </mesh>
+
+      {/* Main housing body (below flange) */}
+      <mesh position={[0, -0.45, 0]} castShadow>
+        <cylinderGeometry args={[1.35, 1.45, 0.85, 64]} />
+        <meshStandardMaterial color="#3a3d42" metalness={0.85} roughness={0.3} />
+      </mesh>
+
+      {/* Cooling/decoration grooves on housing */}
+      {[0, 1, 2].map((i) => (
+        <mesh key={`groove-${i}`} position={[0, -0.25 - i * 0.18, 0]}>
+          <torusGeometry args={[1.42, 0.015, 12, 96]} />
+          <meshStandardMaterial color="#1a1c1f" metalness={0.6} roughness={0.5} />
+        </mesh>
+      ))}
+
+      {/* Back input shaft */}
+      <mesh position={[0, -1.05, 0]} castShadow>
+        <cylinderGeometry args={[0.22, 0.22, 0.45, 32]} />
+        <meshStandardMaterial color="#7a7e85" metalness={0.92} roughness={0.18} />
+      </mesh>
+
+      {/* Tiny part-number etched ring */}
+      <mesh position={[0, -0.12, 0]}>
+        <torusGeometry args={[1.46, 0.012, 12, 96]} />
+        <meshStandardMaterial color="#0a0a0a" metalness={0.4} roughness={0.8} />
+      </mesh>
+    </group>
+  );
+}
+
+function HarmonicDrive3D() {
+  return (
+    <Canvas
+      camera={{ position: [3.4, 2.2, 4.4], fov: 32 }}
+      dpr={[1, 2]}
+      gl={{ antialias: true, alpha: true }}
+      shadows
+      style={{ touchAction: "pan-y" }}
+    >
+      <ambientLight intensity={0.55} />
+      <directionalLight
+        position={[5, 6, 5]}
+        intensity={1.4}
+        castShadow
+        shadow-mapSize={[1024, 1024]}
+      />
+      <directionalLight position={[-5, -2, -3]} intensity={0.5} color="#86c2ff" />
+      <Suspense fallback={null}>
+        <Environment preset="city" />
+      </Suspense>
+      <Float speed={1.4} rotationIntensity={0.12} floatIntensity={0.18}>
+        <HarmonicDriveMesh />
+      </Float>
+      <ContactShadows
+        position={[0, -1.55, 0]}
+        opacity={0.45}
+        scale={6}
+        blur={2.6}
+        far={4}
+      />
+      <OrbitControls
+        enablePan={false}
+        enableZoom={false}
+        minPolarAngle={Math.PI / 4}
+        maxPolarAngle={Math.PI / 1.7}
+        autoRotate={false}
+      />
+    </Canvas>
+  );
+}
 
 /* ══════════════════════════════════════════════════════════════
    HOOKS
@@ -93,12 +256,19 @@ export default function PartShowcase() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle,rgba(41,151,255,0.04),transparent_70%)]" aria-hidden />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
 
-            {/* Featured part — teaser (from home hero) */}
-            <div className="sr group relative w-full max-w-xl mx-auto min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] mb-10 sm:mb-14">
-              <div className="relative h-full w-full rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-[0_8px_60px_-12px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] p-5 sm:p-6 transition-all duration-300 group-hover:shadow-[0_12px_50px_-10px_rgba(0,113,227,0.18)] group-hover:border-accent/30">
+            {/* Featured part — interactive 3D model */}
+            <div className="sr group relative w-full max-w-xl mx-auto mb-10 sm:mb-14">
+              <div className="relative w-full rounded-3xl border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-[0_8px_60px_-12px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] p-5 sm:p-6 transition-all duration-300 group-hover:shadow-[0_12px_50px_-10px_rgba(0,113,227,0.18)] group-hover:border-accent/30">
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex items-center justify-center">
-                    <img src={partImage} alt="Harmonic Drive Gearbox" className="w-full h-full object-contain p-3" />
+                  <div className="relative w-full h-[280px] sm:h-[340px] lg:h-[380px] rounded-2xl overflow-hidden bg-linear-to-br from-slate-50 to-slate-100 border border-slate-100 shadow-inner showcase-canvas">
+                    <HarmonicDrive3D />
+                    <span className="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200/80">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      LIVE 3D
+                    </span>
+                    <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/60 text-white backdrop-blur px-2.5 py-1 text-[10px] font-medium tracking-wide">
+                      Drag to rotate
+                    </span>
                   </div>
                   <span className="mt-4 inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent/10 text-accent">Gearboxes &amp; Speed Reducers</span>
                   <h3 className="mt-2 font-display text-base sm:text-lg font-bold text-brand leading-snug">Harmonic Drive Gearbox</h3>
@@ -117,14 +287,13 @@ export default function PartShowcase() {
             {/* Header */}
             <div className="text-center mb-10 sm:mb-14">
               <p className="sr font-display text-accent font-semibold text-sm uppercase tracking-[0.2em] mb-4">
-                Global vendor intelligence
+                Vendor grid
               </p>
-              <h2 className="sr font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-brand leading-tight">
-                {demoPart.vendors.length} vendors. 4 regions.<br />
-                <span className="text-accent">One clear choice.</span>
+              <h2 className="sr font-display text-3xl sm:text-4xl md:text-5xl font-bold text-brand leading-tight">
+                {demoPart.vendors.length} quotes · 4 regions · <span className="text-accent">ranked award</span>
               </h2>
-              <p className="sr mt-5 text-base sm:text-lg text-slate-500 max-w-2xl mx-auto">
-                Research suppliers by region, compare pricing across ${minPrice.toLocaleString()} – ${maxPrice.toLocaleString()}, and let AI surface the best decision.
+              <p className="sr mt-4 text-sm sm:text-base text-slate-500 max-w-xl mx-auto">
+                ${minPrice.toLocaleString()} – ${maxPrice.toLocaleString()} spread · filter by lane · AI shortlist.
               </p>
             </div>
 
@@ -356,11 +525,10 @@ export default function PartShowcase() {
         <div className="bg-[#0a0a0a] text-white py-24 sm:py-32">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
             <p className="sr font-display text-accent-light font-semibold text-sm uppercase tracking-[0.2em] mb-4">
-              Decision impact
+              At a glance
             </p>
-            <h2 className="sr font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight mb-16 sm:mb-20">
-              From hours of research<br />
-              <span className="text-accent-light">to instant clarity.</span>
+            <h2 className="sr font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-12 sm:mb-16">
+              Price · lead time · logistics — <span className="text-accent-light">one screen.</span>
             </h2>
             <div className="sr-stagger grid grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {keyNumbers.map((item, i) => (

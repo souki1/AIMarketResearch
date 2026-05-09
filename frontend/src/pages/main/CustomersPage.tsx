@@ -81,20 +81,20 @@ const platformOutcomes: {
 }[] = [
   {
     kicker: "Data",
-    title: "High volume, on demand, near real time",
-    sub: "Compare large amounts of part and supplier data as you need it—refreshed in near real time when your sources and integrations allow—instead of static exports that age by the hour.",
+    title: "Volume without spreadsheet drift",
+    sub: "Live feeds where your stack allows—one governed view of parts and suppliers.",
     Icon: LightningBoltIcon,
   },
   {
-    kicker: "Insight",
-    title: "Patterns that narrow the field",
-    sub: "Surface patterns across alternatives so you can shortlist the right vendors and safer buying paths—not only the lowest quote, but options that fit risk, qualification, and how you actually run production.",
+    kicker: "Price",
+    title: "Unit & landed in one frame",
+    sub: "Freight, duty, MOQ—so “cheap” lines don’t hide logistics risk.",
     Icon: GridIcon,
   },
   {
-    kicker: "Decisions",
-    title: "Expectations, buffer, and analysis",
-    sub: "Go beyond unit price: weigh lead time, reliability, and on-time performance, leave room for schedule slack, and use structured comparison and analysis when you need to justify the award to category, plant, or finance.",
+    kicker: "Logistics",
+    title: "Lead time as a first-class signal",
+    sub: "OTIF and lane fit beside price for awards your plant will defend.",
     Icon: ReaderIcon,
   },
 ];
@@ -139,36 +139,42 @@ const teamFocusAreas: { title: string; description: string; Icon: typeof GridIco
   },
 ];
 
-const industriesServed: { label: string; blurb: string; Icon: typeof CubeIcon }[] = [
+const industriesServed: { label: string; blurb: string; Icon: typeof CubeIcon; image: string }[] = [
   {
     label: "Discrete manufacturing",
     blurb: "BOM-heavy assemblies, engineered parts, and make-vs-buy decisions across plants.",
     Icon: CubeIcon,
+    image: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1100&q=80",
   },
   {
     label: "Process manufacturing",
     blurb: "Materials, batches, and specs where traceability and change control matter.",
     Icon: LayersIcon,
+    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1100&q=80",
   },
   {
     label: "Industrial equipment",
     blurb: "OEM and tier suppliers balancing lead times, alternates, and qualification.",
     Icon: RocketIcon,
+    image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1100&q=80",
   },
   {
     label: "Multi-plant operations",
     blurb: "Shared categories with local constraints—one governed view of options.",
     Icon: GridIcon,
+    image: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=1100&q=80",
   },
   {
     label: "Factory supply networks",
     blurb: "High-mix environments where disruption signals need to surface early.",
     Icon: LightningBoltIcon,
+    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1100&q=80",
   },
   {
     label: "Contract manufacturing",
     blurb: "Programs where award documentation and supplier performance are audited.",
     Icon: ReaderIcon,
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1100&q=80",
   },
 ];
 
@@ -181,19 +187,17 @@ export default function CustomersPage() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "linear-gradient(120deg, rgba(15,23,42,0.94) 0%, rgba(15,23,42,0.78) 45%, rgba(0,113,227,0.15) 100%), url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=2000&q=80')",
+              "linear-gradient(120deg, rgba(15,23,42,0.94) 0%, rgba(15,23,42,0.78) 45%, rgba(0,113,227,0.15) 100%), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80')",
           }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_0%,rgba(0,113,227,0.2),transparent_50%)] pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-20 md:py-28 lg:py-32 min-h-[min(62vh,520px)] flex flex-col justify-end">
           <p className="font-display text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] text-white/85">Customers</p>
           <h1 id="customers-hero-heading" className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white mt-4 max-w-4xl leading-[1.05] tracking-tight text-balance">
-            Clearer buys from live data—at the volume manufacturing runs on
+            Compare parts, price, and logistics at manufacturing scale
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-white/75 max-w-2xl leading-relaxed text-pretty">
-            Partsource helps you compare large volumes of part and supplier data on demand—often in near real time—so you can see patterns,
-            narrow to the right vendors, and choose safer options. Decisions weigh price with delivery, risk, and on-time performance, with
-            room to plan and the analysis you need when it is time to commit.
+          <p className="mt-5 text-base md:text-lg text-white/80 max-w-xl leading-relaxed">
+            OEM &amp; aftermarket research, landed cost, and lead-time lanes—so awards match how you actually run plants.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <a
@@ -264,7 +268,7 @@ export default function CustomersPage() {
         </div>
       </section>
 
-      {/* Outcomes — light surface, icon-led stats */}
+      {/* Outcomes — image header + cards */}
       <section
         className="relative py-16 md:py-24 bg-surface border-y border-slate-200/90 overflow-hidden"
         aria-labelledby="outcomes-heading"
@@ -275,15 +279,23 @@ export default function CustomersPage() {
         />
         <div className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-accent/7 blur-3xl" aria-hidden />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.2em]">Outcomes</p>
-            <h2 id="outcomes-heading" className="font-display text-3xl sm:text-4xl font-bold text-brand mt-3 tracking-tight">
-              What Partsource helps you drive
-            </h2>
-            <p className="mt-4 text-slate-600 leading-relaxed">
-              How far you get depends on your data sources and rollout—these are the outcomes we build toward: faster comparison at scale,
-              sharper patterns, and decisions that hold up when price is only part of the story.
-            </p>
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+            <div className="lg:col-span-5">
+              <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.2em]">Outcomes</p>
+              <h2 id="outcomes-heading" className="font-display text-3xl sm:text-4xl font-bold text-brand mt-3 tracking-tight">
+                What Partsource helps you drive
+              </h2>
+              <p className="mt-4 text-sm text-slate-600">Price accuracy + logistics fit—not spreadsheets by email.</p>
+            </div>
+            <div className="lg:col-span-7 relative h-56 sm:h-72 rounded-3xl overflow-hidden ring-1 ring-slate-200/80 shadow-xl shadow-slate-300/30">
+              <img
+                src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1800&q=80"
+                alt="Freight and logistics"
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/15 to-transparent" />
+            </div>
           </div>
           <div className="mt-12 grid gap-5 md:grid-cols-3 md:gap-6">
             {platformOutcomes.map((o) => (
@@ -408,21 +420,25 @@ export default function CustomersPage() {
             </p>
           </div>
 
-          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 list-none p-0">
-            {industriesServed.map(({ label, blurb, Icon }) => (
+          <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 list-none p-0">
+            {industriesServed.map(({ label, blurb, Icon, image }) => (
               <li
                 key={label}
-                className="flex gap-4 rounded-2xl border border-slate-200/90 bg-[#f8fafc] p-5 transition hover:border-accent/35 hover:bg-white hover:shadow-md"
+                className="group relative h-72 rounded-2xl overflow-hidden ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-xl hover:shadow-slate-300/40"
               >
-                <span
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent"
-                  aria-hidden
-                >
+                <img
+                  src={image}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/55 to-black/15" />
+                <span className="absolute top-5 left-5 flex h-11 w-11 items-center justify-center rounded-xl bg-white/95 text-accent shadow-md ring-1 ring-black/5">
                   <Icon className="h-5 w-5" />
                 </span>
-                <div className="min-w-0">
-                  <p className="font-display font-semibold text-brand leading-snug">{label}</p>
-                  <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">{blurb}</p>
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <p className="font-display text-lg font-semibold text-white leading-snug">{label}</p>
+                  <p className="mt-2 text-sm text-white/80 leading-relaxed">{blurb}</p>
                 </div>
               </li>
             ))}

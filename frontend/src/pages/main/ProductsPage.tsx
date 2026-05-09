@@ -18,6 +18,8 @@ const products = [
       "Enter a part number or query and automatically gather data from multiple sources—cleaned, matched, and ready to compare.",
     to: "#product-demo",
     icon: "hub",
+    image:
+      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Vendor comparison workspace",
@@ -25,6 +27,8 @@ const products = [
       "Compare suppliers side by side on price, availability, lead time, and reliability so every award is transparent and defensible.",
     to: "#product-demo",
     icon: "analytics",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Recommendation intelligence",
@@ -32,6 +36,8 @@ const products = [
       "Go beyond lists: get ranked options and explainable AI insights for the best sourcing decision on each part.",
     to: "#product-demo",
     icon: "ai",
+    image:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Integrations & data layer",
@@ -39,6 +45,8 @@ const products = [
       "Connect your stack—ERP, supplier feeds, and internal systems—so research and decisions stay in one place.",
     to: "#capabilities",
     icon: "api",
+    image:
+      "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
@@ -143,43 +151,55 @@ export default function ProductsPage() {
   return (
     <div ref={revealRef}>
       <section
-        className="border-b border-slate-100 min-h-[85vh] md:min-h-[88vh] lg:min-h-[92vh] flex items-center"
-        style={{
-          backgroundImage: [
-            "radial-gradient(ellipse 110% 65% at 100% 0%, rgba(0, 113, 227, 0.14), transparent 52%)",
-            "radial-gradient(ellipse 75% 55% at 0% 100%, rgba(59, 130, 246, 0.09), transparent 48%)",
-            "linear-gradient(168deg, #eff6ff 0%, #f8fafc 18%, #f1f5f9 42%, #eef2ff 72%, #f8fafc 100%)",
-          ].join(", "),
-          backgroundColor: "#f8fafc",
-        }}
+        className="relative overflow-hidden border-b border-slate-200/60 min-h-[88vh] md:min-h-[90vh] lg:min-h-[92vh] flex items-center"
+        aria-labelledby="products-hero-heading"
       >
-        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28 lg:py-36">
-          <div className="w-full flex flex-col items-center text-center">
-            <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider mb-4">
-              AI-powered strategic sourcing and decision intelligence
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=2400&q=80')",
+          }}
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: [
+              "radial-gradient(ellipse 100% 60% at 100% 0%, rgba(0,113,227,0.32), transparent 55%)",
+              "radial-gradient(ellipse 90% 60% at 0% 100%, rgba(41,151,255,0.18), transparent 50%)",
+              "linear-gradient(115deg, rgba(5,9,20,0.94) 0%, rgba(8,15,30,0.82) 45%, rgba(0,30,80,0.6) 100%)",
+            ].join(", "),
+          }}
+          aria-hidden
+        />
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28 lg:py-32">
+          <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center">
+            <p id="products-hero-kicker" className="font-display text-accent-light font-semibold text-xs sm:text-sm uppercase tracking-[0.22em] mb-4">
+              Products & solutions
             </p>
             <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")} className="max-w-6xl mx-auto">
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand leading-[1.1] tracking-tight">
+              <h1 id="products-hero-heading" className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight">
                 Find, analyze, and choose the best supplier and pricing for
-                <span className="text-accent"> any part</span>
+                <span className="text-accent-light"> any part</span>
               </h1>
             </PretextHeroReserve>
-            <p className="mt-6 text-lg text-slate-600 max-w-4xl mx-auto">
-              An AI-powered research and comparison platform for manufacturing teams. Enter a part number—we gather data from multiple sources, compare vendors on price, availability, and reliability, and deliver intelligent recommendations for the best decision.
-            </p>
-            <p className="mt-4 text-base text-slate-500 max-w-4xl mx-auto italic">
-              We turn complex supplier research into instant, data-driven decisions.
+            <p className="mt-6 text-base sm:text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+              An AI-powered research and comparison platform for manufacturing teams—turning complex supplier research into instant, data-driven decisions.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
               <a
                 href={CALENDLY_DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-white bg-brand hover:bg-brand-light transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-brand bg-white hover:bg-slate-100 transition shadow-lg shadow-black/30 min-h-[48px]"
               >
                 Request a demo <ChevronRightIcon className="w-4 h-4" />
               </a>
-              <Link to="/enterprise" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-brand border-2 border-slate-200 hover:border-accent hover:bg-slate-50 transition-colors min-h-[44px]">
+              <Link
+                to="/enterprise"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white border border-white/30 bg-white/5 backdrop-blur-md hover:bg-white/10 transition min-h-[48px]"
+              >
                 Explore platform
               </Link>
             </div>
@@ -187,50 +207,61 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Product cards */}
-      <section className="py-10 md:py-14 bg-white">
+      {/* Product cards — image-led */}
+      <section className="py-14 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="sr-stagger grid md:grid-cols-2 gap-8">
+          <div className="sr-stagger grid md:grid-cols-2 gap-6 lg:gap-8">
             {products.map((p, i) => (
               <Link
                 key={p.title}
                 to={p.to}
-                className="sr block p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow card-hover scroll-mt-24"
+                className="sr group relative flex flex-col rounded-3xl overflow-hidden bg-white ring-1 ring-slate-200/80 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-300/40 card-hover scroll-mt-24"
                 style={{ "--sr-i": i } as CSSProperties}
               >
-                <span className="inline-flex w-11 h-11 rounded-lg items-center justify-center bg-accent/10 text-accent mb-4">
-                  {p.icon === "hub" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h16v6H4zM4 14h7v6H4zM13 14h7v6h-7z" />
-                    </svg>
-                  )}
-                  {p.icon === "analytics" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20V10m5 10V4m5 16v-7M4 20h16" />
-                    </svg>
-                  )}
-                  {p.icon === "ai" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.75 3v2.25M14.25 3v2.25M6 8.25h12M6.75 20.25h10.5A2.25 2.25 0 0019.5 18V9.75A2.25 2.25 0 0017.25 7.5H6.75A2.25 2.25 0 004.5 9.75V18A2.25 2.25 0 006.75 20.25z"
-                      />
-                    </svg>
-                  )}
-                  {p.icon === "api" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 12h8M8 17h5M4 4h16v16H4z" />
-                    </svg>
-                  )}
-                </span>
-                <h2 className="font-display text-xl font-semibold text-brand">{p.title}</h2>
-                <p className="mt-3 text-slate-600">{p.description}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-accent font-medium text-sm">
-                  Learn more
-                  <ChevronRightIcon className="w-4 h-4" />
-                </span>
+                <div className="relative h-52 md:h-60 overflow-hidden">
+                  <img
+                    src={p.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
+                  <span className="absolute top-5 left-5 inline-flex w-11 h-11 rounded-xl items-center justify-center bg-white/95 text-accent shadow-md ring-1 ring-black/5">
+                    {p.icon === "hub" && (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h16v6H4zM4 14h7v6H4zM13 14h7v6h-7z" />
+                      </svg>
+                    )}
+                    {p.icon === "analytics" && (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20V10m5 10V4m5 16v-7M4 20h16" />
+                      </svg>
+                    )}
+                    {p.icon === "ai" && (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9.75 3v2.25M14.25 3v2.25M6 8.25h12M6.75 20.25h10.5A2.25 2.25 0 0019.5 18V9.75A2.25 2.25 0 0017.25 7.5H6.75A2.25 2.25 0 004.5 9.75V18A2.25 2.25 0 006.75 20.25z"
+                        />
+                      </svg>
+                    )}
+                    {p.icon === "api" && (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 12h8M8 17h5M4 4h16v16H4z" />
+                      </svg>
+                    )}
+                  </span>
+                </div>
+                <div className="p-7 md:p-8 flex-1 flex flex-col">
+                  <h2 className="font-display text-xl md:text-2xl font-semibold text-brand">{p.title}</h2>
+                  <p className="mt-3 text-slate-600 leading-relaxed flex-1">{p.description}</p>
+                  <span className="mt-5 inline-flex items-center gap-1 text-accent font-semibold text-sm">
+                    Learn more
+                    <ChevronRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
@@ -301,14 +332,25 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="py-2 md:py-4 bg-white">
+      <section className="py-6 md:py-10 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <img
-            src="https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=1400&q=80"
-            alt="Manufacturing procurement dashboard on laptop"
-            className="sr-scale w-full h-[260px] md:h-[340px] object-cover rounded-xl border border-slate-100"
-            loading="lazy"
-          />
+          <div className="sr-scale relative rounded-3xl overflow-hidden ring-1 ring-slate-200/80 shadow-2xl shadow-slate-300/30">
+            <img
+              src="https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=2000&q=80"
+              alt="Manufacturing procurement dashboard"
+              className="w-full h-[280px] md:h-[420px] object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/30 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent-light">
+                Live decision intelligence
+              </p>
+              <h3 className="mt-2 font-display text-2xl md:text-3xl font-bold text-white max-w-2xl leading-snug">
+                One workspace from part lookup to purchase order
+              </h3>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -421,11 +463,24 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <h2 className="sr font-display text-2xl font-bold text-brand text-center mb-6">Why recommendations—not just search</h2>
-          <p className="sr max-w-3xl mx-auto text-slate-600 text-center">
-            Search and comparison alone do not choose a supplier. Partsource adds decision intelligence: ranked options, explainable rationale, and a faster path from part number to award.
+      <section className="relative overflow-hidden py-20 md:py-28 border-y border-slate-200/40">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1581092919535-0f1f3a8aacf8?auto=format&fit=crop&w=2000&q=80')",
+          }}
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-linear-to-br from-[#050a14]/95 via-[#0a1a33]/85 to-slate-950/80" aria-hidden />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(0,113,227,0.35),transparent_55%)]" aria-hidden />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <p className="sr font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent-light">Decision intelligence</p>
+          <h2 className="sr mt-4 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
+            Recommendations, not just search
+          </h2>
+          <p className="sr mt-5 max-w-2xl mx-auto text-white/80 leading-relaxed">
+            Ranked options, explainable rationale, and a faster path from part number to award.
           </p>
         </div>
       </section>

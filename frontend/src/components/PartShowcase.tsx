@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useMemo, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, ContactShadows, Environment, Float } from "@react-three/drei";
-import * as THREE from "three";
+import HarmonicDriveModel from "./HarmonicDriveModel";
 
 /* ══════════════════════════════════════════════════════════════
    DATA
@@ -33,126 +33,6 @@ const keyNumbers = [
   { value: "87%", label: "Confidence", sub: "Composite score" },
 ];
 
-/* ══════════════════════════════════════════════════════════════
-   3D MODEL — Procedural Harmonic Drive Gearbox
-   ══════════════════════════════════════════════════════════════ */
-
-function HarmonicDriveMesh() {
-  const group = useRef<THREE.Group>(null!);
-
-  useFrame((_, delta) => {
-    if (group.current) group.current.rotation.y += delta * 0.35;
-  });
-
-  const boltCount = 12;
-  const innerToothCount = 56;
-
-  return (
-    <group ref={group} rotation={[Math.PI / 7, 0, 0]} position={[0, -0.1, 0]}>
-      {/* Outer flange */}
-      <mesh castShadow receiveShadow position={[0, 0.05, 0]}>
-        <cylinderGeometry args={[1.7, 1.7, 0.18, 96]} />
-        <meshStandardMaterial color="#9ea4ad" metalness={0.95} roughness={0.18} />
-      </mesh>
-
-      {/* Bolt holes around the flange */}
-      {Array.from({ length: boltCount }).map((_, i) => {
-        const angle = (i / boltCount) * Math.PI * 2;
-        const r = 1.5;
-        return (
-          <mesh
-            key={`bolt-${i}`}
-            position={[Math.cos(angle) * r, 0.05, Math.sin(angle) * r]}
-            castShadow
-          >
-            <cylinderGeometry args={[0.09, 0.09, 0.22, 24]} />
-            <meshStandardMaterial color="#1a1c1f" metalness={0.6} roughness={0.6} />
-          </mesh>
-        );
-      })}
-
-      {/* Recessed inner ring */}
-      <mesh position={[0, 0.15, 0]}>
-        <cylinderGeometry args={[1.18, 1.18, 0.04, 64]} />
-        <meshStandardMaterial color="#2a2c30" metalness={0.7} roughness={0.4} />
-      </mesh>
-
-      {/* Inner gear ring (where teeth sit) */}
-      <mesh position={[0, 0.18, 0]}>
-        <torusGeometry args={[0.85, 0.06, 24, 96]} />
-        <meshStandardMaterial color="#4a4d52" metalness={0.85} roughness={0.25} />
-      </mesh>
-
-      {/* Inner gear teeth — instanced look via small boxes */}
-      {Array.from({ length: innerToothCount }).map((_, i) => {
-        const angle = (i / innerToothCount) * Math.PI * 2;
-        const r = 0.78;
-        return (
-          <mesh
-            key={`tooth-${i}`}
-            position={[Math.cos(angle) * r, 0.18, Math.sin(angle) * r]}
-            rotation={[0, -angle, 0]}
-            castShadow
-          >
-            <boxGeometry args={[0.07, 0.08, 0.12]} />
-            <meshStandardMaterial color="#c8ccd2" metalness={0.95} roughness={0.12} />
-          </mesh>
-        );
-      })}
-
-      {/* Decorative blue accent ring on flange face */}
-      <mesh position={[0, 0.16, 0]}>
-        <torusGeometry args={[1.25, 0.03, 16, 96]} />
-        <meshStandardMaterial
-          color="#0071e3"
-          metalness={0.9}
-          roughness={0.15}
-          emissive="#2997ff"
-          emissiveIntensity={0.5}
-        />
-      </mesh>
-
-      {/* Output shaft (centered) */}
-      <mesh position={[0, 0.45, 0]} castShadow>
-        <cylinderGeometry args={[0.32, 0.32, 0.5, 32]} />
-        <meshStandardMaterial color="#5a5e64" metalness={0.95} roughness={0.18} />
-      </mesh>
-
-      {/* Output shaft cap with key slot accent */}
-      <mesh position={[0, 0.72, 0]} castShadow>
-        <cylinderGeometry args={[0.36, 0.32, 0.08, 32]} />
-        <meshStandardMaterial color="#0071e3" metalness={0.85} roughness={0.2} />
-      </mesh>
-
-      {/* Main housing body (below flange) */}
-      <mesh position={[0, -0.45, 0]} castShadow>
-        <cylinderGeometry args={[1.35, 1.45, 0.85, 64]} />
-        <meshStandardMaterial color="#3a3d42" metalness={0.85} roughness={0.3} />
-      </mesh>
-
-      {/* Cooling/decoration grooves on housing */}
-      {[0, 1, 2].map((i) => (
-        <mesh key={`groove-${i}`} position={[0, -0.25 - i * 0.18, 0]}>
-          <torusGeometry args={[1.42, 0.015, 12, 96]} />
-          <meshStandardMaterial color="#1a1c1f" metalness={0.6} roughness={0.5} />
-        </mesh>
-      ))}
-
-      {/* Back input shaft */}
-      <mesh position={[0, -1.05, 0]} castShadow>
-        <cylinderGeometry args={[0.22, 0.22, 0.45, 32]} />
-        <meshStandardMaterial color="#7a7e85" metalness={0.92} roughness={0.18} />
-      </mesh>
-
-      {/* Tiny part-number etched ring */}
-      <mesh position={[0, -0.12, 0]}>
-        <torusGeometry args={[1.46, 0.012, 12, 96]} />
-        <meshStandardMaterial color="#0a0a0a" metalness={0.4} roughness={0.8} />
-      </mesh>
-    </group>
-  );
-}
-
 function HarmonicDrive3D() {
   return (
     <Canvas
@@ -174,7 +54,7 @@ function HarmonicDrive3D() {
         <Environment preset="city" />
       </Suspense>
       <Float speed={1.4} rotationIntensity={0.12} floatIntensity={0.18}>
-        <HarmonicDriveMesh />
+        <HarmonicDriveModel autoRotate />
       </Float>
       <ContactShadows
         position={[0, -1.55, 0]}

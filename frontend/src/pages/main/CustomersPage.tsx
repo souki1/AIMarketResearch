@@ -3,12 +3,9 @@ import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   ChevronRightIcon,
-  CubeIcon,
   GridIcon,
-  LayersIcon,
   LightningBoltIcon,
   ReaderIcon,
-  RocketIcon,
   TimerIcon,
 } from "@radix-ui/react-icons";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
@@ -100,82 +97,48 @@ const platformOutcomes: {
   },
 ];
 
-/** Capability themes — descriptive only; not testimonials or attributed quotes. */
 const teamFocusAreas: { title: string; description: string; Icon: typeof GridIcon }[] = [
   {
-    title: "Compare massive datasets in one place",
-    description:
-      "Pull together high-volume part and supplier signals so buyers are not reconciling portals, ERP extracts, and email attachments by hand.",
+    title: "One comparison view",
+    description: "Parts, suppliers, and quotes in one workspace—not portals, ERP exports, and email.",
     Icon: GridIcon,
   },
   {
-    title: "Live refresh when your stack allows",
-    description:
-      "Work from on-demand views that can update in near real time as feeds change—so the team debates current availability and risk, not last week’s spreadsheet.",
+    title: "Current data",
+    description: "Refresh from your stack when feeds change so teams work from live availability and risk.",
     Icon: LightningBoltIcon,
   },
   {
-    title: "Patterns, not just rows",
-    description:
-      "Highlight trends and outliers across vendors and alternates so you spot who consistently meets expectations—and where a “cheap” line item might cost you later.",
-    Icon: ReaderIcon,
-  },
-  {
-    title: "Safer buys and better vendor fit",
-    description:
-      "Rank and filter toward suppliers that match your technical, quality, and compliance needs, not only headline price.",
-    Icon: CubeIcon,
-  },
-  {
-    title: "On-time performance in the same frame as cost",
-    description:
-      "Put delivery, lead time, and buffer alongside price so awards reflect what keeps lines running—not a single column of unit cost.",
+    title: "Awards you can defend",
+    description: "Price, lead time, and logistics together—with exportable rationale for approvals.",
     Icon: TimerIcon,
-  },
-  {
-    title: "Decision analysis stakeholders can use",
-    description:
-      "Exportable, explainable comparison and rationale so approvals and post-award reviews do not depend on memory or ad hoc slides.",
-    Icon: LayersIcon,
   },
 ];
 
-const industriesServed: { label: string; blurb: string; Icon: typeof CubeIcon; image: string }[] = [
+const industriesServed: { label: string; blurb: string }[] = [
   {
     label: "Discrete manufacturing",
-    blurb: "BOM-heavy assemblies, engineered parts, and make-vs-buy decisions across plants.",
-    Icon: CubeIcon,
-    image: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1100&q=80",
+    blurb: "BOM-heavy assemblies and engineered parts across plants.",
   },
   {
     label: "Process manufacturing",
-    blurb: "Materials, batches, and specs where traceability and change control matter.",
-    Icon: LayersIcon,
-    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1100&q=80",
+    blurb: "Materials and specs where traceability matters.",
   },
   {
     label: "Industrial equipment",
-    blurb: "OEM and tier suppliers balancing lead times, alternates, and qualification.",
-    Icon: RocketIcon,
-    image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1100&q=80",
+    blurb: "OEM and tier suppliers balancing lead times and alternates.",
   },
   {
     label: "Multi-plant operations",
-    blurb: "Shared categories with local constraints—one governed view of options.",
-    Icon: GridIcon,
-    image: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=1100&q=80",
+    blurb: "Shared categories with local constraints—one governed view.",
   },
   {
     label: "Factory supply networks",
-    blurb: "High-mix environments where disruption signals need to surface early.",
-    Icon: LightningBoltIcon,
-    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1100&q=80",
+    blurb: "High-mix environments with early disruption signals.",
   },
   {
     label: "Contract manufacturing",
-    blurb: "Programs where award documentation and supplier performance are audited.",
-    Icon: ReaderIcon,
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1100&q=80",
+    blurb: "Audited awards and supplier performance documentation.",
   },
 ];
 
@@ -324,128 +287,91 @@ export default function CustomersPage() {
         </div>
       </section>
 
-      {/* Capability themes — no testimonials */}
-      <section className="relative py-16 md:py-24 bg-white border-y border-slate-200/70 overflow-hidden" aria-labelledby="focus-heading">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.35] bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,113,227,0.08),transparent_60%)]"
-          aria-hidden
-        />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-12 xl:gap-16 lg:items-start">
-            <div className="lg:col-span-4 lg:sticky lg:top-28">
-              <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.2em]">Platform</p>
-              <h2 id="focus-heading" className="font-display text-3xl sm:text-4xl font-bold text-brand mt-3 tracking-tight text-balance">
-                What we help teams solve
-              </h2>
-              <p className="mt-4 text-slate-600 leading-relaxed">
-                We do not publish customer quotes or case-study metrics here—below is how the product is meant to help teams work through
-                high-volume, time-sensitive data so sourcing and operations can align on vendors, timing, and risk—not only unit price.
-              </p>
-              <div className="mt-8 hidden lg:block h-px w-16 bg-linear-to-r from-accent to-transparent" aria-hidden />
-            </div>
+      {/* Platform capabilities */}
+      <section className="py-14 md:py-20 bg-white border-y border-slate-200/70" aria-labelledby="focus-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.2em]">Platform</p>
+            <h2 id="focus-heading" className="font-display text-3xl sm:text-4xl font-bold text-brand mt-3 tracking-tight">
+              What we help teams solve
+            </h2>
+            <p className="mt-3 text-slate-600 leading-relaxed">
+              Align sourcing and operations on vendors, timing, and risk—not only unit price.
+            </p>
+          </div>
 
-            <div className="lg:col-span-8 mt-12 lg:mt-0">
-              <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
-                {teamFocusAreas.map(({ title, description, Icon }) => (
-                  <article
-                    key={title}
-                    className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-accent/25 hover:shadow-md"
-                  >
-                    <div className="flex gap-3">
-                      <span
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent"
-                        aria-hidden
-                      >
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <div className="min-w-0">
-                        <h3 className="font-display text-sm font-semibold text-brand leading-snug">{title}</h3>
-                        <p className="mt-2 text-sm text-slate-600 leading-relaxed">{description}</p>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {teamFocusAreas.map(({ title, description, Icon }) => (
+              <article
+                key={title}
+                className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6"
+              >
+                <span
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent"
+                  aria-hidden
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-display text-lg font-semibold text-brand">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{description}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Mid-page band — headline, proof line, CTAs */}
-      <section
-        className="relative overflow-hidden py-20 md:py-28"
-        aria-labelledby="workflow-bridge-heading"
-      >
-        <div className="absolute inset-0 bg-linear-to-br from-[#050a14] via-[#0a1a33] to-slate-950" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_80%_at_50%_-15%,rgba(0,113,227,0.42),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_100%_100%,rgba(41,151,255,0.18),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_40%,rgba(0,113,227,0.06)_50%,transparent_60%)]" aria-hidden />
+      {/* Workflow CTA */}
+      <section className="relative overflow-hidden py-16 md:py-20 bg-slate-950" aria-labelledby="workflow-bridge-heading">
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(0,113,227,0.28),transparent_55%)]"
+          aria-hidden
+        />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
-          <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-white/50">Alignment</p>
-          <h2 id="workflow-bridge-heading" className="mt-4 font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight text-balance leading-[1.15]">
-            One workflow from research to award
+          <h2 id="workflow-bridge-heading" className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight text-balance">
+            Research to award on one platform
           </h2>
-          <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed max-w-2xl mx-auto">
-            From first search through pattern insight, vendor shortlists, and documented awards—category, plant, and finance stay on the same
-            live comparison, with analysis when you need to defend the decision.
+          <p className="mt-4 text-base text-white/70 leading-relaxed">
+            Category, plant, and finance stay on the same live comparison.
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               to="/products#product-demo"
-              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand shadow-lg shadow-black/25 transition hover:bg-slate-100 min-h-[48px]"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand transition hover:bg-slate-100 min-h-[48px]"
             >
-              Interactive product demo
+              Interactive demo
               <ChevronRightIcon className="w-4 h-4 shrink-0" aria-hidden />
             </Link>
             <a
               href={CALENDLY_DEMO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 min-h-[48px]"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10 min-h-[48px]"
             >
-              Book a live walkthrough
+              Book a walkthrough
               <ArrowRightIcon className="w-4 h-4 shrink-0" aria-hidden />
             </a>
           </div>
         </div>
       </section>
 
-      {/* Industries — icon cards */}
-      <section
-        className="py-16 md:py-20 bg-white border-t border-slate-200/80"
-        aria-labelledby="industries-heading"
-      >
+      {/* Industries */}
+      <section className="py-14 md:py-20 bg-white border-t border-slate-200/80" aria-labelledby="industries-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.2em]">Coverage</p>
             <h2 id="industries-heading" className="font-display text-3xl sm:text-4xl font-bold text-brand mt-3 tracking-tight">
               Industries we serve
             </h2>
-            <p className="mt-4 text-slate-600 leading-relaxed">
-              Typical environments where Partsource replaces ad hoc spreadsheets and email for part-level sourcing decisions.
-            </p>
           </div>
 
-          <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 list-none p-0">
-            {industriesServed.map(({ label, blurb, Icon, image }) => (
+          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 list-none p-0">
+            {industriesServed.map(({ label, blurb }) => (
               <li
                 key={label}
-                className="group relative h-72 rounded-2xl overflow-hidden ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-xl hover:shadow-slate-300/40"
+                className="rounded-xl border border-slate-200/80 bg-slate-50/60 px-5 py-4"
               >
-                <img
-                  src={image}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/55 to-black/15" />
-                <span className="absolute top-5 left-5 flex h-11 w-11 items-center justify-center rounded-xl bg-white/95 text-accent shadow-md ring-1 ring-black/5">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <div className="absolute inset-x-0 bottom-0 p-6">
-                  <p className="font-display text-lg font-semibold text-white leading-snug">{label}</p>
-                  <p className="mt-2 text-sm text-white/80 leading-relaxed">{blurb}</p>
-                </div>
+                <p className="font-display text-base font-semibold text-brand">{label}</p>
+                <p className="mt-1 text-sm text-slate-600 leading-relaxed">{blurb}</p>
               </li>
             ))}
           </ul>

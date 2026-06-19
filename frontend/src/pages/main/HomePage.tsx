@@ -2,7 +2,6 @@ import { useRef, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import BarChart from "../../components/BarChart";
 import HeroProductMockup from "../../components/HeroProductMockup";
 import PartShowcase from "../../components/PartShowcase";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
@@ -37,7 +36,7 @@ const features = [
     title: "Multi-source part research",
     description: "OEM numbers, alternates, and aftermarket crosses—normalized in one search.",
     image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1400&q=85",
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h10M4 18h7m9-8l2 2-5 5H8v-2l5-5z" />
@@ -48,7 +47,7 @@ const features = [
     title: "Fair vendor comparison",
     description: "Unit price, landed cost, MOQ, and lead time—same frame, apples-to-apples.",
     image:
-      "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1400&q=85",
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 13h8V3H3v10zm10 8h8V3h-8v18zM3 21h8v-6H3v6z" />
@@ -59,7 +58,7 @@ const features = [
     title: "Intelligent recommendations",
     description: "Ranked awards with rationale—so procurement and the plant agree faster.",
     image:
-      "https://images.unsplash.com/photo-1566576919226-cbbf78296392?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=85",
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -68,24 +67,23 @@ const features = [
   },
 ];
 
-const industryImages: Record<string, string> = {
-  "Direct materials sourcing":
-    "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1100&q=80",
-  "MRO procurement":
-    "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1100&q=80",
-  "Supplier quality management":
-    "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1100&q=80",
-  "Production continuity planning":
-    "https://images.unsplash.com/photo-1578575436955-47349bb07281?auto=format&fit=crop&w=1100&q=80",
-  "Plant-level category control":
-    "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=1100&q=80",
-};
-
-const logos = [
-  "Right unit & landed price",
-  "Faster logistics signals",
-  "OEM & aftermarket coverage",
-  "Multi-plant sourcing",
+const trustStripTiles: { label: string; image: string }[] = [
+  {
+    label: "Right unit & landed price",
+    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    label: "Faster logistics signals",
+    image: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    label: "OEM & aftermarket coverage",
+    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    label: "Multi-plant sourcing",
+    image: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=900&q=80",
+  },
 ];
 
 const howItWorks = [
@@ -93,14 +91,6 @@ const howItWorks = [
   { step: 2, title: "Research", text: "Aggregated quotes, MOQ, lead time, freight assumptions." },
   { step: 3, title: "Compare", text: "One matrix—price, logistics, reliability." },
   { step: 4, title: "Award", text: "Explainable pick + audit trail." },
-];
-
-const industries = [
-  { name: "Direct materials sourcing", desc: "Production BOMs: best total cost of ownership, not sticker price alone." },
-  { name: "MRO procurement", desc: "Keep lines running—availability and expedite paths in the same view." },
-  { name: "Supplier quality management", desc: "Pair quality signals with cost and delivery before you award." },
-  { name: "Production continuity planning", desc: "Dual-source and alternate parts before the shortage hits." },
-  { name: "Plant-level category control", desc: "One policy, many sites—local constraints preserved." },
 ];
 
 const timeToInsightData = [
@@ -143,13 +133,6 @@ const aiImpactData = [
   { label: "More data-driven awards", value: 84, iconKey: "data" as const },
   { label: "Easier supplier collaboration", value: 79, iconKey: "easier" as const },
   { label: "Higher confidence in outcomes", value: 91, iconKey: "confidence" as const },
-];
-
-const useCaseTiles: { label: string; image: string }[] = [
-  { label: "Aftermarket & OEM crosses", image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=900&q=80" },
-  { label: "Landed cost vs unit price", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80" },
-  { label: "Lead time & freight lanes", image: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=900&q=80" },
-  { label: "Alternates before stockouts", image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80" },
 ];
 
 function useReveal() {
@@ -290,27 +273,19 @@ export default function HomePage() {
             Price · logistics · parts intelligence
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {logos.map((text, i) => {
-              const imgs = [
-                "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80",
-                "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=900&q=80",
-                "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80",
-                "https://images.unsplash.com/photo-1566576919226-cbbf78296392?auto=format&fit=crop&w=900&q=80",
-              ];
-              return (
+            {trustStripTiles.map(({ label, image }, i) => (
                 <div
-                  key={text}
+                  key={label}
                   className="sr relative h-28 md:h-32 rounded-xl overflow-hidden ring-1 ring-slate-200/80 group"
                   style={{ "--sr-i": i } as CSSProperties}
                 >
-                  <img src={imgs[i]} alt="" className="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+                  <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
                   <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-black/10" />
                   <p className="absolute bottom-3 left-3 right-3 font-display text-xs sm:text-sm font-semibold text-white leading-tight">
-                    {text}
+                    {label}
                   </p>
                 </div>
-              );
-            })}
+            ))}
           </div>
         </div>
       </section>
@@ -337,20 +312,94 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Decision signals — compact dual charts */}
-      <section className="py-12 md:py-16 bg-white border-y border-slate-100">
+      {/* Decision signals — speed + signal mix */}
+      <section className="py-14 md:py-20 bg-[#fafafa] border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <p className="sr font-display text-accent font-semibold text-sm uppercase tracking-wider">Signals</p>
-            <h2 className="sr font-display text-2xl sm:text-3xl font-bold text-brand mt-2">Faster decisions. Full signal mix.</h2>
-            <p className="sr mt-3 text-sm text-slate-600">Time to decide vs manual · What the engine weighs (price, logistics, risk).</p>
+          <div className="text-center max-w-xl mx-auto mb-10 md:mb-12">
+            <p className="sr font-display text-accent font-semibold text-sm uppercase tracking-[0.2em]">Decision signals</p>
+            <h2 className="sr font-display text-3xl sm:text-4xl font-bold text-brand mt-3 text-balance">
+              Decide faster with every signal in one view
+            </h2>
           </div>
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
-            <div className="sr-scale p-5 md:p-6 rounded-xl bg-slate-50 border border-slate-100">
-              <BarChart data={timeToInsightData} title="Days to a confident comparison" description="Lower is better." valueSuffix=" days" maxValue={20} barColor="bg-accent" />
+
+          <div className="grid lg:grid-cols-2 gap-5 lg:gap-6">
+            {/* Speed comparison */}
+            <div
+              className="sr rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]"
+              style={{ "--sr-i": 0 } as CSSProperties}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-brand">Time to compare</p>
+                  <p className="mt-1 text-sm text-slate-500">From part inquiry to a confident shortlist</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">3× faster</span>
+              </div>
+
+              <div className="mt-8 flex items-baseline gap-3">
+                <p className="font-display text-5xl sm:text-6xl font-bold text-brand tabular-nums leading-none">6</p>
+                <p className="text-lg font-medium text-slate-400">days</p>
+              </div>
+              <p className="mt-2 text-sm font-medium text-accent">With Partsource</p>
+
+              <p className="mt-6 text-sm text-slate-500">
+                Manual research averages{" "}
+                <span className="font-semibold text-slate-400 line-through decoration-slate-300">18 days</span>
+              </p>
+
+              <div className="mt-8 space-y-5">
+                {timeToInsightData.map((item) => (
+                  <div key={item.label}>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <span className="text-sm font-medium text-slate-700">{item.label}</span>
+                      <span className="text-sm font-semibold text-brand tabular-nums">{item.value} days</span>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ${
+                          item.label.includes("Partsource") ? "bg-accent" : "bg-slate-300"
+                        }`}
+                        style={{ width: `${(item.value / 20) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="sr-scale p-5 md:p-6 rounded-xl bg-slate-50 border border-slate-100">
-              <BarChart data={responseVolumeData} title="Signal weights in awards" description="% contribution (illustrative)." valueSuffix="%" maxValue={35} />
+
+            {/* Signal weights */}
+            <div
+              className="sr rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]"
+              style={{ "--sr-i": 1 } as CSSProperties}
+            >
+              <div>
+                <p className="text-sm font-semibold text-brand">What we weigh</p>
+                <p className="mt-1 text-sm text-slate-500">Price, logistics, and risk—balanced for each award</p>
+              </div>
+
+              <ul className="mt-8 space-y-4">
+                {responseVolumeData.map((item, i) => (
+                  <li key={item.label} className="flex items-center gap-4">
+                    <span className="w-6 text-xs font-bold text-slate-300 tabular-nums">{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <span className="text-sm font-medium text-slate-700 truncate">{item.label}</span>
+                        <span className="text-sm font-semibold text-brand tabular-nums shrink-0">{item.value}%</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-accent/80"
+                          style={{ width: `${item.value}%`, opacity: 1 - i * 0.12 }}
+                        />
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-400 text-center">
+                Illustrative mix — tuned per category and plant rules
+              </p>
             </div>
           </div>
         </div>
@@ -378,87 +427,81 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Industries — image-led cards */}
-      <section className="section-alt py-14 md:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="sr font-display text-3xl sm:text-4xl font-bold text-brand">Where it shows up</h2>
-            <p className="sr mt-4 text-slate-600">Direct materials, MRO, quality, continuity—one workflow.</p>
-          </div>
-          <div className="sr-stagger grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {industries.map((ind, i) => (
-              <div
-                key={ind.name}
-                className="sr group relative h-72 rounded-2xl overflow-hidden ring-1 ring-white/10 card-hover"
-                style={{ "--sr-i": i } as CSSProperties}
-              >
-                <img
-                  src={industryImages[ind.name]}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/55 to-black/20" />
-                <div className="absolute inset-x-0 bottom-0 p-6">
-                  <h3 className="font-display text-lg font-semibold text-white leading-snug">{ind.name}</h3>
-                  <p className="mt-2 text-sm text-white/80 leading-relaxed">{ind.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Features — Apple-style product bands */}
+      <section className="section-alt relative overflow-hidden py-20 md:py-28 lg:py-32">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse 70% 45% at 50% 0%, rgba(41,151,255,0.12), transparent 55%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(0,113,227,0.08), transparent 50%)",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <header className="text-center max-w-3xl mx-auto mb-14 md:mb-20">
+            <h2 className="sr font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight text-balance">
+              What Partsource does.
+            </h2>
+            <p className="sr mt-5 text-lg sm:text-xl text-white/70 font-normal leading-relaxed text-pretty">
+              Research, compare, and decide—on one platform.
+            </p>
+          </header>
 
-      {/* Focus tiles — image-led */}
-      <section className="py-12 md:py-16 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-xl mx-auto mb-8">
-            <h2 className="sr font-display text-2xl sm:text-3xl font-bold text-brand">Built for price &amp; logistics</h2>
-          </div>
-          <div className="sr-stagger grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {useCaseTiles.map((uc, i) => (
-              <div key={uc.label} className="sr group relative h-40 rounded-xl overflow-hidden ring-1 ring-slate-200/80 card-hover" style={{ "--sr-i": i } as CSSProperties}>
-                <img src={uc.image} alt="" className="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
-                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/35 to-transparent" />
-                <p className="absolute bottom-3 left-3 right-3 font-display text-sm font-semibold text-white">{uc.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <div className="flex flex-col gap-5 md:gap-6">
+            {features.map((f, i) => {
+              const imageFirst = i % 2 === 1;
+              return (
+                <article
+                  key={f.title}
+                  className="sr group relative overflow-hidden rounded-[28px] bg-brand ring-1 ring-white/8 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.65)]"
+                  style={{ "--sr-i": i } as CSSProperties}
+                >
+                  <div className="grid md:grid-cols-2 md:min-h-[340px] lg:min-h-[380px]">
+                    <div
+                      className={`relative flex flex-col justify-center px-8 py-10 sm:px-10 sm:py-12 lg:px-14 lg:py-16 ${
+                        imageFirst ? "md:order-2" : ""
+                      }`}
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/40 tabular-nums">
+                        0{i + 1}
+                      </p>
+                      <div className="mt-5 inline-flex w-11 h-11 items-center justify-center rounded-2xl bg-accent/15 text-accent">
+                        {f.icon}
+                      </div>
+                      <h3 className="mt-6 font-display text-2xl sm:text-3xl lg:text-[2rem] font-bold text-white tracking-tight leading-[1.12] text-balance">
+                        {f.title}
+                      </h3>
+                      <p className="mt-4 text-base sm:text-lg text-white/65 leading-relaxed max-w-md text-pretty">
+                        {f.description}
+                      </p>
+                      <Link
+                        to="/products"
+                        className="mt-7 inline-flex items-center gap-1 text-[17px] font-medium text-accent hover:underline underline-offset-4 w-fit"
+                      >
+                        Learn more
+                        <ChevronRightIcon className="w-4 h-4" aria-hidden />
+                      </Link>
+                    </div>
 
-      {/* Features — visual cards */}
-      <section className="section-alt py-14 md:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="sr font-display text-3xl sm:text-4xl font-bold text-brand">What Partsource does</h2>
-            <p className="sr mt-4 text-slate-600">Research, compare, and decide—on one platform.</p>
-          </div>
-          <div className="sr-stagger grid md:grid-cols-3 gap-6 md:gap-8">
-            {features.map((f, i) => (
-              <div
-                key={f.title}
-                className="sr group rounded-2xl overflow-hidden bg-white ring-1 ring-slate-200/80 shadow-sm card-hover flex flex-col"
-                style={{ "--sr-i": i } as CSSProperties}
-              >
-                <div className="relative h-44 overflow-hidden">
-                  <img
-                    src={f.image}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/55 via-black/20 to-transparent" />
-                  <span className="absolute top-4 left-4 inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/95 text-accent shadow-md">
-                    {f.icon}
-                  </span>
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="font-display text-xl font-semibold text-brand">{f.title}</h3>
-                  <p className="mt-3 text-slate-600 text-sm leading-relaxed">{f.description}</p>
-                </div>
-              </div>
-            ))}
+                    <div className={`relative min-h-[220px] sm:min-h-[260px] md:min-h-0 overflow-hidden ${imageFirst ? "md:order-1" : ""}`}>
+                      <img
+                        src={f.image}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-[1.2s] ease-out group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                      <div
+                        className={`absolute inset-0 ${
+                          imageFirst
+                            ? "bg-linear-to-l from-brand from-0% via-brand/25 via-30% to-transparent to-75%"
+                            : "bg-linear-to-r from-brand from-0% via-brand/25 via-30% to-transparent to-75%"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>

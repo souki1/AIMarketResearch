@@ -19,13 +19,13 @@ export default function Navbar() {
       <nav className="apple-glass-nav fixed top-0 left-0 right-0 z-40 shadow-[0_1px_0_rgba(255,255,255,0.06)]">
         <div className="enterprise-container h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
-              <svg viewBox="0 0 32 32" fill="none" className="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                <path d="M8 16c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M16 8v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </div>
+            <img
+              src="/logo.svg"
+              alt=""
+              width={36}
+              height={36}
+              className="w-9 h-9 rounded-lg shrink-0"
+            />
             <span className="font-display font-semibold text-lg text-white tracking-[-0.28px]">Partsource</span>
           </Link>
 

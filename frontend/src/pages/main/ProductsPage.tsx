@@ -2,125 +2,95 @@ import { useRef, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import SimpleBarChart from "../../components/SimpleBarChart";
-import BarChart from "../../components/BarChart";
 import PretextHeroReserve from "../../components/enterprise/PretextHeroReserve";
 import SolutionsProductShowcase from "../../components/SolutionsProductShowcase";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
 import Seo from "../../components/Seo";
+import partImage from "../../assets/images/download (1).jpg";
 
 const HERO_HEADLINE_TEXT =
   "Find, analyze, and choose the best supplier and pricing for any part";
 
 const products = [
   {
+    eyebrow: "01 / Research",
     title: "Part research engine",
     description:
       "Enter a part number or query and automatically gather data from multiple sources—cleaned, matched, and ready to compare.",
     to: "#product-demo",
     icon: "hub",
-    image:
-      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+    image: partImage,
+    metric: "12+ source types",
   },
   {
+    eyebrow: "02 / Compare",
     title: "Vendor comparison workspace",
     description:
       "Compare suppliers side by side on price, availability, lead time, and reliability so every award is transparent and defensible.",
     to: "#product-demo",
     icon: "analytics",
     image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1200&q=85",
+    metric: "Same-frame quotes",
   },
   {
+    eyebrow: "03 / Decide",
     title: "Recommendation intelligence",
     description:
       "Go beyond lists: get ranked options and explainable AI insights for the best sourcing decision on each part.",
     to: "#product-demo",
     icon: "ai",
     image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=85",
+    metric: "Explainable ranking",
   },
   {
+    eyebrow: "04 / Connect",
     title: "Integrations & data layer",
     description:
       "Connect your stack—ERP, supplier feeds, and internal systems—so research and decisions stay in one place.",
     to: "#capabilities",
     icon: "api",
     image:
-      "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1200&q=85",
+    metric: "ERP-ready handoff",
   },
 ];
 
-const solutions = [
+const heroStats = [
+  { value: "3 min", label: "to a comparable supplier shortlist" },
+  { value: "4 steps", label: "from part scope to PO-ready award" },
+  { value: "AI", label: "ranked recommendations with rationale" },
+];
+
+const heroSignals = [
+  { label: "OEM cross match", value: "98%", tone: "bg-accent" },
+  { label: "Landed cost confidence", value: "92%", tone: "bg-emerald-500" },
+  { label: "Lead-time coverage", value: "86%", tone: "bg-cyan-400" },
+];
+
+const solutionHighlights = [
   {
-    title: "By manufacturing function",
-    items: [
-      { name: "Direct procurement", desc: "Source production-critical materials with AI-backed supplier recommendations" },
-      { name: "MRO sourcing", desc: "Maintain part availability while optimizing maintenance and operations spend" },
-      { name: "Supplier quality", desc: "Tie supplier quality metrics to sourcing decisions and plant performance" },
-      { name: "Production planning", desc: "Align supplier lead times with manufacturing schedule requirements" },
-      { name: "Factory governance", desc: "Standardize sourcing decision frameworks across multi-plant operations" },
-    ],
+    title: "Research",
+    text: "Find OEM, aftermarket, and alternate supplier options for the same part.",
   },
   {
-    title: "By role",
-    items: [
-      { name: "CPO / Procurement leaders", desc: "Category strategy, governance, and savings visibility" },
-      { name: "Category managers", desc: "Supplier benchmarking, bid analysis, and scenario planning" },
-      { name: "Sourcing managers", desc: "RFQ optimization and award recommendation workflows" },
-      { name: "Plant operations", desc: "Lead-time and supplier performance visibility for continuity" },
-      { name: "Finance partners", desc: "Cost trend intelligence and forecasting support" },
-    ],
+    title: "Compare",
+    text: "Review price, MOQ, lead time, reliability, and landed cost in one view.",
   },
   {
-    title: "By use case",
-    items: [
-      { name: "Supplier qualification", desc: "Automated fit scoring and shortlist recommendations" },
-      { name: "RFQ intelligence", desc: "Bid comparison with explainable AI recommendations" },
-      { name: "Risk management", desc: "Disruption and concentration risk monitoring with alerts" },
-      { name: "Cost optimization", desc: "Should-cost insights and cost movement tracking" },
-      { name: "Performance governance", desc: "OTIF, quality, and compliance trend visibility" },
-    ],
+    title: "Decide",
+    text: "Use ranked recommendations and clear rationale to move faster.",
   },
 ];
 
 const productCapabilities = [
-  "Part number and query-based research across multiple sources",
-  "Normalized vendor data: price, MOQ, availability, and lead time",
-  "Reliability and quality signals where available",
-  "Side-by-side comparison views for sourcing teams",
-  "AI-ranked recommendations with explainable rationale",
-  "Workflow hooks for manufacturing and procurement teams",
-];
-
-const usageByWorkflow = [
-  { label: "Supplier discovery", value: 93 },
-  { label: "RFQ & bid management", value: 89 },
-  { label: "Decision analysis", value: 91 },
-  { label: "Award governance", value: 84 },
-  { label: "Performance tracking", value: 90 },
-];
-
-const aiAdoptionData = [
-  { label: "Insights only", value: 29, sublabel: "AI summaries for sourcing visibility" },
-  { label: "Insights + recommendations", value: 49, sublabel: "Actionable recommendations added to analysis" },
-  { label: "Autonomous decision support", value: 22, sublabel: "End-to-end decision intelligence workflows" },
-];
-
-const adoptionByRole = [
-  { label: "Procurement", value: 36 },
-  { label: "Category teams", value: 25 },
-  { label: "Operations", value: 17 },
-  { label: "Finance", value: 12 },
-  { label: "Executive leadership", value: 10 },
-];
-
-const adoptionByUseCase = [
-  { label: "Supplier qualification", value: 24 },
-  { label: "RFQ optimization", value: 23 },
-  { label: "Risk monitoring", value: 19 },
-  { label: "Cost optimization", value: 17 },
-  { label: "Performance governance", value: 17 },
+  "Part search",
+  "Vendor comparison",
+  "Landed cost",
+  "AI recommendations",
+  "Supplier signals",
+  "Workflow handoff",
 ];
 
 function useReveal() {
@@ -157,113 +127,241 @@ export default function ProductsPage() {
         canonicalPath="/products"
       />
       <section
-        className="relative overflow-hidden border-b border-slate-200/60 min-h-[88vh] md:min-h-[90vh] lg:min-h-[92vh] flex items-center"
+        className="relative overflow-hidden border-b border-white/10 min-h-[88vh] md:min-h-[90vh] lg:min-h-[92vh] flex items-center bg-slate-950"
         aria-labelledby="products-hero-heading"
       >
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=2400&q=80')",
-          }}
-          aria-hidden
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: [
-              "radial-gradient(ellipse 100% 60% at 100% 0%, rgba(0,113,227,0.32), transparent 55%)",
-              "radial-gradient(ellipse 90% 60% at 0% 100%, rgba(41,151,255,0.18), transparent 50%)",
-              "linear-gradient(115deg, rgba(5,9,20,0.94) 0%, rgba(8,15,30,0.82) 45%, rgba(0,30,80,0.6) 100%)",
-            ].join(", "),
-          }}
-          aria-hidden
-        />
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28 lg:py-32">
-          <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center">
-            <p id="products-hero-kicker" className="font-display text-accent-light font-semibold text-xs sm:text-sm uppercase tracking-[0.22em] mb-4">
-              Products & solutions
-            </p>
-            <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")} className="max-w-6xl mx-auto">
-              <h1 id="products-hero-heading" className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight">
-                Find, analyze, and choose the best supplier and pricing for
-                <span className="text-accent-light"> any part</span>
-              </h1>
-            </PretextHeroReserve>
-            <p className="mt-6 text-base sm:text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              An AI-powered research and comparison platform for manufacturing teams—turning complex supplier research into instant, data-driven decisions.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <a
-                href={CALENDLY_DEMO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-brand bg-white hover:bg-slate-100 transition shadow-lg shadow-black/30 min-h-[48px]"
+        <div className="absolute inset-0" aria-hidden>
+          <div
+            className="absolute inset-0 opacity-90"
+            style={{
+              backgroundImage: [
+                "radial-gradient(ellipse 65% 52% at 78% 20%, rgba(0,113,227,0.34), transparent 58%)",
+                "radial-gradient(ellipse 52% 44% at 12% 86%, rgba(20,184,166,0.16), transparent 55%)",
+                "linear-gradient(135deg, #020617 0%, #07111f 42%, #0b1730 100%)",
+              ].join(", "),
+            }}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-size-[72px_72px] mask-[radial-gradient(ellipse_70%_60%_at_50%_30%,black,transparent_75%)]" />
+          <div className="absolute -right-32 top-24 h-80 w-80 rounded-full bg-accent/25 blur-3xl" />
+          <div className="absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
+        </div>
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-24 lg:py-28">
+          <div className="sr-stagger max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,0.92fr)_minmax(440px,1.08fr)] gap-12 lg:gap-16 xl:gap-20 items-center">
+            <div className="text-center lg:text-left">
+              <p
+                id="products-hero-kicker"
+                className="sr inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 font-display text-accent-light font-semibold text-xs sm:text-sm uppercase tracking-[0.2em] backdrop-blur"
+                style={{ "--sr-i": 0 } as CSSProperties}
               >
-                Request a demo <ChevronRightIcon className="w-4 h-4" />
-              </a>
-              <Link
-                to="/enterprise"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white border border-white/30 bg-white/5 backdrop-blur-md hover:bg-white/10 transition min-h-[48px]"
+                Products & solutions
+              </p>
+              <PretextHeroReserve text={HERO_HEADLINE_TEXT.replace("\n", " ")} className="mt-6 max-w-5xl mx-auto lg:mx-0">
+                <h1
+                  id="products-hero-heading"
+                  className="sr font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.55rem] font-bold text-white leading-[1.02] tracking-tight text-balance"
+                  style={{ "--sr-i": 1 } as CSSProperties}
+                >
+                  Find, analyze, and choose the best supplier and pricing for
+                  <span className="block text-accent-light">any part.</span>
+                </h1>
+              </PretextHeroReserve>
+              <p
+                className="sr mt-6 text-base sm:text-lg md:text-xl text-white/76 max-w-2xl mx-auto lg:mx-0 leading-relaxed text-pretty"
+                style={{ "--sr-i": 2 } as CSSProperties}
               >
-                Explore platform
-              </Link>
+                An AI-powered research and comparison platform for manufacturing teams—turning complex supplier research into instant, data-driven decisions.
+              </p>
+              <div
+                className="sr mt-10 flex flex-col sm:flex-row flex-wrap items-center lg:items-start justify-center lg:justify-start gap-3 sm:gap-4"
+                style={{ "--sr-i": 3 } as CSSProperties}
+              >
+                <a
+                  href={CALENDLY_DEMO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-brand bg-white hover:bg-slate-100 transition shadow-lg shadow-black/30 min-h-[48px]"
+                >
+                  Request a demo <ChevronRightIcon className="w-4 h-4" />
+                </a>
+                <a
+                  href="#product-demo"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white border border-white/25 bg-white/5 backdrop-blur-md hover:bg-white/10 transition min-h-[48px]"
+                >
+                  View product flow
+                </a>
+              </div>
+              <div
+                className="sr mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto lg:mx-0"
+                style={{ "--sr-i": 4 } as CSSProperties}
+              >
+                {heroStats.map((stat) => (
+                  <div key={stat.label} className="rounded-2xl border border-white/10 bg-white/6 p-4 text-left backdrop-blur">
+                    <p className="font-display text-2xl font-bold text-white tabular-nums">{stat.value}</p>
+                    <p className="mt-1 text-xs font-medium leading-snug text-white/58">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="sr relative" style={{ "--sr-i": 5 } as CSSProperties}>
+              <div className="absolute -inset-5 rounded-[2.25rem] bg-accent/20 blur-2xl" aria-hidden />
+              <div className="relative overflow-hidden rounded-4xl border border-white/12 bg-white/8 p-3 shadow-2xl shadow-black/50 backdrop-blur-xl">
+                <div className="rounded-[1.45rem] border border-white/10 bg-slate-950/90 overflow-hidden">
+                  <div className="flex items-center gap-2 border-b border-white/10 bg-white/4 px-4 py-3">
+                    <div className="flex gap-1.5" aria-hidden>
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                    </div>
+                    <div className="ml-2 min-w-0 flex-1 rounded-full border border-white/8 bg-black/25 px-3 py-1.5 font-mono text-[11px] text-white/45 truncate">
+                      products.partsource.io/HD-CSD-25-160-2A-GR
+                    </div>
+                  </div>
+                  <div className="grid gap-4 p-4 sm:p-5">
+                    <div className="rounded-3xl border border-white/10 bg-white/6 p-5">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div>
+                          <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent-light">Live part profile</p>
+                          <h2 className="mt-3 font-display text-2xl font-bold text-white">HD-CSD-25-160-2A-GR</h2>
+                          <p className="mt-2 text-sm text-white/58">Harmonic drive gearbox assembly · 4 supplier matches</p>
+                        </div>
+                        <span className="w-fit rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-300 ring-1 ring-emerald-300/20">
+                          Award ready
+                        </span>
+                      </div>
+                      <div className="mt-6 grid gap-3">
+                        {heroSignals.map((signal) => (
+                          <div key={signal.label}>
+                            <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                              <span className="font-medium text-white/68">{signal.label}</span>
+                              <span className="font-bold text-white">{signal.value}</span>
+                            </div>
+                            <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                              <div className={`h-full rounded-full ${signal.tone}`} style={{ width: signal.value }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-[1fr_0.72fr] gap-4">
+                      <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/42">Supplier comparison</p>
+                        <div className="mt-4 space-y-3">
+                          {["MotionWorks", "Atlas Industrial", "OEM Direct"].map((supplier, i) => (
+                            <div key={supplier} className="rounded-2xl bg-white/6 p-3">
+                              <div className="flex items-center justify-between gap-3">
+                                <span className="text-sm font-semibold text-white">{supplier}</span>
+                                <span className="font-mono text-xs text-accent-light">{94 - i * 5}/100</span>
+                              </div>
+                              <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] text-white/52">
+                                <span>${(1280 + i * 145).toLocaleString()}</span>
+                                <span>{8 + i * 3} days</span>
+                                <span>{i === 0 ? "Low risk" : "Med risk"}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="rounded-3xl border border-accent-light/20 bg-accent/14 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-light">AI recommendation</p>
+                        <p className="mt-4 font-display text-3xl font-bold text-white">MotionWorks</p>
+                        <p className="mt-2 text-sm leading-relaxed text-white/64">
+                          Best balance of landed cost, verified stock, and lead-time reliability.
+                        </p>
+                        <div className="mt-6 rounded-2xl bg-white/10 p-3">
+                          <p className="text-xs text-white/48">Estimated savings</p>
+                          <p className="mt-1 font-display text-2xl font-bold text-emerald-300">$18.4K</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Product cards — image-led */}
-      <section className="py-14 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="sr-stagger grid md:grid-cols-2 gap-6 lg:gap-8">
+      <section className="relative overflow-hidden py-16 md:py-24 bg-[#f8fafc]">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_70%_45%_at_50%_0%,rgba(0,113,227,0.14),transparent_65%)]"
+          aria-hidden
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="sr mb-10 md:mb-14 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            <div className="max-w-3xl">
+              <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.22em]">
+                Product modules
+              </p>
+              <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-brand tracking-tight text-balance">
+                Every supplier decision starts from the same clean workspace.
+              </h2>
+            </div>
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 lg:text-right">
+              Move from part discovery to vendor award with a connected set of tools built for manufacturing sourcing teams.
+            </p>
+          </div>
+          <div className="sr-stagger grid md:grid-cols-2 gap-5 lg:gap-6">
             {products.map((p, i) => (
               <Link
                 key={p.title}
                 to={p.to}
-                className="sr group relative flex flex-col rounded-3xl overflow-hidden bg-white ring-1 ring-slate-200/80 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-300/40 card-hover scroll-mt-24"
+                className="sr group relative flex min-h-[440px] flex-col overflow-hidden rounded-4xl bg-white ring-1 ring-slate-200/80 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-300/45 card-hover scroll-mt-24"
                 style={{ "--sr-i": i } as CSSProperties}
               >
-                <div className="relative h-52 md:h-60 overflow-hidden">
+                <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-accent via-cyan-400 to-emerald-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="relative h-56 md:h-64 overflow-hidden">
                   <img
                     src={p.image}
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                    className={`absolute inset-0 w-full h-full transition duration-700 group-hover:scale-105 ${
+                      p.image === partImage ? "object-contain bg-slate-100 p-8 md:p-10" : "object-cover"
+                    }`}
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
-                  <span className="absolute top-5 left-5 inline-flex w-11 h-11 rounded-xl items-center justify-center bg-white/95 text-accent shadow-md ring-1 ring-black/5">
-                    {p.icon === "hub" && (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h16v6H4zM4 14h7v6H4zM13 14h7v6h-7z" />
-                      </svg>
-                    )}
-                    {p.icon === "analytics" && (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20V10m5 10V4m5 16v-7M4 20h16" />
-                      </svg>
-                    )}
-                    {p.icon === "ai" && (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9.75 3v2.25M14.25 3v2.25M6 8.25h12M6.75 20.25h10.5A2.25 2.25 0 0019.5 18V9.75A2.25 2.25 0 0017.25 7.5H6.75A2.25 2.25 0 004.5 9.75V18A2.25 2.25 0 006.75 20.25z"
-                        />
-                      </svg>
-                    )}
-                    {p.icon === "api" && (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 12h8M8 17h5M4 4h16v16H4z" />
-                      </svg>
-                    )}
+                  <div className="absolute inset-0 bg-linear-to-t from-slate-950/72 via-slate-950/10 to-transparent" />
+                  <div className="absolute left-5 right-5 top-5 flex items-center justify-between gap-3">
+                    <span className="inline-flex rounded-full bg-white/92 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-brand shadow-sm ring-1 ring-black/5 backdrop-blur">
+                      {p.eyebrow}
+                    </span>
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/95 text-accent shadow-md ring-1 ring-black/5">
+                      {p.icon === "hub" && (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h16v6H4zM4 14h7v6H4zM13 14h7v6h-7z" />
+                        </svg>
+                      )}
+                      {p.icon === "analytics" && (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20V10m5 10V4m5 16v-7M4 20h16" />
+                        </svg>
+                      )}
+                      {p.icon === "ai" && (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9.75 3v2.25M14.25 3v2.25M6 8.25h12M6.75 20.25h10.5A2.25 2.25 0 0019.5 18V9.75A2.25 2.25 0 0017.25 7.5H6.75A2.25 2.25 0 004.5 9.75V18A2.25 2.25 0 006.75 20.25z"
+                          />
+                        </svg>
+                      )}
+                      {p.icon === "api" && (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 12h8M8 17h5M4 4h16v16H4z" />
+                        </svg>
+                      )}
+                    </span>
+                  </div>
+                  <span className="absolute bottom-5 left-5 rounded-full bg-slate-950/75 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/10 backdrop-blur">
+                    {p.metric}
                   </span>
                 </div>
                 <div className="p-7 md:p-8 flex-1 flex flex-col">
-                  <h2 className="font-display text-xl md:text-2xl font-semibold text-brand">{p.title}</h2>
-                  <p className="mt-3 text-slate-600 leading-relaxed flex-1">{p.description}</p>
-                  <span className="mt-5 inline-flex items-center gap-1 text-accent font-semibold text-sm">
+                  <h2 className="font-display text-2xl md:text-3xl font-semibold text-brand tracking-tight">{p.title}</h2>
+                  <p className="mt-4 text-slate-600 leading-relaxed flex-1">{p.description}</p>
+                  <span className="mt-7 inline-flex w-fit items-center gap-1 rounded-full bg-accent/10 px-4 py-2 text-accent font-semibold text-sm transition group-hover:bg-accent group-hover:text-white">
                     Learn more
                     <ChevronRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </span>
@@ -313,181 +411,48 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Solutions grid */}
-      <section id="solutions-coverage" className="scroll-mt-20 py-10 md:py-14 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="sr-stagger grid md:grid-cols-3 gap-8">
-            {solutions.map((s, i) => (
-              <div
-                key={s.title}
-                className="sr relative z-10 p-8 rounded-xl bg-white border border-black box-border card-hover hover:z-20"
-                style={{ "--sr-i": i } as CSSProperties}
-              >
-                <h2 className="font-display text-xl font-semibold text-brand">{s.title}</h2>
-                <ul className="mt-6 space-y-4">
-                  {s.items.map((item) => (
-                    <li key={item.name}>
-                      <span className="font-medium text-slate-800">{item.name}</span>
-                      <p className="mt-0.5 text-sm text-slate-600">{item.desc}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-6 md:py-10 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="sr-scale relative rounded-3xl overflow-hidden ring-1 ring-slate-200/80 shadow-2xl shadow-slate-300/30">
-            <img
-              src="https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=2000&q=80"
-              alt="Manufacturing procurement dashboard"
-              className="w-full h-[280px] md:h-[420px] object-cover"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/30 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
-              <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent-light">
-                Live decision intelligence
-              </p>
-              <h3 className="mt-2 font-display text-2xl md:text-3xl font-bold text-white max-w-2xl leading-snug">
-                One workspace from part lookup to purchase order
-              </h3>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform usage */}
-      <section className="section-alt py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="sr-left">
-              <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider">Platform adoption</p>
-              <h2 className="font-display text-3xl font-bold text-brand mt-2">Used across the full sourcing lifecycle</h2>
-              <p className="mt-6 text-slate-600 leading-relaxed">
-                Procurement teams run supplier discovery, RFQ decisions, and performance tracking on one platform. The chart shows where the modules create the highest adoption.
-              </p>
-            </div>
-            <div className="sr-right p-6 md:p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow">
-              <SimpleBarChart
-                items={usageByWorkflow}
-                title="Platform usage by workflow stage"
-                description="% of teams using the platform at this stage."
-                barColor="bg-accent"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AI adoption */}
-      <section className="py-12 md:py-16 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            <div className="sr-left p-6 md:p-8 rounded-xl bg-slate-50 border border-slate-300 shadow-sm hover:shadow-md transition-shadow order-2 lg:order-1">
-              <BarChart
-                data={aiAdoptionData}
-                title="How customers use AI"
-                description="Share of customers (%) in each AI usage tier."
-                valueSuffix="%"
-                maxValue={55}
-              />
-            </div>
-            <div className="sr-right order-1 lg:order-2">
-              <p className="font-display text-accent font-semibold text-sm uppercase tracking-wider">AI adoption</p>
-              <h2 className="font-display text-3xl font-bold text-brand mt-2">From visibility to AI-guided decisions</h2>
-              <p className="mt-6 text-slate-600 leading-relaxed">
-                Teams start with analytics visibility and then activate recommendation flows for RFQ awards and supplier actions. Adoption grows quickly once decision simulation is enabled.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Who uses Partsource */}
-      <section className="section-alt py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <h2 className="sr font-display text-3xl font-bold text-brand">Who uses Partsource</h2>
-            <p className="sr mt-4 text-slate-600">
-              The platform is used across procurement, category, operations, and finance. The charts show how adoption is distributed by team and decision use case.
-            </p>
-          </div>
-          <div className="sr-stagger grid lg:grid-cols-2 gap-8">
-            <div
-              className="sr p-6 md:p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow"
-              style={{ "--sr-i": 0 } as CSSProperties}
-            >
-              <SimpleBarChart
-                items={adoptionByRole}
-                title="Adoption by role"
-                description="Share of users (%) by primary job function."
-                max={35}
-                barColor="bg-accent"
-              />
-            </div>
-            <div
-              className="sr p-6 md:p-8 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow"
-              style={{ "--sr-i": 1 } as CSSProperties}
-            >
-              <SimpleBarChart
-                items={adoptionByUseCase}
-                title="Adoption by use case"
-                description="Share of projects (%) by primary use case."
-                max={30}
-                barColor="bg-accent"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Key capabilities */}
-      <section id="capabilities" className="scroll-mt-20 section-alt py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <h2 className="sr font-display text-2xl font-bold text-brand text-center mb-4">Key capabilities</h2>
-          <p className="sr text-center text-slate-600 max-w-xl mx-auto mb-8">
-            From part input to recommendation—research, comparison, and decision support in one system.
-          </p>
-          <div className="sr-stagger grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {productCapabilities.map((cap, i) => (
-              <div
-                key={cap}
-                className="sr p-6 rounded-xl bg-white border border-slate-300 shadow-sm hover:shadow-md transition-shadow card-hover"
-                style={{ "--sr-i": i } as CSSProperties}
-              >
-                <span className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0 mb-3">
-                  {"\u2713"}
-                </span>
-                <p className="text-slate-700 font-medium">{cap}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden py-20 md:py-28 border-y border-slate-200/40">
+      {/* Solution coverage + capabilities */}
+      <section id="solutions-coverage" className="scroll-mt-20 relative overflow-hidden bg-white py-16 md:py-24 border-y border-slate-100">
+        <span id="capabilities" className="absolute -top-20" aria-hidden />
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1581092919535-0f1f3a8aacf8?auto=format&fit=crop&w=2000&q=80')",
-          }}
+          className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_70%_45%_at_50%_0%,rgba(0,113,227,0.12),transparent_60%)]"
           aria-hidden
         />
-        <div className="absolute inset-0 bg-linear-to-br from-[#050a14]/95 via-[#0a1a33]/85 to-slate-950/80" aria-hidden />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(0,113,227,0.35),transparent_55%)]" aria-hidden />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <p className="sr font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent-light">Decision intelligence</p>
-          <h2 className="sr mt-4 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
-            Recommendations, not just search
-          </h2>
-          <p className="sr mt-5 max-w-2xl mx-auto text-white/80 leading-relaxed">
-            Ranked options, explainable rationale, and a faster path from part number to award.
-          </p>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="sr max-w-3xl mx-auto text-center mb-10 md:mb-14">
+            <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.22em]">Platform flow</p>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-brand tracking-tight">
+              One workflow. Three clear steps.
+            </h2>
+            <p className="mt-4 text-slate-600 text-base sm:text-lg leading-relaxed">
+              Everything else supports the same goal: get from part lookup to a confident supplier decision.
+            </p>
+          </div>
+
+          <div className="sr-stagger grid md:grid-cols-3 gap-4 md:gap-5">
+            {solutionHighlights.map((item, i) => (
+              <article
+                key={item.title}
+                className="sr rounded-3xl bg-slate-50 border border-slate-200/80 p-6 md:p-8 shadow-sm"
+                style={{ "--sr-i": i } as CSSProperties}
+              >
+                <span className="font-display text-sm font-bold text-accent tabular-nums">0{i + 1}</span>
+                <h3 className="mt-5 font-display text-2xl font-semibold text-brand">{item.title}</h3>
+                <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">{item.text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="sr mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-2.5">
+            {productCapabilities.map((cap) => (
+              <span
+                key={cap}
+                className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
+              >
+                {cap}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,6 +1,34 @@
 import { Link } from "react-router-dom";
+import { ArrowRightIcon, GridIcon, LightningBoltIcon, ReaderIcon } from "@radix-ui/react-icons";
 import { CALENDLY_DEMO_URL } from "../../constants/booking";
 import Seo from "../../components/Seo";
+
+const companyHeroStats = [
+  { value: "3 min", label: "to a comparable supplier shortlist" },
+  { value: "12+", label: "source types in one research pass" },
+  { value: "100%", label: "explainable recommendation rationale" },
+];
+
+const offerPillars = [
+  {
+    kicker: "Research",
+    title: "Multi-source part intelligence",
+    text: "OEM numbers, alternates, and aftermarket crosses—normalized before anyone opens a spreadsheet.",
+    Icon: ReaderIcon,
+  },
+  {
+    kicker: "Compare",
+    title: "One frame for every quote",
+    text: "Unit price, landed cost, MOQ, and lead time side by side—so cheap lines don't hide logistics risk.",
+    Icon: GridIcon,
+  },
+  {
+    kicker: "Decide",
+    title: "Ranked awards with rationale",
+    text: "Explainable AI rankings procurement and the plant can defend—exportable for approvals.",
+    Icon: LightningBoltIcon,
+  },
+];
 
 const values = [
   {
@@ -65,90 +93,112 @@ export default function CompanyPage() {
     <div>
       <Seo
         title="Company — About Partsource | Partsource"
-        description="Partsource designs for measurable procurement outcomes: faster sourcing, explainable AI recommendations, and enterprise reliability for manufacturing teams."
+        description="Partsource is sourcing intelligence for manufacturing teams—part research, vendor comparison, and explainable recommendations in one workspace."
         canonicalPath="/company"
       />
-      <section className="relative overflow-hidden border-b border-slate-200/60 min-h-[78vh] md:min-h-[82vh] flex items-center">
+      <section
+        className="relative overflow-hidden border-b border-slate-200/80"
+        aria-labelledby="company-hero-heading"
+      >
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=2400&q=80')",
+              "linear-gradient(120deg, rgba(15,23,42,0.94) 0%, rgba(15,23,42,0.78) 45%, rgba(0,113,227,0.18) 100%), url('https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=2400&q=80')",
           }}
           aria-hidden
         />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: [
-              "radial-gradient(ellipse 80% 60% at 100% 0%, rgba(0,113,227,0.32), transparent 55%)",
-              "linear-gradient(120deg, rgba(5,9,20,0.92) 0%, rgba(8,15,30,0.78) 50%, rgba(0,30,80,0.55) 100%)",
-            ].join(", "),
-          }}
-          aria-hidden
-        />
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 md:py-28">
-          <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center">
-            <p className="font-display text-accent-light font-semibold text-xs sm:text-sm uppercase tracking-[0.22em]">
-              Company
-            </p>
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mt-5 max-w-5xl mx-auto leading-[1.05] tracking-tight text-balance">
-              We turn complex supplier research into instant, <span className="text-accent-light">data-driven decisions</span>
-            </h1>
-            <p className="mt-6 text-base sm:text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              An AI-powered strategic sourcing and decision intelligence platform—built for manufacturing teams that ship on schedule.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-3">
-              <a
-                href={CALENDLY_DEMO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand shadow-lg shadow-black/30 transition hover:bg-slate-100 min-h-[48px]"
-              >
-                Book a demo
-              </a>
-              <Link
-                to="/products"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/10 min-h-[48px]"
-              >
-                Explore the product
-              </Link>
-            </div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_90%_0%,rgba(41,151,255,0.22),transparent_55%)] pointer-events-none" aria-hidden />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-20 md:py-28 lg:py-32 min-h-[min(68vh,580px)] flex flex-col justify-end">
+          <p className="font-display text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] text-white/85">
+            About Partsource
+          </p>
+          <h1
+            id="company-hero-heading"
+            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] font-bold text-white mt-4 max-w-4xl leading-[1.05] tracking-tight text-balance"
+          >
+            Sourcing intelligence for teams that{" "}
+            <span className="text-accent-light">can't wait on spreadsheets</span>
+          </h1>
+          <p className="mt-5 text-base md:text-lg text-white/80 max-w-2xl leading-relaxed">
+            Part research, vendor comparison, and explainable recommendations in one workspace—built for manufacturing procurement and plant teams who need awards they can defend.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a
+              href={CALENDLY_DEMO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand shadow-lg shadow-black/25 transition hover:bg-slate-100 min-h-[44px]"
+            >
+              Book a 30-minute demo
+              <ArrowRightIcon className="w-4 h-4" aria-hidden />
+            </a>
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 min-h-[44px]"
+            >
+              Explore the platform
+            </Link>
           </div>
+          <dl className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+            {companyHeroStats.map(({ value, label }) => (
+              <div
+                key={label}
+                className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-sm"
+              >
+                <dt className="font-display text-2xl font-bold text-white">{value}</dt>
+                <dd className="mt-1 text-sm text-white/70 leading-snug">{label}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
-      {/* Mission + What we offer with image side */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
-            <div className="relative h-72 lg:h-auto rounded-3xl overflow-hidden ring-1 ring-slate-200/80 shadow-xl shadow-slate-300/30 order-2 lg:order-1">
+      <section className="py-16 md:py-24 bg-surface border-b border-slate-200/90" aria-labelledby="company-mission-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
+            <div className="relative min-h-[280px] lg:min-h-[480px] rounded-3xl overflow-hidden ring-1 ring-slate-200/80 shadow-xl shadow-slate-300/25">
               <img
                 src="https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1600&q=80"
-                alt="Manufacturing operations"
+                alt="Manufacturing floor and production operations"
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/15 to-transparent" />
-              <p className="absolute bottom-6 left-6 right-6 font-display text-lg md:text-xl font-semibold text-white leading-snug">
-                Built alongside the teams that run production
-              </p>
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/25 to-black/5" />
+              <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent-light">Our mission</p>
+                <p className="mt-2 font-display text-xl md:text-2xl font-semibold text-white leading-snug max-w-md">
+                  Replace spreadsheet archaeology with governed data every team trusts.
+                </p>
+              </div>
             </div>
-            <div className="order-1 lg:order-2 grid sm:grid-cols-2 lg:grid-cols-1 gap-6">
-              <div className="p-7 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-                <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent">Mission</p>
-                <h2 className="mt-3 font-display text-2xl font-bold text-brand">From spreadsheets to certainty</h2>
-                <p className="mt-3 text-slate-600 leading-relaxed">
-                  Give every team instant, comparable data and clear recommendations for every part they buy.
-                </p>
-              </div>
-              <div className="p-7 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-                <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-accent">What we offer</p>
-                <h2 className="mt-3 font-display text-2xl font-bold text-brand">Research, comparison, recommendation</h2>
-                <p className="mt-3 text-slate-600 leading-relaxed">
-                  Input a part number—gather, compare, and decide with explainable AI rankings.
-                </p>
-              </div>
+
+            <div>
+              <p className="font-display text-accent font-semibold text-xs uppercase tracking-[0.22em]">What we build</p>
+              <h2 id="company-mission-heading" className="mt-2 font-display text-3xl sm:text-4xl font-bold text-brand leading-tight text-balance">
+                From part inquiry to PO-ready award—without the email chase
+              </h2>
+              <p className="mt-4 text-slate-600 leading-relaxed max-w-xl">
+                Category managers, buyers, and plant teams use Partsource when a part number lands and the clock starts. Same rigor on the first search of the day as the thousandth.
+              </p>
+
+              <ul className="mt-8 space-y-4">
+                {offerPillars.map(({ kicker, title, text, Icon }) => (
+                  <li
+                    key={kicker}
+                    className="flex gap-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm transition hover:border-accent/30 hover:shadow-md"
+                  >
+                    <span className="shrink-0 flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div>
+                      <p className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">{kicker}</p>
+                      <h3 className="mt-1 font-display text-lg font-bold text-brand">{title}</h3>
+                      <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">{text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

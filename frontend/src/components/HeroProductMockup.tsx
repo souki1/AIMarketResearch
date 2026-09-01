@@ -201,7 +201,7 @@ export default function HeroProductMockup() {
   const [selected, setSelected] = useState<string[]>([SAMPLE[0].id]);
   const [hasLeads, setHasLeads] = useState(true);
   const [region, setRegion] = useState<(typeof COMPARE_FILTERS)[number]>("All");
-  const [sortKey, setSortKey] = useState<SortKey>("reliability");
+  const sortKey: SortKey = "reliability";
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [cursor, setCursor] = useState({ x: 48, y: 86, click: false, on: false });

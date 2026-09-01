@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import HeroProductMockup from "../../components/HeroProductMockup";
 import PartShowcase from "../../components/PartShowcase";
-import { CALENDLY_DEMO_URL } from "../../constants/booking";
+import { CALENDLY_DEMO_URL, WORKSPACE_DEMO_URL } from "../../constants/booking";
 import { SITE_CANONICAL_ORIGIN } from "../../constants/site";
 import Seo from "../../components/Seo";
 
@@ -244,7 +244,9 @@ export default function HomePage() {
                   style={{ "--sr-i": 3 } as CSSProperties}
                 >
                   <a
-                    href="#workspace-demo"
+                    href={WORKSPACE_DEMO_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand shadow-lg shadow-black/40 transition hover:bg-slate-100 min-h-[48px] w-full sm:w-auto"
                   >
                     Try the workspace
@@ -620,7 +622,7 @@ export default function HomePage() {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
               <a
-                href={CALENDLY_DEMO_URL}
+                href={WORKSPACE_DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-brand bg-white hover:bg-slate-100 transition shadow-lg shadow-black/30 min-h-[48px]"

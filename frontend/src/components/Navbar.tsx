@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { HamburgerMenuIcon, Cross2Icon } from "@radix-ui/react-icons";
-import { CALENDLY_DEMO_URL } from "../constants/booking";
+import { CALENDLY_DEMO_URL, WORKSPACE_DEMO_URL } from "../constants/booking";
 
 const navLinks: { label: string; path: string }[] = [
   { label: "Products", path: "/products" },
@@ -57,7 +57,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden lg:flex items-center gap-2">
               <a
-                href={CALENDLY_DEMO_URL}
+                href={WORKSPACE_DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="apple-cta-primary px-4 py-2.5 rounded-xl text-xs font-normal transition-colors"
@@ -119,7 +119,7 @@ export default function Navbar() {
             </Link>
             <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-2">
               <a
-                href={CALENDLY_DEMO_URL}
+                href={WORKSPACE_DEMO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 rounded-lg text-center font-medium text-white bg-accent hover:bg-[#0066cc] min-h-[44px] flex items-center justify-center"

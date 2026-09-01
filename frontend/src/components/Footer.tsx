@@ -39,6 +39,8 @@ const columns = [
       { label: "Vendor comparison", to: "/products#product-demo" },
       { label: "By function & role", to: "/products#solutions-coverage" },
       { label: "Key capabilities", to: "/products#capabilities" },
+      { label: "For OEMs", to: "/oem" },
+      { label: "For suppliers", to: "/suppliers" },
       { label: "Enterprise", to: "/enterprise" },
     ],
   },
@@ -78,17 +80,11 @@ export default function Footer() {
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-10 xl:gap-14">
           <div className="shrink-0 lg:max-w-[min(100%,20rem)] xl:max-w-88">
             <Link to="/" className="inline-flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
-                <svg viewBox="0 0 32 32" fill="none" className="w-5 h-5 text-accent-light" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                  <path d="M8 16c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M16 8v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </div>
+              <img src="/logo.svg" alt="" width={36} height={36} className="w-9 h-9 rounded-lg shrink-0" />
               <span className="font-display font-semibold text-lg tracking-[-0.28px]">Partsource</span>
             </Link>
             <p className="mt-4 text-sm text-white/60 leading-relaxed">
-              AI-powered research and comparison for parts—find suppliers, compare pricing, and get intelligent recommendations.
+              The bridge between OEMs and suppliers: pricing data and research for OEMs; the right part, alternate, and OEM for procurement teams.
             </p>
             <ul className="mt-5 flex flex-wrap items-center gap-2" aria-label="Social media">
               {socialLinks.map(({ label, href, icon }) => (

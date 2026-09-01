@@ -54,7 +54,7 @@ const libraryItems = [
     label: "Insights",
     title: "Price & logistics briefs",
     desc: "Short reads on total cost, freight lanes, and award prep.",
-    href: "#reads",
+    href: "/resources#reads",
     image: IMG.insights,
     imageAlt: "Analytics dashboard with pricing and logistics metrics",
     accent: "border-rose-500",

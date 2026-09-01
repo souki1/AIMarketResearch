@@ -5,6 +5,8 @@ import { CALENDLY_DEMO_URL } from "../constants/booking";
 
 const navLinks: { label: string; path: string }[] = [
   { label: "Products", path: "/products" },
+  { label: "OEM", path: "/oem" },
+  { label: "Suppliers", path: "/suppliers" },
   { label: "Customers", path: "/customers" },
   { label: "Resources", path: "/resources" },
   { label: "Company", path: "/company" },
@@ -36,7 +38,7 @@ export default function Navbar() {
                 <Link
                   key={label}
                   to={path}
-                  className={`px-4 py-2 rounded-xl text-xs font-normal tracking-[-0.12px] transition-colors ${
+                  className={`px-3 py-2 rounded-xl text-xs font-normal tracking-[-0.12px] transition-colors ${
                     isActive ? "text-white bg-white/15" : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >

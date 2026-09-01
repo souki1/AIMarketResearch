@@ -17,7 +17,7 @@ const products = [
     title: "Part research engine",
     description:
       "Enter a part number or query and automatically gather data from multiple sources—cleaned, matched, and ready to compare.",
-    to: "#product-demo",
+    to: "/products#product-demo",
     icon: "hub",
     image: partImage,
     metric: "12+ source types",
@@ -27,7 +27,7 @@ const products = [
     title: "Vendor comparison workspace",
     description:
       "Compare suppliers side by side on price, availability, lead time, and reliability so every award is transparent and defensible.",
-    to: "#product-demo",
+    to: "/products#product-demo",
     icon: "analytics",
     image:
       "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1200&q=85",
@@ -38,7 +38,7 @@ const products = [
     title: "Recommendation intelligence",
     description:
       "Go beyond lists: get ranked options and explainable AI insights for the best sourcing decision on each part.",
-    to: "#product-demo",
+    to: "/products#product-demo",
     icon: "ai",
     image:
       "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=85",
@@ -49,7 +49,7 @@ const products = [
     title: "Integrations & data layer",
     description:
       "Connect your stack—ERP, supplier feeds, and internal systems—so research and decisions stay in one place.",
-    to: "#capabilities",
+    to: "/products#capabilities",
     icon: "api",
     image:
       "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&w=1200&q=85",

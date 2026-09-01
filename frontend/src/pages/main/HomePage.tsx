@@ -35,6 +35,7 @@ const features = [
   {
     title: "Multi-source part research",
     description: "OEM numbers, alternates, and aftermarket crosses—normalized in one search.",
+    to: "/products#product-demo",
     image:
       "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=1400&q=85",
     icon: (
@@ -46,6 +47,7 @@ const features = [
   {
     title: "Fair vendor comparison",
     description: "Unit price, landed cost, MOQ, and lead time—same frame, apples-to-apples.",
+    to: "/products#product-demo",
     image:
       "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1400&q=85",
     icon: (
@@ -57,6 +59,7 @@ const features = [
   {
     title: "Intelligent recommendations",
     description: "Ranked awards with rationale—so procurement and the plant agree faster.",
+    to: "/products#solutions-coverage",
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=85",
     icon: (
@@ -66,6 +69,31 @@ const features = [
     ),
   },
 ];
+
+const audiences = [
+  {
+    kicker: "OEMs",
+    title: "Data, trends, and research before you set the price",
+    body: "OEM teams use Partsource to see supplier coverage, pricing movement, and part research in one place—so quotes and awards are evidence, not a lagging spreadsheet.",
+    points: [
+      "Pricing trends across quotes and lanes",
+      "Supplier coverage and performance",
+      "Part research before the RFQ goes out",
+    ],
+    to: "/oem",
+  },
+  {
+    kicker: "Suppliers & procurement",
+    title: "The right part, the alternate, and the OEM who can deliver",
+    body: "Procurement and supplier teams use Partsource to match the part on the first search, pull OEM crosses and aftermarket alternates, then compare and award with a trail.",
+    points: [
+      "Find the right part on the first search",
+      "OEM crosses and aftermarket alternates",
+      "Compare, award, and hand off to the plant",
+    ],
+    to: "/suppliers",
+  },
+] as const;
 
 const trustStripTiles: { label: string; image: string }[] = [
   {
@@ -167,7 +195,7 @@ export default function HomePage() {
     <div ref={revealRef}>
       <Seo
         title="Partsource — AI-Powered Part Sourcing & Supplier Comparison"
-        description="AI-powered strategic sourcing and decision intelligence. Find, analyze, and choose the best suppliers and pricing for OEM and aftermarket parts."
+        description="Partsource is the bridge between OEMs and suppliers. OEMs get pricing data, trends, and research. Procurement and supplier teams find the right part, alternates, and OEM to fulfill."
         canonicalPath="/"
         jsonLd={homeJsonLd}
       />
@@ -175,7 +203,7 @@ export default function HomePage() {
           HERO
       ════════════════════════════════════════════════════════════════ */}
       <section
-        className="relative overflow-hidden border-b border-slate-200/60 min-h-screen flex items-center bg-linear-to-br from-slate-950 via-[#0a1020] to-slate-950"
+        className="relative overflow-hidden border-b border-slate-200/60 min-h-screen flex items-start bg-linear-to-br from-slate-950 via-[#0a1020] to-slate-950"
         aria-labelledby="home-hero-heading"
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -190,13 +218,13 @@ export default function HomePage() {
         </div>
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-12 md:py-16 lg:py-20 shrink-0">
           <div className="sr-stagger max-w-7xl mx-auto flex flex-col gap-12 lg:gap-14">
-            <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-14 xl:gap-16 items-center">
+            <div className="grid lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] gap-10 lg:gap-12 xl:gap-14 items-start">
               <div className="flex flex-col text-center lg:text-left">
                 <p
                   className="sr font-display text-accent-light font-semibold text-sm sm:text-base uppercase tracking-[0.22em] w-full"
                   style={{ "--sr-i": 0 } as CSSProperties}
                 >
-                  OEM · aftermarket · manufacturing parts
+                  The OEM–supplier bridge
                 </p>
                 <h1
                   id="home-hero-heading"
@@ -209,17 +237,17 @@ export default function HomePage() {
                   className="sr mt-6 text-base sm:text-lg md:text-xl text-white/80 w-full max-w-xl lg:max-w-lg mx-auto lg:mx-0 leading-relaxed text-pretty"
                   style={{ "--sr-i": 2 } as CSSProperties}
                 >
-                  Cross OEM and aftermarket data, compare landed cost and logistics, then award with a clear audit trail.
+                  Upload a BOM, research leads, compare suppliers, draft an RFQ, and pull reports — the workspace between OEMs and the suppliers who fulfill.
                 </p>
                 <div
                   className="sr mt-10 flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 sm:gap-4 w-full"
                   style={{ "--sr-i": 3 } as CSSProperties}
                 >
                   <a
-                    href="#product-demo"
+                    href="#workspace-demo"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand shadow-lg shadow-black/40 transition hover:bg-slate-100 min-h-[48px] w-full sm:w-auto"
                   >
-                    See an interactive demo
+                    Try the workspace
                     <ChevronRightIcon className="w-4 h-4 shrink-0" aria-hidden />
                   </a>
                   <a
@@ -232,20 +260,11 @@ export default function HomePage() {
                   </a>
                 </div>
               </div>
-              <figure className="sr w-full max-w-xl mx-auto lg:max-w-none lg:mx-0" style={{ "--sr-i": 4 } as CSSProperties}>
-                <div className="rounded-2xl overflow-hidden ring-1 ring-white/15 bg-slate-900/80 shadow-2xl shadow-black/60">
-                  <div className="flex items-center gap-2 px-3 py-2.5 bg-slate-800/95 border-b border-white/10">
-                    <div className="flex gap-1.5 shrink-0" aria-hidden>
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]/90" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]/90" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]/90" />
-                    </div>
-                    <div className="flex-1 min-w-0 rounded-md bg-slate-950/90 px-3 py-1.5 text-[11px] sm:text-xs text-slate-400 font-mono truncate border border-white/5">
-                      app.partsource.io/research
-                    </div>
-                  </div>
-                  <HeroProductMockup />
-                </div>
+              <figure id="workspace-demo" className="sr w-full max-w-xl mx-auto lg:max-w-none lg:mx-0" style={{ "--sr-i": 4 } as CSSProperties}>
+                <HeroProductMockup />
+                <figcaption className="mt-3 text-center lg:text-left text-[11px] sm:text-xs text-white/45 tracking-wide">
+                  Upload · Research · Compare · Create RFQ · Reports
+                </figcaption>
               </figure>
             </div>
             <div
@@ -286,6 +305,70 @@ export default function HomePage() {
                   </p>
                 </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bridge — OEM ↔ supplier & procurement */}
+      <section id="who-we-serve" className="relative overflow-hidden bg-white py-16 md:py-24 border-b border-slate-100" aria-labelledby="bridge-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+            <p className="sr font-display text-accent font-semibold text-sm uppercase tracking-[0.2em]">Who we serve</p>
+            <h2 id="bridge-heading" className="sr font-display text-3xl sm:text-4xl md:text-5xl font-bold text-brand mt-3 tracking-tight text-balance">
+              The bridge between OEM and supplier.
+            </h2>
+            <p className="sr mt-4 text-slate-600 text-base sm:text-lg leading-relaxed text-pretty">
+              One workspace. Two sides of the same award—pricing intelligence for OEMs, part and alternate finding for procurement.
+            </p>
+          </div>
+
+          <div className="relative grid lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-0 items-stretch">
+            {audiences.map((side, i) => (
+              <article
+                key={side.kicker}
+                className={`sr relative flex flex-col rounded-3xl border p-7 sm:p-9 ${
+                  i === 0
+                    ? "bg-slate-950 text-white border-white/10 lg:order-1"
+                    : "bg-[#fafafa] text-brand border-slate-200/80 lg:mt-8 lg:order-3"
+                }`}
+                style={{ "--sr-i": i } as CSSProperties}
+              >
+                <p className={`font-display text-xs font-semibold uppercase tracking-[0.2em] ${i === 0 ? "text-accent-light" : "text-accent"}`}>
+                  {side.kicker}
+                </p>
+                <h3 className="mt-4 font-display text-2xl sm:text-3xl font-bold tracking-tight leading-tight text-balance">
+                  {side.title}
+                </h3>
+                <p className={`mt-4 text-sm sm:text-base leading-relaxed ${i === 0 ? "text-white/70" : "text-slate-600"}`}>
+                  {side.body}
+                </p>
+                <ul className="mt-6 space-y-2.5 flex-1">
+                  {side.points.map((point) => (
+                    <li key={point} className="flex items-start gap-2.5 text-sm">
+                      <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${i === 0 ? "bg-accent-light" : "bg-accent"}`} aria-hidden />
+                      <span className={i === 0 ? "text-white/85" : "text-slate-700"}>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to={side.to}
+                  className={`mt-8 inline-flex w-fit items-center gap-1 text-sm font-semibold ${
+                    i === 0 ? "text-accent-light hover:text-white" : "text-accent hover:text-brand"
+                  }`}
+                >
+                  Learn more
+                  <ChevronRightIcon className="w-4 h-4" aria-hidden />
+                </Link>
+              </article>
+            ))}
+
+            <div className="hidden lg:order-2 lg:flex flex-col items-center justify-center px-5 z-10" aria-hidden>
+              <div className="w-px flex-1 bg-linear-to-b from-transparent via-slate-200 to-slate-200" />
+              <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-lg ring-1 ring-slate-200/80">
+                <img src="/logo.svg" alt="" width={36} height={36} className="h-9 w-9 rounded-lg" />
+              </div>
+              <div className="w-px flex-1 bg-linear-to-b from-slate-200 via-slate-200 to-transparent" />
+            </div>
           </div>
         </div>
       </section>
@@ -475,7 +558,7 @@ export default function HomePage() {
                         {f.description}
                       </p>
                       <Link
-                        to="/products"
+                        to={f.to}
                         className="mt-7 inline-flex items-center gap-1 text-[17px] font-medium text-accent hover:underline underline-offset-4 w-fit"
                       >
                         Learn more
@@ -533,7 +616,7 @@ export default function HomePage() {
               Ready to source smarter?
             </h2>
             <p className="mt-5 text-white/80 max-w-xl mx-auto leading-relaxed text-sm sm:text-base">
-              Book a walkthrough—see OEM, aftermarket, and landed cost in one flow.
+              Book a walkthrough—see how OEMs, suppliers, and procurement share one part-to-award flow.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
               <a

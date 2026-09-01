@@ -14,6 +14,8 @@ const CustomersPage = lazy(() => import("../pages/main/CustomersPage"));
 const ResourcesPage = lazy(() => import("../pages/main/ResourcesPage"));
 const CompanyPage = lazy(() => import("../pages/main/CompanyPage"));
 const EnterprisePage = lazy(() => import("../pages/main/EnterprisePage"));
+const OemPage = lazy(() => import("../pages/main/OemPage"));
+const SuppliersPage = lazy(() => import("../pages/main/SuppliersPage"));
 const NotFoundPage = lazy(() => import("../pages/main/NotFoundPage"));
 
 
@@ -34,6 +36,8 @@ export const router = createBrowserRouter([
           { path: "resources", element: <ResourcesPage /> },
           { path: "company", element: <CompanyPage /> },
           { path: "enterprise", element: <EnterprisePage /> },
+          { path: "oem", element: <OemPage /> },
+          { path: "suppliers", element: <SuppliersPage /> },
           { path: "*", element: <NotFoundPage /> },
         ],
       },

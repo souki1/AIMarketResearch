@@ -11,6 +11,8 @@ export const ROUTES = {
   RESOURCES: "/resources",
   COMPANY: "/company",
   ENTERPRISE: "/enterprise",
+  OEM: "/oem",
+  SUPPLIERS: "/suppliers",
   ...APP_ROUTES,
 } as const;
 

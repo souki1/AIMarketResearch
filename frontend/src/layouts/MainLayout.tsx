@@ -1,8 +1,35 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+function useScrollToHash() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    const id = decodeURIComponent(hash.replace(/^#/, ""));
+    const started = Date.now();
+    const tick = window.setInterval(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.clearInterval(tick);
+        return;
+      }
+      if (Date.now() - started > 2500) window.clearInterval(tick);
+    }, 50);
+
+    return () => window.clearInterval(tick);
+  }, [pathname, hash]);
+}
+
 export default function MainLayout() {
+  useScrollToHash();
   return (
     <div className="apple-site enterprise-app min-h-screen flex flex-col">
       <Navbar />

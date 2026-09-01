@@ -1,7 +1,44 @@
-import { useRef, useEffect, useState, useMemo, Suspense } from "react";
+import { useRef, useEffect, useState, useMemo, Suspense, Component, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, ContactShadows, Environment, Float } from "@react-three/drei";
 import HarmonicDriveModel from "./HarmonicDriveModel";
+
+function webglAvailable() {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(canvas.getContext("webgl2") || canvas.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
+class WebGLBoundary extends Component<{ children: ReactNode; fallback: ReactNode; onError?: () => void }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch() {
+    this.props.onError?.();
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+function GearboxFallback() {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center" aria-hidden>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(41,151,255,0.08),transparent_62%)]" />
+      <div className="relative h-[72%] w-[72%] max-h-[260px] max-w-[260px] animate-[spin_28s_linear_infinite]">
+        <div className="absolute inset-0 rounded-full border-[14px] border-slate-400/80 shadow-[inset_0_2px_8px_rgba(255,255,255,0.45),0_8px_24px_rgba(15,23,42,0.12)]" />
+        <div className="absolute inset-[12%] rounded-full border-[10px] border-slate-300/90" />
+        <div className="absolute inset-[28%] rounded-full border-[8px] border-accent/70" />
+        <div className="absolute inset-[44%] rounded-full bg-linear-to-br from-slate-200 to-slate-400 shadow-inner" />
+        <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-600" />
+      </div>
+    </div>
+  );
+}
 
 /* ══════════════════════════════════════════════════════════════
    DATA
@@ -34,43 +71,65 @@ const keyNumbers = [
 ];
 
 function HarmonicDrive3D() {
+  const [live, setLive] = useState(() => webglAvailable());
+
   return (
-    <Canvas
-      camera={{ position: [3.4, 2.2, 4.4], fov: 32 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true }}
-      shadows
-      style={{ touchAction: "pan-y" }}
-    >
-      <ambientLight intensity={0.55} />
-      <directionalLight
-        position={[5, 6, 5]}
-        intensity={1.4}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      />
-      <directionalLight position={[-5, -2, -3]} intensity={0.5} color="#86c2ff" />
-      <Suspense fallback={null}>
-        <Environment preset="city" />
-      </Suspense>
-      <Float speed={1.4} rotationIntensity={0.12} floatIntensity={0.18}>
-        <HarmonicDriveModel autoRotate />
-      </Float>
-      <ContactShadows
-        position={[0, -1.55, 0]}
-        opacity={0.45}
-        scale={6}
-        blur={2.6}
-        far={4}
-      />
-      <OrbitControls
-        enablePan={false}
-        enableZoom={false}
-        minPolarAngle={Math.PI / 4}
-        maxPolarAngle={Math.PI / 1.7}
-        autoRotate={false}
-      />
-    </Canvas>
+    <>
+      <WebGLBoundary
+        fallback={<GearboxFallback />}
+        onError={() => setLive(false)}
+      >
+        {live ? (
+          <Canvas
+            camera={{ position: [3.4, 2.2, 4.4], fov: 32 }}
+            dpr={[1, 2]}
+            gl={{ antialias: true, alpha: true, failIfMajorPerformanceCaveat: false }}
+            shadows
+            style={{ touchAction: "pan-y" }}
+          >
+            <ambientLight intensity={0.55} />
+            <directionalLight
+              position={[5, 6, 5]}
+              intensity={1.4}
+              castShadow
+              shadow-mapSize={[1024, 1024]}
+            />
+            <directionalLight position={[-5, -2, -3]} intensity={0.5} color="#86c2ff" />
+            <Suspense fallback={null}>
+              <Environment preset="city" />
+            </Suspense>
+            <Float speed={1.4} rotationIntensity={0.12} floatIntensity={0.18}>
+              <HarmonicDriveModel autoRotate />
+            </Float>
+            <ContactShadows
+              position={[0, -1.55, 0]}
+              opacity={0.45}
+              scale={6}
+              blur={2.6}
+              far={4}
+            />
+            <OrbitControls
+              enablePan={false}
+              enableZoom={false}
+              minPolarAngle={Math.PI / 4}
+              maxPolarAngle={Math.PI / 1.7}
+              autoRotate={false}
+            />
+          </Canvas>
+        ) : (
+          <GearboxFallback />
+        )}
+      </WebGLBoundary>
+      <span className="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200/80">
+        <span className={`w-1.5 h-1.5 rounded-full ${live ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
+        {live ? "LIVE 3D" : "Preview"}
+      </span>
+      {live && (
+        <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/60 text-white backdrop-blur px-2.5 py-1 text-[10px] font-medium tracking-wide">
+          Drag to rotate
+        </span>
+      )}
+    </>
   );
 }
 
@@ -142,13 +201,6 @@ export default function PartShowcase() {
                 <div className="flex flex-col items-center text-center">
                   <div className="relative w-full h-[280px] sm:h-[340px] lg:h-[380px] rounded-2xl overflow-hidden bg-linear-to-br from-slate-50 to-slate-100 border border-slate-100 shadow-inner showcase-canvas">
                     <HarmonicDrive3D />
-                    <span className="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200/80">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      LIVE 3D
-                    </span>
-                    <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/60 text-white backdrop-blur px-2.5 py-1 text-[10px] font-medium tracking-wide">
-                      Drag to rotate
-                    </span>
                   </div>
                   <span className="mt-4 inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent/10 text-accent">Gearboxes &amp; Speed Reducers</span>
                   <h3 className="mt-2 font-display text-base sm:text-lg font-bold text-brand leading-snug">Harmonic Drive Gearbox</h3>
